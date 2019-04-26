@@ -1,0 +1,10 @@
+<menu id="AutolapMenu">
+	<menu-item id="aloff" label="off" />
+	<menu-item id="al100" label="100m" />
+	<menu-item id="al200" label="200m" />
+	<menu-item id="al400" label="400m" />
+	<menu-item id="al500" label="500m" />
+	<menu-item id="al1000" label="1km" />
+	<menu-item id="al2000" label="2km" />
+	<menu-item id="al5000" label="5km" />
+</menu>

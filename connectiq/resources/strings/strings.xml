@@ -1,0 +1,13 @@
+<strings>
+    <string id="AppName">WormNav</string>
+
+    <string id="prompt">Click the menu button</string>
+
+    <string id="main_menu_label_1">North heading</string>
+    <string id="main_menu_label_2">Auto lap</string>
+    <string id="main_menu_label_3">Delete track</string>
+
+    <string id="save_menu_label_1">Resume</string>
+    <string id="save_menu_label_2">Save</string>
+    <string id="save_menu_label_3">Discard</string>
+</strings>

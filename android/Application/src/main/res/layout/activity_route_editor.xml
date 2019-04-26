@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/osmmap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/location_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="55dp"
+        android:background="@drawable/location_button"
+        android:enabled="false" />
+
+    <TextView
+        android:id="@+id/route_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="5dp"
+        android:text="@string/map_prompt"
+        android:textSize="14sp" />
+
+    <TableLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/mode_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/map_empty_btn"
+                android:maxHeight="0dp"
+                android:maxWidth="0dp" />
+
+            <Button
+                android:id="@+id/zoom_out_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/map_zoom_out"
+                android:maxHeight="0dp"
+                android:maxWidth="0dp" />
+
+            <Button
+                android:id="@+id/fit_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/map_fit"
+                android:maxHeight="0dp"
+                android:maxWidth="0dp" />
+
+            <Button
+                android:id="@+id/zoom_in_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/map_zoom_in"
+                android:maxHeight="0dp"
+                android:maxWidth="0dp" />
+
+            <Button
+                android:id="@+id/save_button"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/map_save"
+                android:maxHeight="0dp"
+                android:maxWidth="0dp" />
+
+        </TableRow>
+
+        <TextView
+            android:id="@+id/copyright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/buttons"
+            android:gravity="start"
+            android:linksClickable="true"
+            android:padding="4dp"
+            android:text="@string/osm_copyright"
+            android:textColor="#444"
+            android:textSize="12sp" />
+
+    </TableLayout>
+
+</RelativeLayout>

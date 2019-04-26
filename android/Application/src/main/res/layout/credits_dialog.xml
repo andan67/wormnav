@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rambler_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_rambler_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/rambler_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/credits_rambler_copy"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/rambler_licence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_gpl30"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/aosp_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_aosp_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/aosp_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/credits_aosp_copy"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/aosp_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_apache20"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/karambola_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_karambola_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/karambola_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/credits_karambola_copy"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/karambola_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_gpl30"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/osmdroid_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_osmdroid_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/osmdroid_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_apache20"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/osmbp_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_osmbonuspack_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/osmbp_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_gnuelesser"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/mapquest_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_mapquest_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/mapquest_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_mapquest"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/osrm_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_osrm_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/osrm_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_bsd2clause"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/osrm_license_demo_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/license_demo_server"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/filebrowser_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/credits_filebrowser_name"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/filebrowser_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/credits_filebrowser_copy"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/filebrowser_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/license_apache20"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</ScrollView>

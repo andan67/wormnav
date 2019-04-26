@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"
+            android:text="@string/dialog_send_to_device_track_name" />
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_name_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:textColor="#999999"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_length_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_send_to_device_track_length" />
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_length_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:textColor="#999999"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_number_of_points_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text"
+            android:text="@string/dialog_send_to_device_track_number_of_points" />
+
+        <TextView
+            android:id="@+id/dialog_send_to_device_track_number_of_points_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="20dp"
+            android:textColor="#999999"
+            android:textSize="18sp" />
+
+</LinearLayout>

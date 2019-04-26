@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="about_app" translatable="false">©2019 andan67</string>
+    <string name="about_to_delete_route">You\'re about to delete the route</string>
+    <string name="about_to_delete_track">You\'re about to delete the track</string>
+
+    <string name="action_about">About</string>
+    <string name="action_exit">Exit</string>
+
+    <string name="button_end_here">End here</string>
+    <string name="button_insert_start">Start/End</string>
+
+    <string name="creator_clear_waypoints">Clear waypoints</string>
+
+    <string name="credits">Credits</string>
+    <string name="credits_rambler_copy">This app is forked from this great app for managing gpx files
+        \n©2015–2017 nwg (Piotr Miller)</string>
+    <string name="credits_rambler_name" translatable="false">
+        <a href="https://github.com/nwg-piotr/RamblerGPXEditor">Rambler GPX Editor</a>
+    </string>
+
+    <string name="credits_aosp_copy" translatable="false">©2017 The Android Open Source Project.</string>
+    <string name="credits_aosp_name" translatable="false">
+        <a href="https://source.android.com">Android Open Source Project</a>
+    </string>
+    <string name="credits_btn" translatable="false">Credits</string>
+    <string name="credits_filebrowser_copy" translatable="false">©Alexey Vassiliev</string>
+    <string name="credits_filebrowser_name" translatable="false">
+        <a href="https://github.com/vaal12/AndroidFileBrowser">AndroidFileBrowser</a>
+    </string>
+    <string name="credits_karambola_copy">- GPX format import/export/manipulation tools;
+        \n- POI/routes view filtering and sorting;
+        \n- Path Simplifier - the Track2Route on the fly conversion and route optimization engine;
+        \n©2016 Karambola (Afonso Santos).
+    </string>
+    <string name="credits_karambola_name" translatable="false">
+        <a href="https://sourceforge.net/projects/geokarambola">GeoKarambola library</a>
+    </string>
+    <string name="credits_osmbonuspack_name" translatable="false">
+        <a href="https://github.com/MKergall/osmbonuspack">OSMBonusPack</a>
+    </string>
+    <string name="credits_osmdroid_name" translatable="false">
+        <a href="https://github.com/osmdroid/osmdroid">osmdroid</a>
+    </string>
+    <string name="credits_mapquest_name" translatable="false">
+        <a href="https://www.mapquest.com">MapQuest</a>
+    </string>
+    <string name="credits_osrm_name" translatable="false">
+        <a href="http://project-osrm.org">Open Source Routing Machine</a>
+    </string>
+    <string name="credits_routing_mapquest" translatable="false">Routing by <u>MapQuest</u></string>
+    <string name="credits_routing_osrm" translatable="false">Routing by <u>OSRM</u> Demo Server</string>
+
+    <string name="credits_logo">App logo by <a href="https://github.com/edskeye">edskeye</a></string>
+
+    <string name="github">
+        <a href="https://github.com/andan67/WormNav">Project on GitHub</a>
+    </string>
+
+    <string name="current_folder">Current folder: %1$s</string>
+
+    <string name="default_file_corrupted">default file not found or corrupted - creating a new one</string>
+    <string name="default_files_saved">Default data files saved</string>
+
+    <string name="delete_source_track">Delete source track</string>
+
+    <string name="dialog_about" translatable="false">WormNav</string>
+    <string name="dialog_all">All</string>
+    <string name="dialog_append">Append</string>
+    <string name="dialog_apply">Apply</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_clear">Clear</string>
+    <string name="dialog_clear_pois">Clear all POI?</string>
+    <string name="dialog_clear_routes">Clear all routes?</string>
+    <string name="dialog_clear_tracks">Clear all tracks?</string>
+    <string name="dialog_confirm_clear_title">Clearing data</string>
+    <string name="dialog_confirm_clear_message">Do you really want to clear current data?</string>
+    <string name="dialog_data_changed_message">Changes you made have not yet been saved. Save now?</string>
+    <string name="dialog_data_changed_title">Data changed</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_delete_route">Delete route?</string>
+    <string name="dialog_delete_route_message">You are about to delete the \"%1$s\" route.</string>
+    <string name="dialog_delete_track_message">You are about to delete the \"%1$s\" track.</string>
+    <string name="dialog_discard">Discard</string>
+    <string name="dialog_dont_save">Don\'t save</string>
+    <string name="dialog_edit_points">Edit points</string>
+    <string name="dialog_filter_age">Filter by Age (days)</string>
+    <string name="dialog_filter_clear">Clear</string>
+    <string name="dialog_filter_dst">Filter by Distance (km)</string>
+    <string name="dialog_filter_lenth">Filter by Length (km)</string>
+    <string name="dialog_filter_routedst">Distance to route (km)</string>
+    <string name="dialog_filter_set">Set filter</string>
+    <string name="dialog_filter_type">Filter by Types</string>
+    <string name="dialog_insert">Insert</string>
+    <string name="dialog_insert_b4">Insert B4</string>
+    <string name="dialog_insert_message">Add %1$s as a way point?</string>
+    <string name="dialog_loading_data">Loading data</string>
+    <string name="dialog_manually">Lat/Lon (GPS format)</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_overwrite_message">Do you want to overwrite current file?</string>
+    <string name="dialog_overwrite_title">File exists</string>
+    <string name="dialog_poi2wpt">POI to Wpt</string>
+    <string name="dialog_poi_changed_message">POI modified. Apply changes?</string>
+    <string name="dialog_pois_filter_title">POI view filter</string>
+    <string name="dialog_route_changed_message">The route has been modified. Apply changes?</string>
+    <string name="dialog_routes_filter_title">Routes view filter</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_save_changes_save">Save</string>
+    <string name="dialog_save_changes_title">Data changed</string>
+    <string name="dialog_savegpx_default" translatable="false">myfile</string>
+    <string name="dialog_savegpx_extension" translatable="false">.gpx</string>
+    <string name="dialog_savegpx_saveasnew">Save to GPX file</string>
+    <string name="dialog_saving_data">Saving data</string>
+    <string name="dialog_select_pois">Select POI to import</string>
+    <string name="dialog_select_routes_export">Select Routes to export</string>
+    <string name="dialog_select_routes_import">Select Routes to import</string>
+    <string name="dialog_select_tracks">Select Tracks to convert</string>
+    <string name="dialog_select_tracks_export">Select Tracks to export</string>
+    <string name="dialog_select_tracks_import">Select Tracks to import</string>
+    <string name="dialog_selected">Selected</string>
+    <string name="dialog_set_lat_lon">Add</string>
+    <string name="dialog_types_of_types">(%1$d of %2$d)</string>
+    <string name="dialog_send_to_device_title">Send track/route to Garmin device</string>
+    <string name="dialog_send_to_device_apply">Send</string>
+
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="drawer_open">Open navigation drawer</string>
+
+    <string name="duplicated_poi">duplicated POI</string>
+
+    <string name="duplicates">duplicates</string>
+
+    <string name="error_opening_file">Error opening file:</string>
+    <string name="error_saving_data">Error saving data:</string>
+
+    <string name="failed_creating_file">Failed creating file</string>
+    <string name="failed_writing_gpx">Failed writing GPX file</string>
+
+    <string name="file_pick">Pick file</string>
+
+    <string name="filebrowser_name">File Browser</string>
+
+    <string name="folder_empty">Folder is empty</string>
+    <string name="folder_select">Select</string>
+    <string name="folder_up">Up</string>
+
+    <string name="gnugpl">This program is free software; you can redistribute it and/or modify
+    it under the terms of the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License version 3.0</a>, as published by
+    the Free Software Foundation.</string>
+
+    <string name="imperial">Imperial</string>
+
+    <string name="lat_lon_should_be">Lat should be -90 to 90\nLon should be -180 to 180</string>
+
+    <string name="license_apache20" translatable="false">Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>
+    </string>
+    <string name="license_bsd2clause" translatable="false">Licensed under the <a href="https://opensource.org/licenses/BSD-2-Clause">2-clause BSD license</a>
+    </string>
+    <string name="license_demo_server" translatable="false">The Route Creator activity depends on routing from OSRM Demo Server, and <a href="https://developer.mapquest.com/documentation/open">MapQuest Open APIs</a>, and the <a href="https://opendatacommons.org/licenses/odbl">ODbl license</a> applies to it.</string>
+    <string name="license_gnuelesser" translatable="false">Licensed under the <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License Version 3</a>
+    </string>
+    <string name="license_gpl30" translatable="false">Licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3.0</a>
+    </string>
+    <string name="license_mapquest" translatable="false">©2017 MapQest, Inc. All rights reserved. Please read <a href="https://hello.mapquest.com/terms-of-use">Terms of use</a>.</string>
+
+    <string name="location_unavailable">Location not available</string>
+
+    <string name="main_poi_loaded">POI Manager (%1$d loaded)</string>
+    <string name="main_routes_loaded">Route Manager (%1$d loaded)</string>
+    <string name="main_tracks_loaded">Track Manager (%1$d loaded)</string>
+
+    <string name="manual_btn" translatable="false">Wiki</string>
+
+    <string name="manually_lat_desc">Latitude:</string>
+    <string name="manually_lon_desc">Longitude:</string>
+    <string name="manually_name_desc">POI name:</string>
+
+    <string name="map_pois_clear">Clear all</string>
+    <string name="map_pois_enter_latlon">New by Lat/Lon</string>
+    <string name="map_pois_import">Import</string>
+    <string name="map_pois_save">Export</string>
+    <string name="map_pois_save_all">Export all</string>
+    <string name="map_pois_save_view">Export filtered view</string>
+    <string name="map_prompt">0 points, long press to add</string>
+    <string name="map_prompt_route">%1$d points, long press to add</string>
+    <string name="map_reverse_route">Reverse route</string>
+
+    <string name="metric">Metric</string>
+
+    <string name="nautical">Nautical</string>
+
+    <string name="neither_single_nor_multiple_routes">Neither single nor multiple routes selected</string>
+    <string name="neither_single_nor_multiple_tracks">Neither single nor multiple tracks selected</string>
+
+    <string name="new_data">New data</string>
+
+    <string name="no_file_selected">No file selected</string>
+    <string name="no_named_poi">The GPX file has no named POI</string>
+    <string name="no_named_routes">The GPX file has no named routes</string>
+    <string name="no_named_tracks">The GPX file has no named Tracks</string>
+    <string name="no_osrm_reponse">Routing server did not respond</string>
+    <string name="no_poi_in_view">No POI in current view</string>
+    <string name="no_poi_not_gpx">No POI or not a GPX file!</string>
+    <string name="no_poi_selected">No POI selected</string>
+    <string name="no_poi_to_clear">No POI to clear</string>
+    <string name="no_routes_in_view">No routes in current view</string>
+    <string name="no_data_loaded">No data loaded</string>
+    <string name="no_routes_memory">No routes in memory or current view</string>
+    <string name="no_routes_not_gpx">No routes or not a GPX file</string>
+    <string name="no_routes_selected">No routes selected</string>
+    <string name="no_routes_to_clear">No routes to clear</string>
+    <string name="no_tracks_in_memory">No Tracks in memory!</string>
+    <string name="no_tracks_not_gpx">No Tracks or not a GPX file!</string>
+    <string name="no_tracks_selected">No tracks selected</string>
+
+    <string name="not_gpx">Not a GPX file!</string>
+
+    <string name="nothing_to_save">Nothing to save</string>
+
+    <string name="open_gpx">Open file</string>
+
+    <string name="optimizer_prompt">%1$d points, maximum error: %2$d m</string>
+
+    <string name="osm_copyright">©<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</string>
+
+    <string name="out_of_memory">Out of memory</string>
+
+    <string name="overlapping_routes">overlapping routes</string>
+
+    <string name="path_not_exists">Path does not exist or cannot be read</string>
+
+    <string name="permissions_deny">Exit</string>
+    <string name="permissions_files">Access to read and write files</string>
+    <string name="permissions_grant">Allow</string>
+    <string name="permissions_insufficient">Couldn\'t run the app due to missing permissions:</string>
+    <string name="permissions_location">Access to the device location</string>
+    <string name="permissions_required">This application needs the storage access to read and write GPX files. It also needs to access your location data.</string>
+
+    <string name="picker_edit_apply">Apply</string>
+    <string name="picker_edit_dialog_title">Route properties</string>
+
+    <string name="poi_cleared">POI cleared</string>
+    <string name="poi_edit_description_label">Description:</string>
+    <string name="poi_edit_elevation_label">Ele (m):</string>
+    <string name="poi_edit_name_edit">unnamed</string>
+    <string name="poi_edit_name_label">Name:</string>
+    <string name="poi_edit_time">Time unknown</string>
+    <string name="poi_imported">POI imported</string>
+    <string name="poi_loaded">" %1$d POI"</string>
+    <string name="poi_saved_as">Saved POI as</string>
+
+    <string name="read_error">Read error:</string>
+
+    <string name="removed">Removed</string>
+
+    <string name="route_edit_number_label">Number</string>
+    <string name="route_edit_prompt">Select a route</string>
+    <string name="route_points_limited">Points number reduced to %1$d</string>
+    <string name="route_type_bicycle">Bicycle</string>
+    <string name="route_type_car">Car</string>
+    <string name="route_type_pedestrian">Pedestrian</string>
+
+    <string name="routes_clear">Clear all routes</string>
+    <string name="routes_cleared">Routes cleared</string>
+    <string name="routes_delete_selected">Delete selected</string>
+    <string name="routes_edit_convert_tracks">Import tracks</string>
+    <string name="routes_edit_export_multiple">Export</string>
+    <string name="routes_edit_import_routes">Import routes</string>
+    <string name="routes_edit_selected">Edit selected</string>
+    <string name="routes_imported">Routes imported</string>
+    <string name="routes_loaded">%1$d routes</string>
+    <string name="routes_new_auto">Draw automatically</string>
+    <string name="routes_new_manually">Draw manually</string>
+    <string name="routes_simplify_selected">Optimize selected</string>
+
+    <string name="sample_loaded">Sample data loaded. Take a look at them.</string>
+
+    <string name="save_gpx">Save file</string>
+
+    <string name="saving">Saving</string>
+    <string name="saving_to">Saving to</string>
+    <string name="saving_wait">Saving files, please wait</string>
+
+    <string name="select_folder">Select\n[ %1$s ]</string>
+
+    <string name="selected_routes_exported">Selected routes exported</string>
+    <string name="selected_tracks_exported">Selected tracks exported</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_map_rotation">Allow map rotation</string>
+    <string name="settings_units_label">Units</string>
+    <string name="settings_routing_label">Routing server</string>
+    <string name="settings_routing_osrm" translatable="false">OSRM</string>
+    <string name="settings_routing_mapquest" translatable="false">MapQuest</string>
+
+    <string name="settings_key_label">MapQuest API key</string>
+
+    <string-array name="settings_routing_array" translatable="false">
+        <item>@string/settings_routing_osrm</item>
+        <item>@string/settings_routing_mapquest</item>
+    </string-array>
+
+    <string name="settings_key_mask">DEFAULT_API_KEY</string>
+
+    <string name="shared_folder_created">SharedData folder created</string>
+    <string name="shared_folder_failure">Failed creating SharedData folder</string>
+
+    <string name="show_poi">Show POI</string>
+
+    <string name="simplifying">Simplifying…</string>
+
+    <string name="sync_data">Sync data</string>
+
+    <string name="tou_osrm">OSRM Terms of use</string>
+    <string name="tou_mapquest">MapQuest Terms of use</string>
+
+    <string name="track_edit_prompt">Select a track</string>
+    <string name="track_reduce">Optimization</string>
+
+    <string name="tracks_clear_all">Clear all tracks</string>
+    <string name="tracks_cleared">Routes cleared</string>
+    <string name="tracks_convert">Convert into routes</string>
+    <string name="tracks_converted">%1$d tracks converted</string>
+    <string name="tracks_delete_selected">Delete selected</string>
+    <string name="tracks_edit_properties">Edit properties</string>
+    <string name="tracks_export">Export tracks</string>
+    <string name="tracks_send_selected_to_device">Send selected to device</string>
+    <string name="tracks_import">Import tracks</string>
+    <string name="tracks_loaded">%1$d tracks</string>
+
+    <string name="translations">German translations: Stefan Scherrer</string>
+
+    <string name="type">Type:</string>
+
+    <string-array name="units_array">
+        <item>@string/metric</item>
+        <item>@string/imperial</item>
+        <item>@string/nautical</item>
+    </string-array>
+
+    <string name="unnamed">unnamed</string>
+
+    <string name="version_name" translatable="false">Version: %1$s_beta</string>
+
+    <string name="warning_poi_filtered_out">POI will be invisible at current filter settings</string>
+
+    <string name="waypoint_delete">Delete waypoint?</string>
+    <string name="waypoint_edit_title">Edit route point</string>
+
+    <string name="whats_new_dont_show">Don\'t show again</string>
+    <string name="whats_new_message">Everything is new, however still under development.</string>
+    <string name="whats_new_title">What\'s new?</string>
+
+    <string name="wp_name">Enter name</string>
+
+    <string name="x_of_y_poi_press">%1$d of %2$d POI, long press to add</string>
+    <string name="x_of_y_routes">%1$d of %2$d routes</string>
+    <string name="x_tracks">%1$d tracks</string>
+
+    <string name="load_devices">Reload Devices</string>
+    <string name="initialization_error">Failed to initialize the SDK.\n</string>
+    <string name="service_unavailable">The ConnectIQ service is unavailable.</string>
+    <string name="tap_to_send">Tap message below to send to device.</string>
+    <string name="open_app_open">Tap here to open the Comm app on the device.</string>
+    <string name="open_app_already_open">The Comm app is already open on the device.</string>
+    <string name="received_message">Received message from device.</string>
+
+    <string name="hello_world_message">Hello World!</string>
+    <string name="short_string_message">Hi</string>
+    <string name="medium_string_message">Why hello there, good world! This is a medium-length string.</string>
+    <string name="long_string_message">Lorem ipsum dolor sit amet, pri ex epicuri luptatum, cum tantas partem fastidii an. Ea quot iudicabit vim, vis copiosae repudiandae at. Pri ut agam animal epicuri, nam cu omnis latine voluptatibus. Est dicat viderer ei, at possit sapientem ullamcorper vix, et eum virtute dolorum intellegat. No summo animal forensibus sit, singulis dissentiunt vix at, id congue theophrastus cum. Eam ex semper molestiae, te porro labore mel.</string>
+    <string name="absurd_message">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at ultricies enim. Quisque venenatis sed nisl a molestie. Sed iaculis commodo erat nec dignissim. Aenean vitae fermentum diam, fringilla vehicula orci. Donec quis lorem velit. Vivamus sit amet mauris volutpat, faucibus tellus quis, fringilla ligula. Phasellus tempor auctor malesuada. Duis tempor id dolor et sagittis. Vivamus sem magna, condimentum et lacus at, semper pretium nunc. Phasellus volutpat, metus eget egestas dictum, massa mauris dictum justo, quis viverra neque felis ut augue. In hendrerit eros vitae dui laoreet sodales. Praesent vitae odio vitae arcu luctus imperdiet. Phasellus venenatis ex in nunc finibus, ac elementum sapien aliquam. Etiam pulvinar tincidunt mauris non faucibus. Vestibulum ut enim sit amet metus sodales porttitor. Proin ut venenatis orci, nec volutpat neque. Integer pretium risus vel nibh fringilla, vel egestas lectus semper. Integer eleifend mauris id odio blandit ornare. In nec dui aliquam, pulvinar massa ut, mollis mi. Nunc nec mauris est. Nunc efficitur eget ligula et dapibus. Vestibulum varius urna quam, eget tristique magna fringilla id. Quisque blandit dolor mattis metus interdum lacinia. In in accumsan ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Mauris nunc nunc, interdum nec tempus ut, facilisis vel eros. Curabitur vitae tellus nec elit semper faucibus. Donec sed diam facilisis, porttitor urna vitae, interdum sapien. Nunc nec eros at leo sollicitudin fermentum at et orci. Proin erat lorem, tincidunt id nunc vel, egestas sodales erat. Praesent sem augue, aliquam vulputate cursus quis, dapibus quis nisl. Aenean tincidunt sapien eu tincidunt rutrum. Aenean ultricies auctor magna eget tempor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus id massa diam. Etiam at ipsum id nisi finibus ultrices gravida eu est. Fusce at velit a urna pulvinar mollis sit amet vel quam. Vivamus mi ante, tempus id lacus sit amet, laoreet condimentum lectus. Nulla facilisi. Morbi eget nisl non nibh maximus maximus a a erat. Nulla nec pellentesque ex. Maecenas malesuada ante ac magna vestibulum, id tincidunt nisi vestibulum. Vestibulum at magna eu dolor finibus cursus fringilla a elit. Etiam a nunc in lacus maximus viverra. Nulla bibendum, tortor ac ultrices pulvinar, magna mi tristique tellus, sed mattis magna mauris et arcu. Donec consequat tortor et ligula condimentum dignissim. Aliquam at massa et massa blandit elementum nec sed nunc. Fusce tempor quam tellus, eu suscipit elit consequat et. Cras quis massa at nulla aliquet tristique eget sit amet eros. In pulvinar massa et orci rhoncus lacinia. Quisque semper feugiat erat, sit amet facilisis justo feugiat a. Nullam mattis lorem in nisl maximus, sed suscipit enim tempus. Nam sed aliquam elit, quis pharetra mi. Aliquam erat volutpat. Cras dapibus vel sapien non aliquet. Etiam lacinia tempus euismod. Donec ultricies est non ante eleifend, et blandit lorem consequat. Nulla tincidunt massa et tellus ornare, eu ornare nisl auctor. Nam ac posuere ipsum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Quisque porttitor, arcu et pharetra porta, tellus ipsum vestibulum ex, ac dictum risus mauris a massa. Phasellus in quam dui. Vestibulum et ligula at justo scelerisque posuere. Cras pretium ac nisi vel tincidunt. Suspendisse aliquam, tellus ac consectetur dapibus, turpis sapien dictum odio, sit amet fermentum ex elit at diam. In hac habitasse platea dictumst. Ut bibendum pharetra aliquet. Aenean condimentum lacus ligula, at auctor sem semper at. Aenean sollicitudin neque augue, at tempor est commodo eu. Mauris massa tortor, mollis posuere nisi vitae, efficitur volutpat odio. Phasellus faucibus pellentesque augue, ut vulputate augue condimentum vel. Aliquam eu gravida dui, sed vestibulum justo. Curabitur nec mauris augue. Sed eu lobortis magna. Suspendisse bibendum est hendrerit hendrerit dignissim. Sed vel nisi magna. Mauris ultricies tincidunt porttitor. Praesent congue diam turpis, eu feugiat neque sollicitudin sed. Nullam molestie est posuere odio luctus volutpat. Nam lacinia nisl vel ex sodales posuere. Curabitur quis aliquam nulla. Ut dapibus sem arcu, a posuere dolor hendrerit eleifend. Curabitur ornare eu lorem eget egestas. Vivamus venenatis porta ipsum, vitae efficitur felis porttitor ut. Donec lobortis ornare suscipit. Etiam eget dolor ut felis condimentum elementum. Duis pretium eget nunc a tempor. Pellentesque vel dui leo. Ut condimentum risus eu velit sollicitudin semper. Nullam pellentesque ut turpis vitae sollicitudin. Duis blandit feugiat odio sit amet fermentum. Quisque ultrices dapibus metus, sed laoreet mi blandit ut. Sed at dui vitae turpis suscipit varius et eu velit. Donec mattis augue placerat pharetra vehicula. Nam convallis mauris ut turpis ultricies, volutpat imperdiet eros viverra. Etiam nisl est, accumsan at scelerisque sit amet, elementum quis ex. Curabitur ac sapien lacus. Phasellus et eleifend nisl. Donec eu eleifend felis, id ultrices nibh. In hendrerit arcu quis justo blandit varius sed eget libero. Nulla egestas magna vehicula, pellentesque nibh quis, congue tortor. Ut sed hendrerit nisl, id posuere lorem. Suspendisse sodales est id mauris pretium porttitor. Integer risus magna, lacinia nec lorem eu, pulvinar mattis turpis. Proin aliquam turpis velit, quis placerat felis sollicitudin at. Fusce condimentum quam eget lorem interdum, et ornare urna fermentum. Quisque elit arcu, laoreet tempus leo id, blandit vehicula mauris. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam mauris mauris, sollicitudin id tortor vitae, condimentum suscipit lectus. Morbi congue sit amet risus quis egestas. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Praesent pellentesque metus eget quam pulvinar mollis. In ut neque risus. Curabitur massa erat, dapibus a lacus eget, faucibus rhoncus risus. Aenean imperdiet dolor quis commodo pulvinar. Vivamus porttitor diam fermentum interdum posuere.</string>
+
+    <string name="hello_world">Hello World</string>
+    <string name="short_string">Short String</string>
+    <string name="medium_string">Medium String</string>
+    <string name="long_string">Long String</string>
+    <string name="absurd_string">Absurd String</string>
+    <string name="array">Array of Values</string>
+    <string name="dictionary">Dictionary of Values</string>
+    <string name="complex">Complex Data Type</string>
+
+    <string name="missing_widget">Missing Comm Widget</string>
+    <string name="missing_widget_message">The Comm Widget used with this application is not installed on your ConnectIQ device.   Please install the widget and try again.</string>
+
+    <string name="dialog_send_to_device_track_bb_latNorth">Bounding Box - Latitude North</string>
+    <string name="dialog_send_to_device_track_bb_latSouth">Bounding Box - Latitude South</string>
+    <string name="dialog_send_to_device_track_bb_lonWest">Bounding Box - Longitude West</string>
+    <string name="dialog_send_to_device_track_bb_lonEast">Bounding Box - Longitude East</string>
+    <string name="dialog_send_to_device_track_bb_latCenter">Bounding Box - Latitude Center</string>
+    <string name="dialog_send_to_device_track_bb_lonCenter">Bounding Box - Longitude Center</string>
+    <string name="dialog_send_to_device_track_bb_diagonal">Bounding Box - Diagonal (m)</string>
+    <string name="dialog_send_to_device_track_name">Name:</string>
+    <string name="dialog_send_to_device_track_length">Length (km):</string>
+    <string name="dialog_send_to_device_track_number_of_points">#Points:</string>
+    <string name="massage_status_name">Status of last IQ message sent:</string>
+    <string name="use_last_path">Use last file path</string>
+    <string name="run_with_simulator">Run with simulator</string>
+
+</resources>

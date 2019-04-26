@@ -1,0 +1,6 @@
+<menu id="MainMenu">
+	<menu-item id="north" label="@Strings.main_menu_label_1" />
+	<menu-item id="autolap" label="@Strings.main_menu_label_2" />
+	<menu-item id="delete" label="@Strings.main_menu_label_3" />
+</menu>
+

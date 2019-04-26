@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+ Copyright 2013 The Android Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<resources>
+    <string name="app_name">WormNav Companion</string>
+    <string name="route_creator_name">Route Creator</string>
+    <string name="route_editor_name">Route Editor</string>
+    <string name="route_picker_name">Route Manager</string>
+    <string name="route_optimizer_name">Route Optimizer</string>
+    <string name="poi_manager_name">POI Manager</string>
+    <string name="track_manager_name">Track Manager</string>
+    <string name="device_browser_name">Device Browser</string>
+    <string name="device_manager_name">Device Manager</string>
+
+</resources>

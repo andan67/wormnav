@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.andan.android.connectiq.wormnav.RouteEditorActivity">
+
+    <item
+        android:id="@+id/routes_new_route"
+        android:orderInCategory="100"
+        android:title="@string/routes_new_manually" />
+
+    <item
+        android:id="@+id/routes_new_autorute"
+        android:orderInCategory="105"
+        android:title="@string/routes_new_auto" />
+
+    <item
+        android:id="@+id/routes_edit_selected"
+        android:enabled="false"
+        android:orderInCategory="110"
+        android:title="@string/routes_edit_selected" />
+
+    <item
+        android:id="@+id/routes_simplify_selected"
+        android:orderInCategory="120"
+        android:title="@string/routes_simplify_selected" />
+
+    <item
+        android:id="@+id/routes_delete_selected"
+        android:orderInCategory="130"
+        android:title="@string/routes_delete_selected" />
+
+    <item
+        android:id="@+id/routes_clear"
+        android:orderInCategory="140"
+        android:title="@string/routes_clear" />
+
+    <item
+        android:id="@+id/routes_import_routes"
+        android:orderInCategory="150"
+        android:title="@string/routes_edit_import_routes" />
+
+    <item
+        android:id="@+id/convert_tracks"
+        android:orderInCategory="160"
+        android:title="@string/routes_edit_convert_tracks" />
+
+
+    <item
+        android:id="@+id/export"
+        android:orderInCategory="170"
+        android:title="@string/routes_edit_export_multiple" />
+
+    <item
+        android:id="@+id/show_poi"
+        android:checkable="true"
+        android:orderInCategory="180"
+        android:title="@string/show_poi" />
+
+    <item
+        android:id="@+id/routes_send_selected_to_device"
+        android:orderInCategory="142"
+        android:title="@string/tracks_send_selected_to_device" />
+
+</menu>

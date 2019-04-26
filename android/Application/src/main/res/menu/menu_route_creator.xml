@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.andan.android.connectiq.wormnav.RouteEditorActivity">
+
+    <item
+        android:id="@+id/clear_waypoints"
+        android:orderInCategory="100"
+        android:title="@string/creator_clear_waypoints" />
+
+    <item
+        android:id="@+id/routing_server"
+        android:orderInCategory="110"
+        android:title="@string/settings_routing_label" />
+
+    <item
+        android:id="@+id/show_poi"
+        android:checkable="true"
+        android:orderInCategory="120"
+        android:title="@string/show_poi" />
+
+    <item
+        android:id="@+id/tou_osrm"
+        android:orderInCategory="130"
+        android:title="@string/tou_osrm" />
+
+    <item
+        android:id="@+id/tou_mapquest"
+        android:orderInCategory="140"
+        android:title="@string/tou_mapquest" />
+
+</menu>

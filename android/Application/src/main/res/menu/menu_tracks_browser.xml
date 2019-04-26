@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.andan.android.connectiq.wormnav.RouteEditorActivity">
+
+
+    <item
+        android:id="@+id/tracks_edit_properties"
+        android:enabled="false"
+        android:orderInCategory="100"
+        android:title="@string/tracks_edit_properties" />
+
+    <item
+        android:id="@+id/tracks_convert"
+        android:enabled="false"
+        android:orderInCategory="105"
+        android:title="@string/tracks_convert" />
+
+    <item
+        android:id="@+id/tracks_delete_selected"
+        android:enabled="false"
+        android:orderInCategory="110"
+        android:title="@string/tracks_delete_selected" />
+
+    <item
+        android:id="@+id/tracks_clear"
+        android:enabled="false"
+        android:orderInCategory="120"
+        android:title="@string/tracks_clear_all" />
+
+    <item
+        android:id="@+id/tracks_import_tracks"
+        android:orderInCategory="130"
+        android:title="@string/tracks_import" />
+
+    <item
+        android:id="@+id/tracks_export"
+        android:orderInCategory="140"
+        android:title="@string/tracks_export" />
+
+    <item
+        android:id="@+id/tracks_send_selected_to_device"
+        android:orderInCategory="142"
+        android:title="@string/tracks_send_selected_to_device" />
+
+</menu>

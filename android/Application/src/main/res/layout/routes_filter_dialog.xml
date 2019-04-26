@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <TableRow>
+
+            <CheckBox
+                android:id="@+id/route_filter_types_on"
+                android:text="@string/dialog_filter_type" />
+
+        </TableRow>
+
+
+        <TableRow>
+
+            <EditText
+                android:id="@+id/route_length_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:text="" />
+
+            <TextView
+                android:layout_weight="1"
+                android:text="min" />
+
+            <EditText
+                android:id="@+id/route_length_max"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:text="" />
+
+            <TextView
+                android:layout_weight="1"
+                android:text="max" />
+
+        </TableRow>
+
+        <CheckBox
+            android:id="@+id/route_filter_length_on"
+            android:text="@string/dialog_filter_lenth" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/route_distance_min"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:text="" />
+
+            <TextView
+                android:layout_weight="1"
+                android:text="min" />
+
+            <EditText
+                android:id="@+id/route_distance_max"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:text="" />
+
+            <TextView
+                android:layout_weight="1"
+                android:text="max" />
+
+        </TableRow>
+
+        <CheckBox
+            android:id="@+id/route_filter_distance_on"
+            android:text="@string/dialog_filter_routedst" />
+
+    </TableLayout>
+
+</LinearLayout>

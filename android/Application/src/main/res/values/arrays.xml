@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2015 Garmin International Ltd.
+ Subject to Garmin SDK License Agreement and Wearables Application Developer Agreement.
+-->
+<resources>
+    <string-array name="send_message_display">
+        <item>@string/hello_world</item>
+        <item>@string/short_string</item>
+        <item>@string/medium_string</item>
+        <item>@string/long_string</item>
+        <item>@string/absurd_string</item>
+        <item>@string/array</item>
+        <item>@string/dictionary</item>
+        <item>@string/complex</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pois_menu"
+    tools:context=".PoisActivity">
+
+    <item
+        android:id="@+id/pois_enter_latlon"
+        android:orderInCategory="100"
+        android:title="@string/map_pois_enter_latlon" />
+
+    <item
+        android:id="@+id/pois_clear_pois"
+        android:orderInCategory="120"
+        android:title="@string/map_pois_clear" />
+
+    <item
+        android:id="@+id/pois_import_pois"
+        android:orderInCategory="130"
+        android:title="@string/map_pois_import" />
+
+    <item
+        android:id="@+id/pois_save"
+        android:orderInCategory="140"
+        android:title="@string/map_pois_save">
+
+        <menu>
+            <item
+                android:id="@+id/pois_save_all"
+                android:title="@string/map_pois_save_all" />
+
+            <item
+                android:id="@+id/pois_save_view"
+                android:title="@string/map_pois_save_view" />
+        </menu>
+
+    </item>
+
+</menu>
