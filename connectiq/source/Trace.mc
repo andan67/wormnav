@@ -9,7 +9,7 @@ module Trace {
     var pos_start_index;
     var pos_nelements;
     var cumDistance;
-    const MIN_DISTANCE = 100;
+    var breadCrumbDist = 100;
 
     var lat_last_pos;
     var lon_last_pos;
@@ -28,7 +28,7 @@ module Trace {
     function reset() {
         pos_nelements = 0;
         pos_start_index = 0;
-        cumDistance=MIN_DISTANCE;
+        cumDistance=breadCrumbDist;
         lat_last_pos=null;
         lon_last_pos=null;
     }
@@ -57,9 +57,9 @@ module Trace {
         lat_last_pos=lat_pos;
         lon_last_pos=lon_pos;
 
-        if(cumDistance >= MIN_DISTANCE) {
+        if((cumDistance >= breadCrumbDist) && (breadCrumbDist > 0)) {
             put_pos(lat_last_pos,lon_last_pos);
-            cumDistance -=MIN_DISTANCE;
+            cumDistance -=breadCrumbDist;
         }
     }
 

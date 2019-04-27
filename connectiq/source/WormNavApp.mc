@@ -30,22 +30,31 @@ class WormNavApp extends Application.AppBase {
     function onStart(state) {
         System.println("onStart");
 
-        var data= Application.getApp().getProperty("trackData");
+        // start page is map
         pageIndex=0;
+
+        var data= Application.getApp().getProperty("trackData");
+
         if(data!=null) {
             System.println("load data from property store");
             track = new TrackModel(data);
             System.println("Created track from property store!");
         }
 
-        var propNorthHeading = Application.getApp().getProperty("northHeading");
-        if(propNorthHeading!=null) {
-            Transform.northHeading=propNorthHeading;
+        if(Application.getApp().getProperty("northHeading")!=null) {
+            Transform.northHeading=Application.getApp().getProperty("northHeading");
         }
 
-        var propAutolapDistance = Application.getApp().getProperty("autolapDistance");
-        if(propAutolapDistance  !=null) {
-            Trace.autolapDistance = propAutolapDistance;
+        if(Application.getApp().getProperty("centerMap")!=null) {
+            Transform.centerMap=Application.getApp().getProperty("centerMap");
+        }
+
+        if(Application.getApp().getProperty("autolapDistance")!=null) {
+            Trace.autolapDistance = Application.getApp().getProperty("autolapDistance");
+        }
+
+        if(Application.getApp().getProperty("breadCrumbDist")!=null) {
+            Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
 
         phoneMethod = method(:onPhone);
@@ -55,6 +64,8 @@ class WormNavApp extends Application.AppBase {
             Communications.setMailboxListener(mailMethod);
         }
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
+
+        // timer is used for auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
     }
@@ -82,7 +93,7 @@ class WormNavApp extends Application.AppBase {
         track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
-            mainView.isNewTrack=true;
+            $.mainView.isNewTrack=true;
             WatchUi.requestUpdate();
         }
         catch( ex ) {
@@ -117,8 +128,8 @@ class WormNavApp extends Application.AppBase {
             }
             lapViewCounter++;
 
-            if(lapViewCounter==10) {
-                lapViewCounter = 0;
+            if($.lapViewCounter==10) {
+                $.lapViewCounter = 0;
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }

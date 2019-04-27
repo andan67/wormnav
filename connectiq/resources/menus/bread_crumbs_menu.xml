@@ -1,0 +1,10 @@
+<menu id="BreadCrumbsMenu">
+	<menu-item id="bcoff" label="off" />
+	<menu-item id="bc100" label="100m" />
+	<menu-item id="bc200" label="200m" />
+	<menu-item id="bc400" label="400m" />
+	<menu-item id="bc500" label="500m" />
+	<menu-item id="bc1000" label="1km" />
+	<menu-item id="bc2000" label="2km" />
+	<menu-item id="bc5000" label="5km" />
+</menu>

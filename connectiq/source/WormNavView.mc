@@ -14,11 +14,11 @@ class WormNavView extends WatchUi.View {
 
     var activity_values;
 
-    function draw_positions(dc) {
+    function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
 
-        if(Transform.northHeading) {
+        if(Transform.northHeading || Transform.centerMap) {
             for(var i=0; i < Trace.pos_nelements; i+=1) {
                 var j = (Trace.pos_start_index +i) % Trace.BUFFER_SIZE;
                 xy_pos = Transform.xy_2_screen(Trace.x_array[j], Trace.y_array[j]);
@@ -93,7 +93,7 @@ class WormNavView extends WatchUi.View {
         var step = 2;
 
        var i=0;
-       if(Transform.northHeading || Transform.isTrackCentered) {
+       if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
            xy_pos1 = Transform.xy_2_screen(xya[i],xya[i+1]);
            xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
        } else {
@@ -101,9 +101,10 @@ class WormNavView extends WatchUi.View {
            xy_pos2 = Transform.xy_2_rot_screen(xya[i+step],xya[i+step+1]);
        }
        dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
+
        for(i = step; i < xya.size()-step-1; i+=step ) {
             xy_pos1 = xy_pos2;
-            if(Transform.northHeading || Transform.isTrackCentered) {
+            if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
                 xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
             }
             else {
@@ -116,12 +117,10 @@ class WormNavView extends WatchUi.View {
 
     function draw_trace(dc) {
 
-        draw_positions(dc);
-
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
-        var sf = 1.8*cursorSizePixel;
+        var sf = 2*cursorSizePixel;
 
         var heading;
         var dx1;
@@ -131,7 +130,7 @@ class WormNavView extends WatchUi.View {
         var dx3;
         var dy3;
 
-        if(Transform.northHeading) {
+        if(Transform.northHeading || Transform.centerMap) {
             heading = Transform.heading_smooth;
             dx1= cursorSizePixel*Transform.sin_heading_smooth;
             dy1=-cursorSizePixel*Transform.cos_heading_smooth;
@@ -149,7 +148,7 @@ class WormNavView extends WatchUi.View {
 
         var xy_pos = Transform.xy_2_screen(Transform.x_pos, Transform.y_pos);
 
-        dc.drawCircle(xy_pos[0], xy_pos[1], 3);
+        //dc.drawCircle(xy_pos[0], xy_pos[1], 3);
 
         dc.setPenWidth(3);
         dc.drawLine(xy_pos[0]+dx1, xy_pos[1]+dy1, xy_pos[0]+dx2, xy_pos[1]+dy2);
@@ -159,7 +158,8 @@ class WormNavView extends WatchUi.View {
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.fillCircle(Transform.compass_x,Transform.compass_y,Transform.compass_size);
-        if(Transform.northHeading) {
+
+        if(Transform.northHeading || Transform.centerMap) {
             dx1 = - 0.5*Transform.compass_size;
             dx2 = 0;
             dx3 = -dx1;
@@ -186,6 +186,10 @@ class WormNavView extends WatchUi.View {
                   [Transform.compass_x + dx2, Transform.compass_y + dy2],
                   [Transform.compass_x + dx3, Transform.compass_y + dy3]];
         dc.fillPolygon(points);
+
+        if(Trace.breadCrumbDist > 0) {
+            draw_bread_crumbs(dc);
+        }
     }
 
     function initialize() {
@@ -225,6 +229,7 @@ class WormNavView extends WatchUi.View {
 
         if(isNewTrack && track!=null) {
             isNewTrack = false;
+            Trace.reset();
             Transform.newTrack();
         }
 

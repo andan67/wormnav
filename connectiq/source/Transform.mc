@@ -32,6 +32,7 @@ module Transform {
     var y_d;
 
     var northHeading=true;
+    var centerMap=false;
     var sin_heading;
     var cos_heading;
     var heading_smooth=-1;
@@ -70,16 +71,24 @@ module Transform {
     }
 
     function setViewCenter(lat, lon) {
-        var ll = lon-track.lon_center;
-        var cos_lat = Math.cos(lat);
-        x_d = cos_lat*Math.sin(ll);
-        y_d = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
-        xs_center = pixelWidth2;
-        if(northHeading || isTrackCentered) {
-            ys_center = pixelHeight2;
+        if(!centerMap) {
+            var ll = lon-track.lon_center;
+            var cos_lat = Math.cos(lat);
+            x_d = cos_lat*Math.sin(ll);
+            y_d = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
+            xs_center = pixelWidth2;
+            if(northHeading || isTrackCentered) {
+                ys_center = pixelHeight2;
+            }
+            else {
+                ys_center = pixelHeight3;
+            }
         }
         else {
-            ys_center = pixelHeight3;
+           x_d=0;
+           y_d=0;
+           xs_center = pixelWidth2;
+           ys_center = pixelHeight2;
         }
     }
 

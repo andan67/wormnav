@@ -121,7 +121,15 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
         menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_2), :autolap);
 
-        menu.addItem(Rez.Strings.main_menu_label_3, :delete);
+        menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_3), :breadCrumbs);
+
+        if(Transform.centerMap) {
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + " off", :center);
+        } else {
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + " on", :center);
+        }
+
+        menu.addItem(Rez.Strings.main_menu_label_5, :delete);
 
         var delegate = new WormNavMainMenuDelegate(); // a WatchUi.MenuInputDelegate
         WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);

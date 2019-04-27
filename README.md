@@ -6,10 +6,6 @@ It consists of two apps:
 - An Android companion app to manage gpx tracks and routes and send them to the Garmin device via bluetooth.
 - The ConnectIQ app for the Garmin device to navigate along the track and run activities.
 
-**Notes**
-- The apps are still in beta and currently only works for the Garmin devices Forerunner 230 and 235
-- For performance and memory reasons, the number of track/way points used for the navigation on the Garmin device is limited. Thus it might be necessary to reduce the number of points of existing tracks or routes by the 'optimize' feature.
-
 **Installation and User Guide**
 - Download the sources and build binaries using Android Studio and Eclipse with Garmin plugin.
 - Deploy the built apps to the Android and Garmin devices.
@@ -17,10 +13,17 @@ It consists of two apps:
 - Couple Android and Garmin devices via bluetooth
 - Send selected track or route to Garmin device
 - Open WormNav app on Garmin device
-- Apply settings if necessary:
-    - North heading of map on/off (off means rotate with track heading)
-    - Autolap distance
- 
+- Change settings as needed
+
+**Features**
+- Manage tracks and routes with companion app
+- Standalone navigation along selected track using Garmin device
+- Configurable auto lap and bread crumb navigation
+- Map zoom in/out and center
+- Show activity data
+       
  
 **Limitations**
-- Only one data page with four fixed fields 
+- The ConnectIQ app currently only runs on the Garmin devices Forerunner 230 and 235.
+- For performance and memory reasons, the number of track/way points used for the navigation on the Garmin device is limited. Thus it might be necessary to reduce the number of points of existing tracks or routes by the 'optimize' feature of the companion app.
+- Only one data page with four fixed fields
