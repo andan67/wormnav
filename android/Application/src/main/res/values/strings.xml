@@ -340,7 +340,7 @@
 
     <string name="unnamed">unnamed</string>
 
-    <string name="version_name" translatable="false">Version: %1$s_beta</string>
+    <string name="version_name" translatable="false">Version: %1$s</string>
 
     <string name="warning_poi_filtered_out">POI will be invisible at current filter settings</string>
 

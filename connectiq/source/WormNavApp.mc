@@ -18,7 +18,7 @@ var track = null;
 var session = null;
 
 var lapViewCounter = 0;
-var vibrateData = [new Att.VibeProfile(  50, 100 )];
+var vibrateData = [new Att.VibeProfile(  50, 250 )];
 
 class WormNavApp extends Application.AppBase {
 
@@ -65,7 +65,7 @@ class WormNavApp extends Application.AppBase {
         }
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
-        // timer is used for auto lap
+        // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
     }
@@ -86,7 +86,6 @@ class WormNavApp extends Application.AppBase {
     }
 
     function onPhone(msg) {
-
         System.println("onPhone(msg)");
         messageReceived = true;
         pageIndex=0;
@@ -104,6 +103,7 @@ class WormNavApp extends Application.AppBase {
     }
 
     function onPosition(info) {
+        //onTimer();
         Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
         if($.pageIndex==0) {
             $.mainView.setPosition(info);

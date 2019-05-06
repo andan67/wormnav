@@ -224,6 +224,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         int id = item.getItemId();
         if (id == R.id.load_devices) {
             Log.d(TAG,"onOptionsItemSelected");
+            loadDevices();
+            /*
             try {
                 mConnectIQ.unregisterAllForEvents();
                 mConnectIQ.shutdown(this);
@@ -235,6 +237,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                 // This is usually because the SDK was already shut down
                 // so no worries.
             }
+            */
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -243,7 +246,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onItemClick(AdapterView l, View v, int position, long id) {
         // -1 because of header
-        if(position>0) {
+        if(position>0 && mSdkReady) {
             mDevice = mAdapter.getItem(position - 1);
 
             displaySendToDeviceDialog();
@@ -254,6 +257,12 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         // Retrieve the list of known devices
         Log.d(TAG,"loadDevices");
         try {
+            if(mDeviceList != null && mDeviceList.size()>0) {
+                for (IQDevice device : mDeviceList) {
+                    mConnectIQ.unregisterForDeviceEvents(device);
+                }
+            }
+            // get new list
             mDeviceList = mConnectIQ.getKnownDevices();
             Log.d(TAG,mDeviceList.toString());
             if (mDeviceList != null) {
@@ -293,29 +302,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
 
         TextView textView;
-
-        /*
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_latNorth_value);
-        textView.setText(Float.toString(mTrackBoundingBox[0]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_latSouth_value);
-        textView.setText(Float.toString(mTrackBoundingBox[1]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_lonWest_value);
-        textView.setText(Float.toString(mTrackBoundingBox[2]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_lonEast_value);
-        textView.setText(Float.toString(mTrackBoundingBox[3]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_latCenter_value);
-        textView.setText(Float.toString(mTrackBoundingBox[4]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_lonCenter_value);
-        textView.setText(Float.toString(mTrackBoundingBox[5]));
-
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_bb_diagonal_value);
-        textView.setText(Float.toString(mTrackBoundingBox[6]));
-        */
 
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_name_value);
         textView.setText(mTrackName);
