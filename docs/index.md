@@ -38,7 +38,7 @@ It consists of two apps:
 ##### Main screen
 {::options parse_block_html="true" /}
 <div style="float: left; width: 50%">
-<img src="/images/android_main_screen.png" width="300"/>
+<img src="images/android_main_screen.png" width="300"/>
 </div>
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
@@ -50,7 +50,7 @@ It consists of two apps:
 
 ##### Route Manager - Import
 <div style="float: left; width: 50%">
-<img src="/images/android_route_manager_import.png" width="300"/>
+<img src="images/android_route_manager_import.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -62,7 +62,7 @@ It consists of two apps:
 
 ##### Route Manager - Show tracks/routes on map
 <div style="float: left; width: 50%">
-<img src="/images/android_route_manager_route.png" width="300"/>
+<img src="images/android_route_manager_route.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -75,7 +75,7 @@ It consists of two apps:
 
 ##### Route Manager - Optimize
 <div style="float: left; width: 50%">
-<img src="/images/android_route_manager_optimize.png" width="300"/>
+<img src="images/android_route_manager_optimize.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -90,7 +90,7 @@ It consists of two apps:
 
 ##### Device Browser
 <div style="float: left; width: 50%">
-<img src="/images/android_device_browser_success.png" width="300"/>
+<img src="images/android_device_browser_success.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -104,7 +104,7 @@ It consists of two apps:
 
 ##### Send to device dialog
 <div style="float: left; width: 50%">
-<img src="/images/android_send_to_device_menu.png" width="300"/>
+<img src="images/android_send_to_device_menu.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -129,13 +129,13 @@ It consists of two apps:
 - Fixed north or heads-up map orientation
 
 #### Button usage
-<img src="/images/garmin_description_export.png" width="1024"/>
+<img src="images/garmin_description_export.png" width="1024"/>
 
 #### Screens
 
 ##### Main menu
 <div style="float: left; width: 50%">
-<img src="/images/garmin_main_menu.png" width="300"/>
+<img src="images/garmin_main_menu.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -153,7 +153,7 @@ Available menu items:
 
 ##### Map view (north map orientation)
 <div style="float: left; width: 50%">
-<img src="/images/garmin_track_nav_standard_2.png" width="300"/>
+<img src="images/garmin_track_nav_standard_2.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -171,7 +171,7 @@ Standard view of map/track when activity has started
 
 ##### Map view (heads-up)
 <div style="float: left; width: 50%">
-<img src="/images/garmin_track_nav_heads_up.png" width="300"/>
+<img src="images/garmin_track_nav_heads_up.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -186,7 +186,7 @@ Heads-up view of map/track
 
 ##### Map view (track centered)
 <div style="float: left; width: 50%">
-<img src="/images/garmin_track_nav_centered_2.png" width="300"/>
+<img src="images/garmin_track_nav_centered_2.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
@@ -201,7 +201,7 @@ Map view with center of track as view center
 
 ##### Data page
 <div style="float: left; width: 50%">
-<img src="/images/garmin_data_page_2.png" width="300"/>
+<img src="images/garmin_data_page_2.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
