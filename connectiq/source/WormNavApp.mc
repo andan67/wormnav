@@ -120,10 +120,15 @@ class WormNavApp extends Application.AppBase {
             if(lapView == null) {
                 lapView = new WormNavLapView();
             }
-            if(lapViewCounter==1) {
+            if($.lapViewCounter==1) {
                 WatchUi.pushView(lapView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+            }
+            if($.lapViewCounter==2) {
                 if (Attention has :vibrate) {
                     Att.vibrate( vibrateData );
+                }
+                if (Attention has :playTone) {
+                    Attention.playTone(Attention.TONE_LAP );
                 }
             }
             lapViewCounter++;

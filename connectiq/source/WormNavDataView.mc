@@ -43,7 +43,8 @@ class WormNavDataView extends  WatchUi.View {
         dc.drawLine(0,2*y,width,2*y);
         dc.drawLine(width/2,y,width/2,2*y);
 
-        if(session.isRecording() && Activity.getActivityInfo()!=null) {
+        //if(session.isRecording() && Activity.getActivityInfo()!=null) {
+        if(Activity.getActivityInfo()!=null) {
             if( Activity.getActivityInfo().elapsedDistance!= null) {
                data[0] = Activity.getActivityInfo().elapsedDistance/1000;
             }
