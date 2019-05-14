@@ -60,11 +60,13 @@ final class Data {
     static Gpx sRoutesGpx = new Gpx();
     static Gpx sTracksGpx = new Gpx();
 
-    static String lastOpenFile = null;
-    static String lastFilePath = null;
-
-    static boolean useLastFilePath = true;
-    static boolean runWithSimulator = false;
+    static String defaultDirectoryPath = "";
+    static String lastImportedFileFullPath = "";
+    static String loadedFileFullPath = "";
+    static String savedFileFullPath = "";
+    static String lastPickedDirectory = "";
+    static String lastPickedFileFullPath = "";
+    static boolean loadLastOpenFile = true;
 
     static Integer sLastZoom;
     static GeoPoint sLastCenter;

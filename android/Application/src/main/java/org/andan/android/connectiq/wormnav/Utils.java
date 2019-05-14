@@ -33,6 +33,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -583,9 +585,11 @@ public class Utils extends AppCompatActivity {
 
         Data.sAllowRotation = preferences.getBoolean("rotation", false);
         Data.sRoutingSource = preferences.getInt("source", Data.ROUTING_SRC_OSRM);
-        Data.useLastFilePath = preferences.getBoolean("uselastpath", true);
-        Data.lastFilePath = preferences.getString("lastpath",new File(Environment.getExternalStorageDirectory() + "").toString());
-        //Data.runWithSimulator = preferences.getBoolean("runWithSimulator", false);
+
+        Data.lastImportedFileFullPath = preferences.getString("lastImportedFile","");
+        Data.loadedFileFullPath = preferences.getString("loadedFile","");
+        Data.savedFileFullPath = preferences.getString("savedFile","");
+        Data.loadLastOpenFile = preferences.getBoolean("loadLastOpenFile", true);
     }
 
     protected void saveSettings() {
@@ -602,9 +606,10 @@ public class Utils extends AppCompatActivity {
         }
 
         editor.putBoolean("rotation", Data.sAllowRotation);
-        editor.putBoolean("uselastpath", Data.useLastFilePath);
-        editor.putString("lastpath", Data.lastFilePath);
-        editor.putBoolean("runWithSimulator", Data.runWithSimulator);
+        editor.putBoolean("loadLastOpenFile", Data.loadLastOpenFile);
+        editor.putString("lastImportedFile", Data.lastImportedFileFullPath);
+        editor.putString("loadedFile", Data.loadedFileFullPath);
+        editor.putString("savedFile", Data.savedFileFullPath);
 
         editor.apply();
     }
@@ -637,4 +642,32 @@ public class Utils extends AppCompatActivity {
                 || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
                 || "google_sdk".equals(Build.PRODUCT);
     }
+
+    public static String getFileNameFromFullPath(String fullPathFileName) {
+        try {
+            String[] splitFullPath = fullPathFileName.split("/");
+            return  splitFullPath[splitFullPath.length - 1];
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static String getParentFromFullPath(String fullPathFileName) {
+        try {
+            int fileNameLength =  getFileNameFromFullPath(fullPathFileName).length();
+            return fullPathFileName.substring(0, fullPathFileName.length()-fileNameLength-1);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public  static String getBaseFileNameFromFullPath(String fullPathFileName) {
+        try {
+            String fileName =  getFileNameFromFullPath(fullPathFileName);
+            return fileName.substring(0, fileName.lastIndexOf("."));
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 }

@@ -273,15 +273,18 @@ public class FileBrowserActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        //Log.d(LOGTAG, "OnBackPressed path" + path.getAbsolutePath());
-
-        //returnDirectoryFinishActivity();
+        //super.onBackPressed();
+        Intent retIntent = new Intent();
+        retIntent.putExtra(returnDirectoryParameter, path.getAbsolutePath());
+        Log.d(LOGTAG, "returnDirectoryFinishActivity():" + retIntent.getStringExtra(returnDirectoryParameter));
+        this.setResult(RESULT_CANCELED, retIntent);
+        this.finish();
     }
 
     private void returnDirectoryFinishActivity() {
         Intent retIntent = new Intent();
         retIntent.putExtra(returnDirectoryParameter, path.getAbsolutePath());
+        Log.d(LOGTAG, "returnDirectoryFinishActivity():" + retIntent.getStringExtra(returnDirectoryParameter));
         this.setResult(RESULT_OK, retIntent);
         this.finish();
     }// END private void returnDirectoryFinishActivity() {

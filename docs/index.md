@@ -5,7 +5,7 @@ WormNav
 
 This project provides a simple 'worm' navigation feature for selected Garmin devices.
 It consists of two apps:
-- An Android companion app to manage gpx tracks and routes and send them to the Garmin device via bluetooth.
+- An Android companion app to manage GPX tracks and routes and send them to the Garmin device via bluetooth.
 - The ConnectIQ app for the Garmin device to navigate along the track and run activities.
 
 ### Installation and basic set-up
@@ -15,7 +15,7 @@ It consists of two apps:
 - Connect your Gamin device with your Android smartphone/tablet via bluetooth
 
 ### Usage scenario
-1. Choose or create a gpx track or route you would like to use for navigation with your Garmin device
+1. Choose or create a GPX track or route you would like to use for navigation with your Garmin device
 2. Import this track/route into WormNav Companion app
 3. Optimize the track/route to reduce number of waypoints
 4. Connect your Garmin device with your smartphone/tablet via bluetooth
@@ -27,48 +27,58 @@ It consists of two apps:
 ### Companion app
 
 #### Key features and capabilities:
-- Load gpx tracks and routes
-- Show gpx tracks or routes in Open Street map
+- Load GPX tracks and routes
+- Show GPX tracks or routes in Open Street map
 - Optimize routes (reduce number of waypoints given maximum error contraint)
 - Store tracks and routes
 - Send track/route to connected Garmin device
 
 #### Screens
 
-##### Main screen
+##### First run/Main screen
 {::options parse_block_html="true" /}
 <div style="float: left; width: 50%">
-<img src="images/android_main_screen.png" width="300"/>
+<img src="images/android_main_screen_loaded.png" width="300"/>
 </div>
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-- Load or save GPX files
-- Manage loaded GPX tracks, routes, or points of interest (POIs)
+- On first run the app will ask to grant two permissions (STORAGE and LOCATION).
+- Also the app will try to create a 'WormNav' subfolder in the external storage location that can be used to store all GPX files in one location. 
+Of course, other accessible locations can also be used.
+- Main functions available from the main screen:
+    - Manage settings
+    - Load or save GPX file with possibly multiple tracks or routes. If 'Open last loaded/saved file" is enabled in the settings (default), 
+    the last loaded or saved GPX file will be opened on app start.
+    - Manage loaded GPX tracks, routes, or points of interest (see below)
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Route Manager - Import
+
+
+##### Track/Route Manager - Import
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_import.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-- Import GPX tracks or routes into Route Manager
+- Import GPX tracks or routes
+- Delete loaded GPX tracks or routes
+- The 'Save file' function will save all loaded tracks and routes into a single GPX file
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Route Manager - Show tracks/routes on map
+##### Track/Route Manager - Show tracks/routes on map
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_route.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-- Show loaded tracks or routes on Open Street Map
-- Iterate through tracks/routes
+- Show loaded tracks or routes on OpenStreet Map
+- Select track/route by using arrows at screen buttom
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
@@ -83,7 +93,8 @@ It consists of two apps:
 - Optimize route by reducing number of waypoints
 - Shows maximum error caused by optimization
 - Useful for performance reasons on low spec devices
-- Recommendation for Garmin Forerunner 230/235: max 200 waypoints 
+- Recommendation for Garmin Forerunner 230/235: max 200 waypoints
+- Tracks must be converted into routes for optimization
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>

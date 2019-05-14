@@ -75,8 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.andan.android.connectiq.wormnav.BuildConfig;
-import org.andan.android.connectiq.wormnav.R;
 import pt.karambola.commons.collections.ListUtils;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.beans.Point;
@@ -777,7 +775,6 @@ public class RoutesBrowserActivity extends Utils
     protected void onPause() {
 
         super.onPause();
-
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
@@ -828,9 +825,7 @@ public class RoutesBrowserActivity extends Utils
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
-
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
         Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
                 null,
@@ -1024,12 +1019,13 @@ public class RoutesBrowserActivity extends Utils
                                     int resultCode, Intent data) {
 
         if (requestCode == REQUEST_CODE_PICK_FILE) {
+            Log.d(TAG, "RoutesBrowser resultCode:" + resultCode);
             if (resultCode == RESULT_OK) {
 
                 String fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastFilePath = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
-
+                Data.lastImportedFileFullPath = fileFullPath;
+                saveSettings();
                 switch (filePickerAction) {
 
                     case ACTION_IMPORT_ROUTES:
@@ -1053,11 +1049,12 @@ public class RoutesBrowserActivity extends Utils
                 }
 
             } else {
-
+                /*
                 Toast.makeText(
                         this,
                         getResources().getString(R.string.no_file_selected),
                         Toast.LENGTH_LONG).show();
+                        */
             }
 
         } else {
@@ -1950,12 +1947,11 @@ public class RoutesBrowserActivity extends Utils
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
-        final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
+        final View saveAsLayout = inflater.inflate(R.layout.export_gpx_dialog_layout, null);
 
         final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         final Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -1996,8 +1992,6 @@ public class RoutesBrowserActivity extends Utils
                     public void onClick(DialogInterface dialog, int id) {
 
                         fileName = filename.getText().toString().trim();
-                        File folder = new File(Environment.getExternalStorageDirectory() + "");
-                        String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
                         File full_file_path = new File(path +"/" + fileName + ".gpx");
                         saveSelectedRoutes(full_file_path.toString());
                     }

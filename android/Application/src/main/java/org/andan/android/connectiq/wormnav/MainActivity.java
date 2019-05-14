@@ -1,6 +1,7 @@
 package org.andan.android.connectiq.wormnav;
 
 import android.Manifest;
+import android.media.MediaScannerConnection;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -20,6 +21,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatImageButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
@@ -43,6 +46,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pt.karambola.geo.Units;
@@ -50,7 +54,7 @@ import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.io.GpxFileIo;
 import pt.karambola.gpx.util.GpxUtils;
 
-public class MainActivity extends Utils {
+public class MainActivity extends Utils implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     Intent fileExploreIntent;
     String currentPath;
@@ -62,6 +66,7 @@ public class MainActivity extends Utils {
     int filePickerAction = -1;
     private final int ACTION_OPEN = 1;
     private final int ACTION_SAVE_AS = 2;
+    private final int ACTION_SAVE_AS_PICKER = 3;
 
     boolean saveInProgress;
 
@@ -75,6 +80,9 @@ public class MainActivity extends Utils {
     private CharSequence mTitle;
 
     private static final String TAG = "MainActivity";
+
+    private TextView mSaveAsDialogPath;
+    private EditText mSaveAsDialogFilename;
 
     boolean mLocationAcquired = false;
 
@@ -98,8 +106,10 @@ public class MainActivity extends Utils {
 
 
     /* Id to identify Location permission request. */
+    private static final int PERMISSION_REQUEST = 0;
     private static final int PERMISSION_REQUEST_WRITE_STORAGE = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 2;
+    private static final String APP_PERMISSIONS[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,25 +136,45 @@ public class MainActivity extends Utils {
         }
 
         loadSettings();
+        if(Data.loadLastOpenFile && Data.loadedFileFullPath.length() > 0) {
+            Log.d(TAG,"load last open file");
+            externalGpxFile = Data.loadedFileFullPath;
+            new openExternalGpxFile().execute();
+        } else {
+            Data.loadedFileFullPath = "";
+            refreshLoadedDataInfo();
+        }
 
         // up-front permission handling
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        List<String> appPermissionsNeeded = new ArrayList<>();
+        for(String permission : APP_PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                appPermissionsNeeded.add(permission);
+            }
+        }
+        // request permission
+        if(!appPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_REQUEST_WRITE_STORAGE);
+                    this, appPermissionsNeeded.toArray(new String[appPermissionsNeeded.size()]), PERMISSION_REQUEST);
         }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_REQUEST_ACCESS_FINE_LOCATION);
-        }
 
         mLocationAcquired = false;
 
-        currentPath = new File(Environment.getExternalStorageDirectory() + "").toString();
+        // create shared folder
+
+        File folder = new File(Environment.getExternalStorageDirectory() + "/WormNav");
+        if(!folder.exists()) {
+            if(folder.mkdirs()) {
+                Toast.makeText(MainActivity.this, getString(R.string.shared_folder_created), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "failed to create WormNav folder");
+            } else {
+                Toast.makeText(MainActivity.this, getString(R.string.shared_folder_failure), Toast.LENGTH_SHORT).show();
+                folder = new File(Environment.getExternalStorageDirectory() + "");
+            }
+        }
+        Data.defaultDirectoryPath = folder.toString();
+        Log.d(TAG, "Data.defaultDirectoryPath:" + Data.defaultDirectoryPath);
 
         fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -265,29 +295,22 @@ public class MainActivity extends Utils {
     public void onRequestPermissionsResult(
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        String permissionResult = "Request code: " + requestCode + ", Permissions: " + permissions
-                + ", Results: " + grantResults;
-        Log.d(TAG, "onRequestPermissionsResult(): " + permissionResult);
+        if (requestCode == PERMISSION_REQUEST) {
+            // Gather grant permission result
+            HashMap<String,Integer> permissionResultMap = new HashMap<>();
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-           //ok
-
-        } else {
-
-            if (requestCode == PERMISSION_REQUEST_WRITE_STORAGE &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                //Toast.makeText(getApplicationContext(), getString(R.string.permissions_insufficient) + " " + getString(R.string.permissions_files), Toast.LENGTH_LONG).show();
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    permissionResultMap.put(permissions[i],grantResults[i]);
+                }
             }
-
-            if (requestCode == PERMISSION_REQUEST_ACCESS_FINE_LOCATION &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                //Toast.makeText(getApplicationContext(), getString(R.string.permissions_insufficient) + " " + getString(R.string.permissions_location), Toast.LENGTH_LONG).show();
+            // all permission must be granted, otherwise notify about denied permission and close app
+            if (!permissionResultMap.isEmpty()) {
+                for (String deniedPermission : permissionResultMap.keySet()) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.permissions_insufficient) + " " + deniedPermission, Toast.LENGTH_LONG).show();
+                }
+                finish();
             }
-
-            finish();
         }
     }
 
@@ -334,13 +357,12 @@ public class MainActivity extends Utils {
 
             displayConfirmClearDialog();
         }
-
         refreshLoadedDataInfo();
     }
 
     private void fileOpen() {
         filePickerAction = ACTION_OPEN;
-        final String path = !Data.useLastFilePath? currentPath : Data.lastFilePath;
+        final String path = Data.loadedFileFullPath.length()>0? getParentFromFullPath( Data.loadedFileFullPath): Data.defaultDirectoryPath;
         fileExploreIntent.putExtra(
                 FileBrowserActivity.startDirectoryParameter,
                 path
@@ -430,7 +452,9 @@ public class MainActivity extends Utils {
                 return true;
 
             case R.id.action_exit:
+                //showSaveAsDialog();
                 finish();
+                return true;
         }
 
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -574,29 +598,15 @@ public class MainActivity extends Utils {
             }
         });
 
-        final CheckBox useLastPathCheckBox = (CheckBox) layout.findViewById(R.id.useLastPathCheckBox);
-        useLastPathCheckBox.setChecked(Data.useLastFilePath);
-        useLastPathCheckBox.setOnClickListener(new View.OnClickListener() {
+        final CheckBox loadLastOpenFileCheckBox = (CheckBox) layout.findViewById(R.id.loadLastOpenFile);
+        loadLastOpenFileCheckBox.setChecked(Data.loadLastOpenFile);
+        loadLastOpenFileCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Data.useLastFilePath = !Data.useLastFilePath;
-                useLastPathCheckBox.setChecked(Data.useLastFilePath);
+                Data.loadLastOpenFile = !Data.loadLastOpenFile;
+                loadLastOpenFileCheckBox.setChecked(Data.loadLastOpenFile);
             }
         });
-
-        final CheckBox runWithSimulatorCheckBox = (CheckBox) layout.findViewById(R.id.runWithSimulatorCheckBox);
-        //runWithSimulatorCheckBox.setChecked(Data.runWithSimulator);
-        runWithSimulatorCheckBox.setChecked(Utils.isDeviceEmulator());
-        runWithSimulatorCheckBox.setEnabled(false);
-        /*
-        runWithSimulatorCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Data.runWithSimulator = !Data.runWithSimulator;
-                runWithSimulatorCheckBox.setChecked(Data.runWithSimulator);
-            }
-        });
-        */
 
         builder.setTitle(getResources().getString(R.string.settings))
                 .setIcon(R.drawable.ico_settings)
@@ -615,6 +625,7 @@ public class MainActivity extends Utils {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume()");
         refreshLoadedDataInfo();
         //loadSettings();
 
@@ -678,58 +689,44 @@ public class MainActivity extends Utils {
         super.onActivityResult(requestCode, resultCode, data);
 
         TextView openFile = (TextView) findViewById(R.id.open_file);
-
+        Log.d(TAG,"onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
         if (requestCode == REQUEST_CODE_PICK_FILE) {
+            if(resultCode == RESULT_CANCELED) {
+                Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
+                switch (filePickerAction) {
+                    case ACTION_SAVE_AS_PICKER:
+                        mSaveAsDialogPath.setText(Data.lastPickedDirectory);
+                        break;
+                }
+            }
             if (resultCode == RESULT_OK) {
-
+                Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
                 String fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastFilePath = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
-
                 switch (filePickerAction) {
 
                     case ACTION_OPEN:
 
                         externalGpxFile = fileFullPath;
-
                         new openExternalGpxFile().execute();
 
                         break;
 
                     case ACTION_SAVE_AS:
-                        // Save all to the picked file
-                        String savingPoi = String.format(getString(R.string.poi_loaded), Data.sPoiGpx.getPoints().size());
-                        String savingRoutes = String.format(getString(R.string.routes_loaded), Data.sRoutesGpx.getRoutes().size());
-                        String savingTracks = String.format(getString(R.string.tracks_loaded), Data.sTracksGpx.getTracks().size());
-                        Toast.makeText(getApplicationContext(), getString(R.string.saving) + " " + savingPoi + ", " + savingRoutes + ", " + savingTracks, Toast.LENGTH_LONG).show();
-
-                        Data.mGpx = new Gpx();
-
-                        Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
-                        Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
-                        Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
-
-                        GpxFileIo.parseOut(Data.mGpx, fileFullPath);
-
-
-                        Data.lastOpenFile = fileFullPath;
-
-                        try {
-                            String[] splitFullPath = fileFullPath.split("/");
-                            String filename = splitFullPath[splitFullPath.length - 1];
-                            openFile.setText(filename);
-                        } catch (Exception e) {
-                            openFile.setText(String.valueOf(e));
-                        }
+                        Data.lastPickedFileFullPath = fileFullPath;
+                        mSaveAsDialogPath.setText(getParentFromFullPath(Data.lastPickedFileFullPath));
+                        mSaveAsDialogFilename.setText(getBaseFileNameFromFullPath(Data.lastPickedFileFullPath));
                         break;
                 }
 
 
             } else {
+                /*
                 Toast.makeText(
                         this,
                         getString(R.string.no_file_selected),
                         Toast.LENGTH_LONG).show();
+                        */
             }
         }
         refreshLoadedDataInfo();
@@ -742,10 +739,8 @@ public class MainActivity extends Utils {
         LayoutInflater inflater = getLayoutInflater();
         final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
 
-        final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-
-        final String path = !Data.useLastFilePath? currentPath : Data.lastFilePath;
-        Log.d(TAG,"showSaveAsDialog(): " + path);
+        mSaveAsDialogFilename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
+        mSaveAsDialogPath = saveAsLayout.findViewById(R.id.save_new_path);
 
         final Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -754,7 +749,28 @@ public class MainActivity extends Utils {
                 FileBrowserActivity.class
         );
 
-        filename.setText(fileName);
+        final String path = Data.loadedFileFullPath.length()>0? getParentFromFullPath( Data.loadedFileFullPath):Data.defaultDirectoryPath;
+        final String fileBaseName = Data.loadedFileFullPath.length()>0? getBaseFileNameFromFullPath(Data.loadedFileFullPath): "myfile";
+        Data.lastPickedDirectory = path;
+        mSaveAsDialogPath.setText(path);
+        mSaveAsDialogFilename.setText(fileBaseName);
+
+        final AppCompatImageButton pickButton = saveAsLayout.findViewById(R.id.save_pick_button);
+        pickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filePickerAction = ACTION_SAVE_AS_PICKER;
+
+                fileExploreIntent.putExtra(
+                        FileBrowserActivity.startDirectoryParameter,
+                        path
+                );
+                startActivityForResult(
+                        fileExploreIntent,
+                        REQUEST_CODE_PICK_FILE
+                );
+            }
+        });
 
         String dialogTitle = getResources().getString(R.string.dialog_savegpx_saveasnew);
         String saveText = getResources().getString(R.string.dialog_save_changes_save);
@@ -770,27 +786,11 @@ public class MainActivity extends Utils {
 
                     }
                 })
-                .setNegativeButton(saveAsText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-
-                        filePickerAction = ACTION_SAVE_AS;
-
-                        fileExploreIntent.putExtra(
-                                FileBrowserActivity.startDirectoryParameter,
-                                path
-                        );
-                        startActivityForResult(
-                                fileExploreIntent,
-                                REQUEST_CODE_PICK_FILE
-                        );
-                    }
-                })
                 .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        fileName = filename.getText().toString().trim();
-                        saveGpxDestructive(fileName);
+                        fileName = mSaveAsDialogFilename.getText().toString().trim();
+                        saveGpxDestructive(Data.lastPickedDirectory, fileName);
 
                     }
                 });
@@ -819,10 +819,10 @@ public class MainActivity extends Utils {
 
             }
         };
-        filename.addTextChangedListener(validate_name);
+        mSaveAsDialogFilename.addTextChangedListener(validate_name);
     }
 
-    private void saveGpxDestructive(String filename) {
+    private void saveGpxDestructive(String path, String filename) {
 
         if (Data.sPoiGpx.getPoints().size() == 0 && Data.sRoutesGpx.getRoutes().size() == 0 && Data.sTracksGpx.getTracks().size() == 0) {
             Toast.makeText(this, getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
@@ -830,8 +830,6 @@ public class MainActivity extends Utils {
         }
 
         boolean path_ok;
-
-        final String path = !Data.useLastFilePath? currentPath : Data.lastFilePath;
 
         File folder = new File(path);
 
@@ -900,7 +898,7 @@ public class MainActivity extends Utils {
             }
 
             TextView openFile = (TextView) findViewById(R.id.open_file);
-            Data.lastOpenFile = new_file;
+            Data.loadedFileFullPath = new_file;
 
             try {
                 String[] splitFullPath = new_file.split("/");
@@ -918,8 +916,9 @@ public class MainActivity extends Utils {
 
     public void refreshLoadedDataInfo() {
 
+        Log.d(TAG, "refreshLoadedDataInfo():" + Data.loadedFileFullPath);
         TextView openFile = (TextView) findViewById(R.id.open_file);
-        openFile.setText("");
+        openFile.setText(getBaseFileNameFromFullPath(Data.loadedFileFullPath));
 
         if (Data.sPoiGpx == null || Data.sRoutesGpx == null || Data.sTracksGpx == null) {
             return;
@@ -1057,9 +1056,8 @@ public class MainActivity extends Utils {
                 Toast.makeText(getApplicationContext(), getString(R.string.error_opening_file) + " " + e, Toast.LENGTH_SHORT).show();
 
             }
-
             if (gpxIn != null) {
-
+                Data.loadedFileFullPath = externalGpxFile;
                 Data.sPoiGpx = new Gpx();
                 Data.sPoiGpx.setPoints(gpxIn.getPoints());
 
@@ -1087,17 +1085,7 @@ public class MainActivity extends Utils {
         protected void onPostExecute(Void result) {
 
             alert.dismiss();
-
-            TextView openFile = (TextView) findViewById(R.id.open_file);
             refreshLoadedDataInfo();
-
-            try {
-                String[] splitFullPath = externalGpxFile.split("/");
-                String filaname = splitFullPath[splitFullPath.length - 1];
-                openFile.setText(filaname);
-            } catch (Exception e) {
-                openFile.setText(String.valueOf(e));
-            }
 
             if (purger_pois != 0) {
                 Toast.makeText(getApplicationContext(), getString(R.string.removed) + " " + purger_pois + " " + getString(R.string.duplicated_poi), Toast.LENGTH_SHORT).show();

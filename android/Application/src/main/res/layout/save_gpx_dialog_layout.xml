@@ -1,31 +1,51 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tableLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:layout_height="match_parent">
 
+    <ImageButton
+        android:id="@+id/save_pick_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bar_open"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/bar_open" />
 
-    <TableRow>
+    <TextView
+        android:id="@+id/save_new_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="/storage/emulated/0/Wormnavigation"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/save_pick_button"
+        app:layout_constraintStart_toEndOf="@+id/save_pick_button"
+        app:layout_constraintTop_toTopOf="@+id/save_pick_button" />
 
-        <EditText
-            android:id="@+id/save_new_filename"
-            android:layout_weight="4"
-            android:inputType="textUri"
-            android:text="@string/dialog_savegpx_default" />
+    <EditText
+        android:id="@+id/save_new_filename"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:inputType="textUri"
+        android:text="@string/dialog_savegpx_default"
+        app:layout_constraintStart_toStartOf="@+id/save_new_path"
+        app:layout_constraintTop_toBottomOf="@+id/save_new_path" />
 
-        <TextView
-            android:id="@+id/save_new_extension"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_weight="1"
-            android:gravity="start"
-            android:padding="2dp"
-            android:text="@string/dialog_savegpx_extension"
-            android:textColor="#999999"
-            android:textSize="18sp" />
+    <TextView
+        android:id="@+id/save_new_extension"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/dialog_savegpx_extension"
+        android:textColor="#999999"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/save_new_filename"
+        app:layout_constraintStart_toEndOf="@+id/save_new_filename" />
 
-    </TableRow>
-
-</TableLayout>
+</android.support.constraint.ConstraintLayout>

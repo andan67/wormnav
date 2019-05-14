@@ -36,20 +36,13 @@
             android:textSize="16sp" />
 
         <CheckBox
-            android:id="@+id/useLastPathCheckBox"
+            android:id="@+id/loadLastOpenFile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/use_last_path"
+            android:text="@string/load_last_open_file"
             android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/runWithSimulatorCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/run_with_simulator"
-            android:textSize="16sp" />
 
     </LinearLayout>
 

@@ -715,8 +715,7 @@ public class TracksBrowserActivity extends Utils
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -885,8 +884,7 @@ public class TracksBrowserActivity extends Utils
             if (resultCode == RESULT_OK) {
                 String fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastFilePath = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
-                Log.i(TAG, "lastFilePath:" + Data.lastFilePath);
+                Data.lastImportedFileFullPath = fileFullPath;
 
                 switch (filePickerAction) {
 
@@ -907,10 +905,12 @@ public class TracksBrowserActivity extends Utils
                 }
 
             } else {
+                /*
                 Toast.makeText(
                         this,
                         getResources().getString(R.string.no_file_selected),
                         Toast.LENGTH_LONG).show();
+                */
             }
 
         }
@@ -1538,9 +1538,7 @@ public class TracksBrowserActivity extends Utils
         final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
 
         final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         final Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -1581,8 +1579,6 @@ public class TracksBrowserActivity extends Utils
                     public void onClick(DialogInterface dialog, int id) {
 
                         fileName = filename.getText().toString().trim();
-                        File folder = new File(Environment.getExternalStorageDirectory() + "");
-                        String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
                         File full_file_path = new File(path +"/" + fileName + ".gpx");
                         saveSelectedTracks(full_file_path.toString());
                     }

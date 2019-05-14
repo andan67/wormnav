@@ -1025,9 +1025,7 @@ public class PoiActivity extends Utils
 
         final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
-
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         final Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -1117,8 +1115,7 @@ public class PoiActivity extends Utils
 
         boolean path_ok;
 
-        String currentPath = new File(Environment.getExternalStorageDirectory() + "").toString();
-        final String path = !Data.useLastFilePath? currentPath : Data.lastFilePath;
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         File folder = new File(path);
 
@@ -1395,9 +1392,7 @@ public class PoiActivity extends Utils
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        File folder = new File(Environment.getExternalStorageDirectory() + "");
-        final String path = !Data.useLastFilePath? folder.toString() : Data.lastFilePath;
+        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -1468,7 +1463,6 @@ public class PoiActivity extends Utils
             if (resultCode == RESULT_OK) {
                 String newDir = data.getStringExtra(
                         FileBrowserActivity.returnDirectoryParameter);
-                Data.lastFilePath = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
                 Toast.makeText(
                         this,
                         "Received DIRECTORY path from file browser:\n" + newDir,
@@ -1489,7 +1483,7 @@ public class PoiActivity extends Utils
 
                 fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastFilePath = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
+                Data.lastImportedFileFullPath = fileFullPath;
 
                 fileFolderAndName = fileFullPath.replace(sdRoot, "");
 
@@ -1513,10 +1507,12 @@ public class PoiActivity extends Utils
                 }
 
             } else {//if(resultCode == this.RESULT_OK) {
+                /*
                 Toast.makeText(
                         this,
                         "No file selected",
                         Toast.LENGTH_LONG).show();
+                        */
             }
 
         } else {
