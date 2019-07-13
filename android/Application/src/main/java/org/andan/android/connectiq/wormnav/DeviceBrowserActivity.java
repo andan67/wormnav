@@ -24,6 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,22 +43,21 @@ import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 
 import org.andan.android.connectiq.wormnav.R;
+import org.osmdroid.util.GeoPoint;
+
+import pt.karambola.gpx.beans.Route;
+import pt.karambola.gpx.beans.Track;
+import pt.karambola.gpx.util.GpxUtils;
 
 public class DeviceBrowserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 
 
-    public static final String IQDEVICE = "IQDevice";
-    public static final String IQMESSAGE = "IQMESSAGE";
-    //public static final String MY_APP = "a3421feed289106a538cb9547ab12095";
     public static final String MY_APP = "91da4791-78e5-4e58-b1e6-e6f423bb1984";
 
-    public static final String TRACK_BOUNDING_BOX="TRACK_BOUDNING_BOX";
     public static final String TRACK_NAME="TRACK_NAME";
     public static final String TRACK_LENGTH="TRACK_LENGTH";
-    public static final String TRACK_NUMBER_OF_POINTS="TRACK_NUMBER_OF_POINTS";
-    public static final String TRACK_POINTS="TRACK_POINTS";
-    public static final String TRACK_MESSAGE="MESSAGE";
+    public static final String GEO_POINTS="GEO_POINTS";
 
     private ConnectIQ mConnectIQ;
     private TextView mEmptyView;
@@ -76,6 +78,10 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     private String mTrackName;
     private float mTrackLength;
     private int mTrackNumberOfPoints;
+    private int maxPathWpt;
+    private double maxPathError;
+
+    private ArrayList<GeoPoint> mGeoPoints;
     private float[] mTrackPoints;
 
     private final String TAG = "DeviceBrowser";
@@ -132,6 +138,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate:");
         setContentView(R.layout.activity_device_browser);
         mListView = (ListView) findViewById(android.R.id.list);
 
@@ -157,12 +164,11 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         mMessageStatus = (TextView)findViewById(R.id.message_status_value_textView);
 
-        Intent intent = getIntent();
-        mTrackBoundingBox = getIntent().getFloatArrayExtra(TRACK_BOUNDING_BOX);
         mTrackName = getIntent().getStringExtra(TRACK_NAME);
         mTrackLength = getIntent().getFloatExtra(TRACK_LENGTH,0);
-        mTrackNumberOfPoints = getIntent().getIntExtra(TRACK_NUMBER_OF_POINTS, 0);
-        mTrackPoints = getIntent().getFloatArrayExtra(TRACK_POINTS);
+        mGeoPoints = getIntent().getParcelableArrayListExtra(GEO_POINTS);
+
+        Log.d(TAG, "onCreate:" + mTrackLength);
 
     }
 
@@ -309,8 +315,35 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_length_value);
         textView.setText(String.format("%.3f", mTrackLength/1000));
 
-        textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_number_of_points_value);
-        textView.setText(Integer.toString(mTrackNumberOfPoints));
+
+        final EditText maxWptEditText = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxPoints);
+        final EditText maxError = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxError);
+
+        final CheckBox reduceCheckBox = trackSendToDeviceLayout.findViewById(R.id.reduceTrackCheckbox);
+
+        if(Data.useDefaultOptimization) {
+            maxPathWpt = Data.defaultMaxPathWpt;
+            maxPathError = Data.defaultMaxPathError;
+        } else {
+            maxPathWpt = mGeoPoints.size();
+            maxPathError = 10d;
+        }
+        reduceCheckBox.setChecked(Data.useDefaultOptimization);
+        maxWptEditText.setEnabled(Data.useDefaultOptimization);
+        maxError.setEnabled(Data.useDefaultOptimization);
+
+        maxWptEditText.setText(String.valueOf(maxPathWpt));
+        maxError.setText(String.valueOf(maxPathError));
+
+
+
+        reduceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                maxWptEditText.setEnabled(isChecked);
+                maxError.setEnabled(isChecked);
+            }
+        });
 
         mMyApp = new IQApp(MY_APP);
 
@@ -326,12 +359,19 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                     public void onClick(DialogInterface dialog, int id) {
 
                         Intent intentService = new Intent(DeviceBrowserActivity.this, IQSendMessageIntentService.class);
-
-                        intentService.putExtra(DeviceBrowserActivity.TRACK_BOUNDING_BOX, mTrackBoundingBox);
-                        intentService.putExtra(DeviceBrowserActivity.TRACK_NAME, mTrackName);
-                        intentService.putExtra(DeviceBrowserActivity.TRACK_LENGTH, mTrackLength);
-                        intentService.putExtra(DeviceBrowserActivity.TRACK_NUMBER_OF_POINTS, mTrackNumberOfPoints);
-                        intentService.putExtra(DeviceBrowserActivity.TRACK_POINTS, mTrackPoints);
+                        maxPathWpt = 0;
+                        if (reduceCheckBox.isChecked()) {
+                            if (!maxWptEditText.getText().toString().isEmpty()) {
+                                maxPathWpt = Integer.valueOf(maxWptEditText.getText().toString());
+                            }
+                            if (!maxError.getText().toString().isEmpty()) {
+                                maxPathError = Double.valueOf(maxError.getText().toString());
+                            }
+                        }
+                        float[][] trackData = SendToDeviceUtility.generateTrackPointsAndBoundingBox(mGeoPoints, maxPathWpt, maxPathError);
+                        mTrackBoundingBox = trackData[0];
+                        mTrackPoints = trackData[1];
+                        mTrackNumberOfPoints = mTrackPoints.length/2;
 
                         List<Object> message = new ArrayList<>();
                         // Create lists from arrays
@@ -361,17 +401,18 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                                 Log.i(TAG, "message status:" + status);
                                 final String sendTimeAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(sendTime);
                                 if (resultCode == IQSendMessageIntentService.MESSAGE_SEND_OK) {
-                                    mMessageStatus.setText("Last send to device '" + deviceName +
-                                            "' on '" + sendTimeAsString + "' with status '" + status + "'.");
+                                    mMessageStatus.setText("Last message sent to '" + deviceName +
+                                            "' at '" + sendTimeAsString + "' with status '" + status + "'.");
                                 } else {
-                                    mMessageStatus.setText("Last send to device '" + deviceName +
-                                            "' on '" + sendTimeAsString + "' failed for reason '" + status + "'.");
+                                    mMessageStatus.setText("Last message sent to '" + deviceName +
+                                            "' at '" + sendTimeAsString + "' failed for reason '" + status + "'.");
                                 }
                             }
                         });
 
                         intentService.putExtra(IQSendMessageIntentService.INTENT_BUNDLE, messageBundle);
                         DeviceBrowserActivity.this.startService(intentService);
+
                     }
                 })
                 .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {

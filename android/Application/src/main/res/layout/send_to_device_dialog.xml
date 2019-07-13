@@ -38,21 +38,64 @@
             android:textColor="#999999"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/dialog_send_to_device_track_number_of_points_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="text"
-            android:text="@string/dialog_send_to_device_track_number_of_points" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/dialog_send_to_device_track_number_of_points_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingBottom="20dp"
-            android:textColor="#999999"
-            android:textSize="18sp" />
+                <CheckBox
+                    android:id="@+id/reduceTrackCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:text="@string/track_reduce" />
+
+                <TableRow
+                    android:layout_marginBottom="0dp"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp">
+
+                        <EditText
+                            android:id="@+id/dialog_send_to_device_reduceMaxPoints"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:inputType="number|numberSigned"
+                            android:maxLength="3"
+                            android:paddingLeft="10dp"
+                            android:text="123" />
+
+                        <TextView
+                            android:id="@+id/reduceMaxPointsLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Max wpt#" />
+
+                        <EditText
+                            android:id="@+id/dialog_send_to_device_reduceMaxError"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:inputType="number|numberSigned"
+                            android:maxLength="4"
+                            android:text="10" />
+
+                        <TextView
+                            android:id="@+id/reduceMaxErrorLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Max error" />
+
+                </TableRow>
+
+        </TableLayout>
 
 </LinearLayout>

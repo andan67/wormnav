@@ -590,6 +590,10 @@ public class Utils extends AppCompatActivity {
         Data.loadedFileFullPath = preferences.getString("loadedFile","");
         Data.savedFileFullPath = preferences.getString("savedFile","");
         Data.loadLastOpenFile = preferences.getBoolean("loadLastOpenFile", true);
+
+        Data.useDefaultOptimization = preferences.getBoolean("useDefaultOptimization", false);
+        Data.defaultMaxPathWpt = preferences.getInt("defaultMaxPathWpt", 0);
+        Data.defaultMaxPathError = (double) preferences.getFloat("defaultMaxPathError",10.f);
     }
 
     protected void saveSettings() {
@@ -610,6 +614,10 @@ public class Utils extends AppCompatActivity {
         editor.putString("lastImportedFile", Data.lastImportedFileFullPath);
         editor.putString("loadedFile", Data.loadedFileFullPath);
         editor.putString("savedFile", Data.savedFileFullPath);
+
+        editor.putBoolean("useDefaultOptimization", Data.useDefaultOptimization);
+        editor.putInt("defaultMaxPathWpt", Data.defaultMaxPathWpt);
+        editor.putFloat("defaultMaxPathError", (float) Data.defaultMaxPathError);
 
         editor.apply();
     }

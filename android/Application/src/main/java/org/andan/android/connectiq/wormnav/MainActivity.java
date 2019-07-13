@@ -36,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -136,8 +137,8 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         }
 
         loadSettings();
-        if(Data.loadLastOpenFile && Data.loadedFileFullPath.length() > 0) {
-            Log.d(TAG,"load last open file");
+        if (Data.loadLastOpenFile && Data.loadedFileFullPath.length() > 0) {
+            Log.d(TAG, "load last open file");
             externalGpxFile = Data.loadedFileFullPath;
             new openExternalGpxFile().execute();
         } else {
@@ -147,13 +148,13 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         // up-front permission handling
         List<String> appPermissionsNeeded = new ArrayList<>();
-        for(String permission : APP_PERMISSIONS) {
+        for (String permission : APP_PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 appPermissionsNeeded.add(permission);
             }
         }
         // request permission
-        if(!appPermissionsNeeded.isEmpty()) {
+        if (!appPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(
                     this, appPermissionsNeeded.toArray(new String[appPermissionsNeeded.size()]), PERMISSION_REQUEST);
         }
@@ -164,8 +165,8 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         // create shared folder
 
         File folder = new File(Environment.getExternalStorageDirectory() + "/WormNav");
-        if(!folder.exists()) {
-            if(folder.mkdirs()) {
+        if (!folder.exists()) {
+            if (folder.mkdirs()) {
                 Toast.makeText(MainActivity.this, getString(R.string.shared_folder_created), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "failed to create WormNav folder");
             } else {
@@ -202,7 +203,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             @Override
             public void onClick(View arg0) {
 
-                if(Data.sPoiGpx != null) {
+                if (Data.sPoiGpx != null) {
                     /*
                      * Let's work on a copy of POI data, (to be saved or not on exit).
                      */
@@ -213,8 +214,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                     i = new Intent(MainActivity.this, PoiActivity.class);
 
                     startActivity(i);
-                }
-                else {
+                } else {
                     Toast.makeText(MainActivity.this, "Load poi first!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -227,13 +227,12 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             @Override
             public void onClick(View arg0) {
 
-                if(Data.sRoutesGpx != null) {
+                if (Data.sRoutesGpx != null) {
                     Intent i;
                     i = new Intent(MainActivity.this, RoutesBrowserActivity.class);
 
                     startActivity(i);
-                }
-                else {
+                } else {
                     Toast.makeText(MainActivity.this, "Load route first!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -246,13 +245,12 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             @Override
             public void onClick(View arg0) {
 
-                if(true || Data.sTracksGpx != null) {
+                if (true || Data.sTracksGpx != null) {
                     Intent i;
                     i = new Intent(MainActivity.this, TracksBrowserActivity.class);
 
                     startActivity(i);
-                }
-                else {
+                } else {
                     Toast.makeText(MainActivity.this, "Load track first!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -297,11 +295,11 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         if (requestCode == PERMISSION_REQUEST) {
             // Gather grant permission result
-            HashMap<String,Integer> permissionResultMap = new HashMap<>();
+            HashMap<String, Integer> permissionResultMap = new HashMap<>();
 
             for (int i = 0; i < grantResults.length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                    permissionResultMap.put(permissions[i],grantResults[i]);
+                    permissionResultMap.put(permissions[i], grantResults[i]);
                 }
             }
             // all permission must be granted, otherwise notify about denied permission and close app
@@ -362,7 +360,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
     private void fileOpen() {
         filePickerAction = ACTION_OPEN;
-        final String path = Data.loadedFileFullPath.length()>0? getParentFromFullPath( Data.loadedFileFullPath): Data.defaultDirectoryPath;
+        final String path = Data.loadedFileFullPath.length() > 0 ? getParentFromFullPath(Data.loadedFileFullPath) : Data.defaultDirectoryPath;
         fileExploreIntent.putExtra(
                 FileBrowserActivity.startDirectoryParameter,
                 path
@@ -376,7 +374,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     private void setupDrawer() {
         // enable ActionBar app icon to behave as action to toggle nav drawer
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setIcon(R.mipmap.ic_launcher);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -608,13 +606,42 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             }
         });
 
+        final CheckBox defaultReduceTrackCheckbox = (CheckBox) layout.findViewById(R.id.defaultReduceTrackCheckbox);
+
+        final EditText maxWptEditText = layout.findViewById(R.id.default_reduceMaxPoints);
+        maxWptEditText.setText(String.valueOf(Data.defaultMaxPathWpt));
+
+        final EditText maxError = layout.findViewById(R.id.default_reduceMaxError);
+        maxError.setText(String.valueOf(Data.defaultMaxPathError));
+
+
+        defaultReduceTrackCheckbox.setChecked(Data.useDefaultOptimization);
+        maxWptEditText.setEnabled(Data.useDefaultOptimization);
+        maxError.setEnabled(Data.useDefaultOptimization);
+
+
+        defaultReduceTrackCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                maxWptEditText.setEnabled(isChecked);
+                maxError.setEnabled(isChecked);
+                Log.d(TAG, "useDefaultOptimization:" + isChecked);
+                Data.useDefaultOptimization = isChecked;
+            }
+        });
+
         builder.setTitle(getResources().getString(R.string.settings))
                 .setIcon(R.drawable.ico_settings)
                 .setCancelable(false)
                 .setView(layout)
                 .setPositiveButton(getResources().getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        if (!maxWptEditText.getText().toString().isEmpty()) {
+                            Data.defaultMaxPathWpt = Integer.valueOf(maxWptEditText.getText().toString());
+                        }
+                        if (!maxError.getText().toString().isEmpty()) {
+                            Data.defaultMaxPathError = Double.valueOf(maxError.getText().toString());
+                        }
                         saveSettings();
                     }
                 });
@@ -625,7 +652,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume()");
+        Log.d(TAG, "onResume()");
         refreshLoadedDataInfo();
         //loadSettings();
 
@@ -689,9 +716,9 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         super.onActivityResult(requestCode, resultCode, data);
 
         TextView openFile = (TextView) findViewById(R.id.open_file);
-        Log.d(TAG,"onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
+        Log.d(TAG, "onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
         if (requestCode == REQUEST_CODE_PICK_FILE) {
-            if(resultCode == RESULT_CANCELED) {
+            if (resultCode == RESULT_CANCELED) {
                 Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
                 switch (filePickerAction) {
                     case ACTION_SAVE_AS_PICKER:
@@ -749,8 +776,8 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                 FileBrowserActivity.class
         );
 
-        final String path = Data.loadedFileFullPath.length()>0? getParentFromFullPath( Data.loadedFileFullPath):Data.defaultDirectoryPath;
-        final String fileBaseName = Data.loadedFileFullPath.length()>0? getBaseFileNameFromFullPath(Data.loadedFileFullPath): "myfile";
+        final String path = Data.loadedFileFullPath.length() > 0 ? getParentFromFullPath(Data.loadedFileFullPath) : Data.defaultDirectoryPath;
+        final String fileBaseName = Data.loadedFileFullPath.length() > 0 ? getBaseFileNameFromFullPath(Data.loadedFileFullPath) : "myfile";
         Data.lastPickedDirectory = path;
         mSaveAsDialogPath.setText(path);
         mSaveAsDialogFilename.setText(fileBaseName);

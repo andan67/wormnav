@@ -68,6 +68,10 @@ final class Data {
     static String lastPickedFileFullPath = "";
     static boolean loadLastOpenFile = true;
 
+    static boolean useDefaultOptimization = false;
+    static int defaultMaxPathWpt = 0;
+    static double defaultMaxPathError = 10d;
+
     static Integer sLastZoom;
     static GeoPoint sLastCenter;
     static Float sLastRotation;

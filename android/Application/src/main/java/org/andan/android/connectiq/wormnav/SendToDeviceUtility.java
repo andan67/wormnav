@@ -9,7 +9,6 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.karambola.R3.R3;
 import pt.karambola.gpx.beans.GenericPoint;
 import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.RoutePoint;
@@ -18,8 +17,6 @@ import pt.karambola.gpx.beans.TrackPoint;
 import pt.karambola.gpx.util.GpxUtils;
 
 public class SendToDeviceUtility {
-
-
 
     private SendToDeviceUtility() {
     }
@@ -41,61 +38,64 @@ public class SendToDeviceUtility {
     }
 
     private static void createIntentAndStartActivity(Context ctx, List<GenericPoint> genericPoints, String name, float length) {
-        List<GeoPoint> geoPoints = new ArrayList<>();
-
-        float[] trackPointsToSend = new float[genericPoints.size() * 2];
-
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        // Copy into GeoPoint array which is parcable
         for (int j = 0; j < genericPoints.size(); j++) {
 
             GenericPoint genericPoint = genericPoints.get(j);
             GeoPoint geoPoint = new GeoPoint(genericPoint.getLatitude(), genericPoint.getLongitude());
             geoPoints.add(geoPoint);
-            /*
-            trackPointsToSend[2 * j] = (float) Math.toRadians(genericPoint.getLatitude());
-            trackPointsToSend[2 * j + 1] = (float) Math.toRadians(genericPoint.getLongitude());
-            */
+
         }
 
-        BoundingBox boundingBox = ((Utils) ctx).findBoundingBox(geoPoints);
-        System.out.println("Send to device -" +
-                " Center lat:" + boundingBox.getCenter().getLatitude() +
-                " Center lon: " + boundingBox.getCenter().getLongitude() +
-                " Bbox lon west: " + boundingBox.getLonWest() +
-                " Bbox lon east: " + boundingBox.getLonEast() +
-                " Bbox lat south: " + boundingBox.getLatSouth() +
-                " Bbox lat north: " + boundingBox.getLatNorth() +
-                " Diameter: " + boundingBox.getDiagonalLengthInMeters() / 1000 +
-                " Name :" + name +
-                " #points:" + genericPoints.size() +
-                " length: " + length);
+        Intent intent = new Intent(ctx, DeviceBrowserActivity.class);
+        intent.putExtra(DeviceBrowserActivity.TRACK_NAME, name);
+        intent.putExtra(DeviceBrowserActivity.TRACK_LENGTH, length);
+        intent.putParcelableArrayListExtra(DeviceBrowserActivity.GEO_POINTS, geoPoints);
 
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        ctx.startActivity(intent);
+    }
+
+
+    public static float[][] generateTrackPointsAndBoundingBox(ArrayList<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
+        if(maxPathWpt>0 && maxPathWpt <= geoPoints.size()) {
+            // optimize, i.e. reduce points
+            Route route = new Route();
+            for(GeoPoint geoPoint: geoPoints) {
+                RoutePoint routePoint = new RoutePoint();
+                routePoint.setLatitude(geoPoint.getLatitude());
+                routePoint.setLongitude(geoPoint.getLongitude());
+                route.addRoutePoint(routePoint);
+            }
+            GpxUtils.simplifyRoute(route, maxPathWpt, maxPathError);
+            geoPoints = new ArrayList<>();
+            for(RoutePoint routePoint : route.getRoutePoints()) {
+                geoPoints.add(new GeoPoint(routePoint.getLatitude(), routePoint.getLongitude()));
+            }
+        }
+
+        BoundingBox boundingBox = findBoundingBox(geoPoints);
         double latCenter = Math.toRadians(boundingBox.getCenter().getLatitude());
         double lonCenter = Math.toRadians(boundingBox.getCenter().getLongitude());
 
-        for (int j = 0; j < genericPoints.size(); j++) {
-            GenericPoint genericPoint = genericPoints.get(j);
-            xyPoint xy = transform(Math.toRadians(genericPoint.getLatitude()),
-                    Math.toRadians(genericPoint.getLongitude()),
+        float[] trackPointsToSend = new float[geoPoints.size() * 2];
+        for (int j = 0; j < geoPoints.size(); j++) {
+            GeoPoint geoPoint = geoPoints.get(j);
+            xyPoint xy = transform(Math.toRadians(geoPoint.getLatitude()),
+                    Math.toRadians(geoPoint.getLongitude()),
                     latCenter, lonCenter);
             trackPointsToSend[2 * j] = (float) xy.x;
             trackPointsToSend[2 * j + 1] = (float) xy.y;
         }
 
         float[] track_boundingBox = new float[7];
-        /*
-        track_boundingBox[0] = (float) Math.toRadians(boundingBox.getLatNorth());
-        track_boundingBox[1] = (float) Math.toRadians(boundingBox.getLatSouth());
-        track_boundingBox[2] = (float) Math.toRadians(boundingBox.getLonWest());
-        track_boundingBox[3] = (float) Math.toRadians(boundingBox.getLonEast());
-        track_boundingBox[4] = (float) Math.toRadians(boundingBox.getCenter().getLatitude());
-        track_boundingBox[5] = (float) Math.toRadians(boundingBox.getCenter().getLongitude());
-        track_boundingBox[6] = (float) boundingBox.getDiagonalLengthInMeters();
-        */
         xyPoint xy = transform(Math.toRadians(boundingBox.getLatNorth()),
                 Math.toRadians(boundingBox.getLonWest()),
                 latCenter, lonCenter);
         track_boundingBox[0] = (float) xy.x;
         track_boundingBox[1] = (float) xy.y;
+
         xy = transform(Math.toRadians(boundingBox.getLatSouth()),
                 Math.toRadians(boundingBox.getLonEast()),
                 latCenter, lonCenter);
@@ -105,14 +105,34 @@ public class SendToDeviceUtility {
         track_boundingBox[5] = (float) lonCenter;
         track_boundingBox[6] = (float) boundingBox.getDiagonalLengthInMeters();
 
-        Intent intent = new Intent(ctx, DeviceBrowserActivity.class);
-        intent.putExtra(DeviceBrowserActivity.TRACK_BOUNDING_BOX, track_boundingBox);
-        intent.putExtra(DeviceBrowserActivity.TRACK_NAME, name);
-        intent.putExtra(DeviceBrowserActivity.TRACK_LENGTH, length);
-        intent.putExtra(DeviceBrowserActivity.TRACK_NUMBER_OF_POINTS, genericPoints.size());
-        intent.putExtra(DeviceBrowserActivity.TRACK_POINTS, trackPointsToSend);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        ctx.startActivity(intent);
+        return new float[][] {track_boundingBox, trackPointsToSend};
+    }
+
+    /**
+     * Calculate bounding box for given List of GeoPoints
+     * Based on the osmdroid code by Nicolas Gramlich, released under the Apache License 2.0
+     * https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org
+     * /osmdroid/util/BoundingBox.java
+     */
+    private static BoundingBox findBoundingBox(List<GeoPoint> geoPoints) {
+
+        double minLat = Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLat = -Double.MAX_VALUE;
+        double maxLon = -Double.MAX_VALUE;
+
+        for (GeoPoint geoPoint : geoPoints) {
+
+            final double latitude = geoPoint.getLatitude();
+            final double longitude = geoPoint.getLongitude();
+
+            minLat = Math.min(minLat, latitude);
+            minLon = Math.min(minLon, longitude);
+            maxLat = Math.max(maxLat, latitude);
+            maxLon = Math.max(maxLon, longitude);
+
+        }
+        return new BoundingBox(maxLat, maxLon, minLat, minLon);
     }
 
     private static xyPoint transform(double lat, double lon, double latCenter, double lonCenter) {

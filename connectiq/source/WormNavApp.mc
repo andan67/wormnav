@@ -57,12 +57,7 @@ class WormNavApp extends Application.AppBase {
             Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
 
-        phoneMethod = method(:onPhone);
-        if(Communications has :registerForPhoneAppMessages) {
-            Communications.registerForPhoneAppMessages(phoneMethod);
-        } else {
-            Communications.setMailboxListener(mailMethod);
-        }
+
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
         // timer is used for data fields and auto lap
@@ -82,6 +77,12 @@ class WormNavApp extends Application.AppBase {
              mainView.isNewTrack=true;
         }
         viewDelegate = new WormNavDelegate();
+        phoneMethod = method(:onPhone);
+        if(Communications has :registerForPhoneAppMessages) {
+            Communications.registerForPhoneAppMessages(phoneMethod);
+        } else {
+            Communications.setMailboxListener(mailMethod);
+        }
         return [mainView, viewDelegate];
     }
 

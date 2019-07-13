@@ -85,6 +85,7 @@ module Trace {
                     lapInitDistance = lapInitDistance + autolapDistance;
                     lapCounter++;
                     isLap = true;
+                    session.addLap();
                 }
                 elapsedlapTimeP = elapsedlapTime;
                 elapsedLapDistanceP = elapsedLapDistance;

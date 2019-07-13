@@ -382,5 +382,6 @@
     <string name="use_last_path">Use last file path</string>
     <string name="run_with_simulator">Run with simulator</string>
     <string name="load_last_open_file">Open last loaded/saved file on start</string>
+    <string name="default_track_reduce">Default optimization</string>
 
 </resources>

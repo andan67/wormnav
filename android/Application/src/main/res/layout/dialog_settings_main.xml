@@ -43,6 +43,64 @@
             android:text="@string/load_last_open_file"
             android:textSize="16sp" />
 
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/defaultReduceTrackCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:textSize="16sp"
+                android:text="@string/default_track_reduce" />
+
+            <TableRow
+                android:layout_marginBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp">
+
+                <EditText
+                    android:id="@+id/default_reduceMaxPoints"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:inputType="number|numberSigned"
+                    android:maxLength="3"
+                    android:paddingLeft="10dp"
+                    android:text="123" />
+
+                <TextView
+                    android:id="@+id/reduceMaxPointsLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Max wpt#" />
+
+                <EditText
+                    android:id="@+id/default_reduceMaxError"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:inputType="number|numberSigned"
+                    android:maxLength="4"
+                    android:text="10" />
+
+                <TextView
+                    android:id="@+id/reduceMaxErrorLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Max error" />
+
+            </TableRow>
+
+        </TableLayout>
 
     </LinearLayout>
 
