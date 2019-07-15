@@ -120,9 +120,10 @@ Of course, other accessible locations can also be used.
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
+- Optionally set maximum number of waypoints and maximum error (may be set by default settings)
 - Click on 'Send' button to send selected track/route to Garmin device
-- Watch for last sent status message on Device Browser screen
-- On success, track is stored on Garmin device and ready for use with WormNav app
+- Wait for last sent status message on Device Browser screen. Note that sending via bluetooth may take a few seconds.
+- On success, the track is stored on the Garmin device and ready for use with the WormNav app
 
 </div>
 {::options parse_block_html="true" /}
@@ -202,9 +203,10 @@ Heads-up view of map/track
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Map view with center of track as view center
+Show track and current position with center of track as view center
 - North is always in up-direction
-- Useful for getting overview on position on or distance to track
+- Useful for getting an overview of current position in relation to the track
+- Zoom in/out possible
 
 </div>
 {::options parse_block_html="true" /}
@@ -221,7 +223,7 @@ Data page with 4 fixed data fields
 - Elapsed time
 - Elapsed distance in km
 - Average pace in min/km
-- Heart rate (if sensor exists)
+- Heart rate (if sensor exists and activated)
 
 </div>
 {::options parse_block_html="true" /}

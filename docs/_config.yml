@@ -3,3 +3,4 @@ markdown: kramdown
 kramdown:
   # parse markdown inside block-level HTML tag
   parse_block_html: true
+repository: andan67/wormnav
