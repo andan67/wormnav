@@ -5,13 +5,19 @@
             <iq:product id="fr235"/>
             <iq:product id="fr630"/>
             <iq:product id="fr735xt"/>
+            <iq:product id="vivoactive3"/>
+            <iq:product id="vivoactive3d"/>
+            <iq:product id="vivoactive3m"/>
+            <iq:product id="vivoactive3mlte"/>
         </iq:products>
         <iq:permissions>
             <iq:uses-permission id="Communications"/>
             <iq:uses-permission id="Fit"/>
             <iq:uses-permission id="Positioning"/>
         </iq:permissions>
-        <iq:languages/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
         <iq:barrels/>
     </iq:application>
 </iq:manifest>

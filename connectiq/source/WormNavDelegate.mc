@@ -114,9 +114,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         menu.setTitle("Main Menu");
 
         if(Transform.northHeading) {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + " off", :north);
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + ": off", :north);
         } else {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + " on", :north);
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + ": on", :north);
         }
 
         menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_2), :autolap);
@@ -124,9 +124,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_3), :breadCrumbs);
 
         if(Transform.centerMap) {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + " off", :center);
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + ": off", :center);
         } else {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + " on", :center);
+            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + ": on", :center);
         }
 
         menu.addItem(Rez.Strings.main_menu_label_5, :delete);

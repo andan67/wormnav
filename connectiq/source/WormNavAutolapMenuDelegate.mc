@@ -35,7 +35,7 @@ class WormNavAutolapMenuDelegate extends WatchUi.MenuInputDelegate {
                 setAutolap(5000);
                 break;
             default:
-                return false;
+                return;
         }
     }
 

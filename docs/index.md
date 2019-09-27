@@ -143,6 +143,15 @@ Of course, other accessible locations can also be used.
 #### Button usage
 <img src="images/garmin_description_export.png" width="1024"/>
 
+Vivoactive has a touch screen. All operations perform on touch screen rather then button.
+- tap: start/pause activity
+- long tap: menu
+- swipe up/down: zoom out/in
+- swipe right: 
+  - switch data fields and map view (when activity started)
+  - Resume, save or discard activity (when activity paused)
+  - Exit (when activit not started)
+
 #### Screens
 
 ##### Main menu

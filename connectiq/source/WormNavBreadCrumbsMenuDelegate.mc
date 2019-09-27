@@ -35,7 +35,7 @@ class WormNavBreadCrumbsMenuDelegate extends WatchUi.MenuInputDelegate {
                 setBreadCrumbs(5000);
                 break;
             default:
-                return false;
+                return;
         }
     }
 
