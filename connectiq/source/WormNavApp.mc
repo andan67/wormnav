@@ -1,5 +1,6 @@
 using Toybox.Application;
 using Toybox.WatchUi;
+using Toybox.Timer;
 using Toybox.Attention as Att;
 using Trace;
 
