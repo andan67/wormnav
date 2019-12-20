@@ -248,12 +248,6 @@ class WormNavView extends WatchUi.View {
         draw_scale(dc);
     }
 
-    function setPosition(info) {
-        Transform.isTrackCentered = false;
-        Transform.setPosition(info);
-        WatchUi.requestUpdate();
-    }
-
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
     // memory.

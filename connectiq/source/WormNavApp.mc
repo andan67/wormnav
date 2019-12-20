@@ -106,9 +106,11 @@ class WormNavApp extends Application.AppBase {
 
     function onPosition(info) {
         //onTimer();
+        Transform.isTrackCentered = false;
+        Transform.setPosition(info);
         Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
         if($.pageIndex==0) {
-            $.mainView.setPosition(info);
+            WatchUi.requestUpdate();
         }
     }
 

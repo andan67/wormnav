@@ -27,6 +27,8 @@ module Transform {
     var xs_center;
     var ys_center;
     var isTrackCentered;
+    var lat_first_position=null;
+    var lon_first_position=null;
 
     var x_d;
     var y_d;
@@ -72,7 +74,7 @@ module Transform {
 
     function setViewCenter(lat, lon) {
         if(!centerMap) {
-            var ll = lon-track.lon_center;
+            var ll = lon-lon_view_center;
             var cos_lat = Math.cos(lat);
             x_d = cos_lat*Math.sin(ll);
             y_d = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
@@ -125,11 +127,13 @@ module Transform {
 
     function newTrack() {
         System.println("newTrack()");
-        cos_lat_view_center = Math.cos(track.lat_center);
-        sin_lat_view_center = Math.sin(track.lat_center);
+        lat_view_center=track.lat_center;
+        lon_view_center=track.lon_center;
+        cos_lat_view_center = Math.cos(lat_view_center);
+        sin_lat_view_center = Math.sin(lat_view_center);
         isTrackCentered = true;
         calcZoomToFitLevel();
-        setViewCenter(track.lat_center, track.lon_center);
+        setViewCenter(lat_view_center, lon_view_center);
         Transform.setHeading(0);
     }
 
@@ -137,6 +141,16 @@ module Transform {
         if(x_pos != null) {
             last_x_pos = x_pos;
             last_y_pos = y_pos;
+        }
+        if(lat_first_position==null) {
+            lat_first_position = info.position.toRadians()[0];
+            lon_first_position = info.position.toRadians()[1];
+        }
+        if(track==null) {
+            lat_view_center = lat_first_position;
+            lon_view_center = lon_first_position;
+            cos_lat_view_center = Math.cos(lat_view_center);
+            sin_lat_view_center = Math.sin(lat_view_center);
         }
         var xy = ll_2_xy(info.position.toRadians()[0], info.position.toRadians()[1]);
         x_pos = xy[0];
@@ -150,7 +164,7 @@ module Transform {
     }
 
     function ll_2_screen(lat, lon) {
-        var ll = lon-track.lon_center;
+        var ll = lon-lon_view_center;
         var cos_lat = Math.cos(lat);
         var x = cos_lat*Math.sin(ll);
         var y = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
@@ -165,7 +179,7 @@ module Transform {
     }
 
     function ll_2_xy(lat, lon) {
-        var ll = lon-track.lon_center;
+        var ll = lon-lon_view_center;
         var cos_lat = Math.cos(lat);
         return [cos_lat*Math.sin(ll), cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll)];
     }
