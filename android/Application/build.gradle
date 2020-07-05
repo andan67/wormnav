@@ -13,9 +13,9 @@ buildscript {
 apply plugin: 'com.android.application'
 
 // Load keystore
-def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
+//def keystoreProperties = new Properties()
+//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 dependencies {
     implementation files('libs/httpclient-4.5.jar')
@@ -68,10 +68,10 @@ android {
     }
     signingConfigs {
         config {
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
+            //storeFile file(keystoreProperties['storeFile'])
+            //storePassword keystoreProperties['storePassword']
+            //keyAlias keystoreProperties['keyAlias']
+            //keyPassword keystoreProperties['keyPassword']
         }
     }
     buildTypes {

@@ -3,17 +3,49 @@ using Toybox.Activity;
 using Utils;
 using Trace;
 
+
 class WormNavDataView extends  WatchUi.View {
 
     hidden var width;
     hidden var height;
     hidden var data = new [4];
-    const avgChar = StringUtil.utf8ArrayToString([0xC3,0x98]);
-
+    hidden var dataFields;
+    hidden var numberDataFields = 0;
+    hidden var dfLines;
+    hidden var dfCenters;
+    hidden var font;
+    hidden var fontNumber;
+    
     // Set the label of the field here
-    function initialize() {
+    function initialize(dataFields) {
         View.initialize();
-        //data = new [4];
+        System.println("WormNavDataView:initialize");
+        self.dataFields = dataFields;
+        System.println(dataFields);
+        
+        for( var i = 0; i < Utils.max(4,dataFields.size()); i += 1 ) {
+    		if(dataFields[i]==Utils.UNSET) {
+    			break;
+    		}
+    		numberDataFields += 1;
+		}
+	
+		switch(numberDataFields) {
+			case 1:
+				font = Graphics.FONT_LARGE;
+           		fontNumber = Graphics.FONT_NUMBER_HOT;
+				break;
+			case 2:
+				font = Graphics.FONT_LARGE;
+           		fontNumber = Graphics.FONT_NUMBER_HOT;
+				break;
+			case 4:
+			default:
+				font = Graphics.FONT_MEDIUM;
+           		fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+           		break;
+		}
+		
         // Set up a 1Hz update timer because we aren't registering
         // for any data callbacks that can kick our display update.
     }
@@ -25,10 +57,48 @@ class WormNavDataView extends  WatchUi.View {
     }
 
     function onLayout(dc) {
-        width=dc.getWidth();
+    	width=dc.getWidth();
         height=dc.getHeight();
+        
+        if(numberDataFields==0) {
+        	return;
+        }
+        
+        var h1 = dc.getFontHeight(font);
+        var a1 = dc.getFontAscent(font);
+        var d1 = dc.getFontDescent(font);
+        var h2 = dc.getFontHeight(fontNumber);
+        var a2 = dc.getFontAscent(fontNumber);
+        var d2 = dc.getFontDescent(fontNumber);
+    	
+    	var h = height/Utils.min(numberDataFields,3);
+    	var b = 0.5*(h-a1-a2-d1);
+		var y1 = b + 0.5*h1;
+		var y2 = b + h1 + 0.5*(a2-d2);
+		var w2= 0.5*width;
+		
+    	switch(numberDataFields) {
+			case 1:
+				//
+				dfLines = [];
+				dfCenters = [[w2, y1-d2, y2-d2]];
+				break;
+			case 2:
+				dfLines = [[[0,h],[width,h]]];
+				dfCenters = [[w2,y1,y2],[w2,h+y1,h+y2]];
+				break;
+			case 3:
+				dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]]];
+				dfCenters = [[w2,y1,y2],[w2,h+y1,h+y2],[w2,2*h+y1,2*h+y2]];
+				break;	
+			case 4:
+			default:
+				dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]],[[w2,h],[w2,2*h]]];
+				dfCenters = [[w2,y1,y2],[0.5*w2,h+y1,h+y2],[1.5*w2,h+y1,h+y2],[w2,2*h+y1,2*h+y2]];
+				break;
+		}
     }
-
+    
     // Handle the update event
     function onUpdate(dc) {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
@@ -38,60 +108,28 @@ class WormNavDataView extends  WatchUi.View {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
-        var y = height/3;
-        dc.drawLine(0,y,width,y);
-        dc.drawLine(0,2*y,width,2*y);
-        dc.drawLine(width/2,y,width/2,2*y);
-
-        //if(session.isRecording() && Activity.getActivityInfo()!=null) {
-        if(Activity.getActivityInfo()!=null) {
-            if( Activity.getActivityInfo().elapsedDistance!= null) {
-               data[0] = Activity.getActivityInfo().elapsedDistance/1000;
-            }
-            if(Activity.getActivityInfo().elapsedTime!=null) {
-               data[1] = Activity.getActivityInfo().timerTime;
-            }
-            if(Activity.getActivityInfo().averageSpeed!=null) {
-               data[2] = Activity.getActivityInfo().averageSpeed;
-               //data[2]=Utils.speedToPace(data[2]);
-               //data[2] = Utils.convertSpeedToPace(data[2]);
-            }
-            if(Activity.getActivityInfo().currentHeartRate!=null) {
-               data[3] = Activity.getActivityInfo().currentHeartRate;
-            }
-        }
-
-        y=0;
-        var x= width/2;
-        drawField(dc, "Timer", data[1]!=null? Utils.msToTime(data[1]) : null,x,y);
-        y= height/3;
-        x = width/4;
-        drawField(dc, "Distance", data[0]!=null? data[0].format("%.2f") : null, x, y);
-        x= 3*width/4;
-        StringUtil.utf8ArrayToString([0xC2,0xB0]);
-        //drawField(dc, avgChar + " Pace",Utils.printPace(data[2]) , x, y);
-        drawField(dc, avgChar + " Pace", data[2]!=null? Utils.convertSpeedToPace(data[2]) : null , x, y);
-        y=2*height/3;
-        x=width/2;
-        drawField(dc, "Heart Rate", data[3]!=null? data[3] : null, x, y);
+		for(var i=0; i < dfLines.size(); i +=1) {
+			dc.drawLine(dfLines[i][0][0],dfLines[i][0][1],dfLines[i][1][0],dfLines[i][1][1]);
+		}
+    
+		var dataLabelValue = null;
+		for(var i=0; i< numberDataFields; i+= 1) {
+			dataLabelValue = Utils.getDataFieldLabelValue(dataFields[i]);
+			drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
+		}
     }
-
-    function drawField(dc, label, value, x, y) {
-        //var offset = dc.getFontHeight( Graphics.FONT_MEDIUM );
-        var offset = 0.5*dc.getFontAscent( Graphics.FONT_MEDIUM );
-
+    
+    function drawField(dc, label, value, x, y1, y2) {
         if(value==null) {
             value="--";
         }
         if( label == null ) {
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x, y+offset, Graphics.FONT_NUMBER_MEDIUM, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        } else {
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x, y+offset , Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x, y + offset + dc.getFontDescent( Graphics.FONT_MEDIUM )+ 0.5*dc.getFontHeight( Graphics.FONT_NUMBER_MEDIUM ), Graphics.FONT_NUMBER_MEDIUM, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        	label = "";
+        
         }
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         return;
     }
 }

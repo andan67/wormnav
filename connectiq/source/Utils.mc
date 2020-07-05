@@ -2,8 +2,61 @@ using Toybox.Math;
 using Toybox.Activity;
 using Toybox.System as Sys;
 using Toybox.Lang as Lang;
+using Toybox.StringUtil;
 
 module Utils {
+
+	enum {
+		UNSET,
+		TIMER,
+		DISTANCE,
+		AVGERAGE_PACE,
+		CURRENT_HEART_RATE,
+		PACE,
+		SPEED,
+		LAP_PACE,
+		LAP_SPEED,
+		LAST_LAP_PACE,
+		LAST_LAP_SPEED,
+		LAP_DISTANCE
+	}
+
+	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
+	
+	function timer() {
+		var data=Activity.getActivityInfo().timerTime;
+		return ["Timer", data!=null? Utils.msToTime(data) : null];
+	}
+	
+	function distance() {
+		var data=Activity.getActivityInfo().elapsedDistance;
+		return ["Distance", data!=null? data.format("%.2f") : null];
+	}
+	
+	function averagePace() {
+		var data=Activity.getActivityInfo().averageSpeed;
+		return [AVG_CHAR + " Pace", data!=null?  Utils.convertSpeedToPace(data) : null];
+	}
+	
+	function currentHeartRate() {
+		var data= Activity.getActivityInfo().currentHeartRate;
+		return ["Heart Rate", data!=null?  Utils.convertSpeedToPace(data) : null];
+	}
+
+	function getDataFieldLabelValue(i) {
+		switch(i) {
+			case TIMER:
+				return timer();
+			case DISTANCE:
+				return distance();
+			case AVGERAGE_PACE:
+				return averagePace();
+			case CURRENT_HEART_RATE:
+				return currentHeartRate();
+			default:
+				return [null,null];
+		}
+	}
 
     function msToTime(ms) {
         var seconds = (ms / 1000) % 60;
@@ -138,5 +191,21 @@ module Utils {
         }
 
         return speed.toNumber()+seconds;
+    }
+    
+    function max(x,y) {
+    	if(x>=y) {
+    		return x;
+    	} else {
+    		return y;
+    	} 
+    }
+    
+     function min(x,y) {
+    	if(x<y) {
+    		return x;
+    	} else {
+    		return y;
+    	} 
     }
 }

@@ -71,11 +71,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         if(pageIndex==0 && ( session != null ) ) {
             System.println("session is recording");
             System.println("page index: " + pageIndex);
-            if(dataView==null) {
-               dataView = new WormNavDataView();
+			if(dataView==null) {
+				var dataFields = [Utils.TIMER, Utils.DISTANCE, Utils.AVGERAGE_PACE, Utils.CURRENT_HEART_RATE];
+               	dataView = new WormNavDataView(dataFields);
             }
             System.println("switch to data view");
-            pageIndex=1;
+			pageIndex=1;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         else if(pageIndex==0) {
