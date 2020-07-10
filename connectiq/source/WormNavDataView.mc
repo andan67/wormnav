@@ -1,6 +1,6 @@
 using Toybox.WatchUi;
 using Toybox.Activity;
-using Utils;
+using Data;
 using Trace;
 
 
@@ -18,17 +18,16 @@ class WormNavDataView extends  WatchUi.View {
     
     // Set the label of the field here
     function initialize(dataFields) {
+    	System.println("WormNavDataView:initialize");
         View.initialize();
-        System.println("WormNavDataView:initialize");
+        setDataFields(dataFields);
+    }
+    
+    function setDataFields(dataFields) {
+        System.println("WormNavDataView:setDataFields");
         self.dataFields = dataFields;
         System.println(dataFields);
-        
-        for( var i = 0; i < Utils.max(4,dataFields.size()); i += 1 ) {
-    		if(dataFields[i]==Utils.UNSET) {
-    			break;
-    		}
-    		numberDataFields += 1;
-		}
+        numberDataFields = Data.min(4,dataFields.size());
 	
 		switch(numberDataFields) {
 			case 1:
@@ -60,6 +59,8 @@ class WormNavDataView extends  WatchUi.View {
     	width=dc.getWidth();
         height=dc.getHeight();
         
+        System.println("onLayout: " + numberDataFields);
+        
         if(numberDataFields==0) {
         	return;
         }
@@ -71,7 +72,7 @@ class WormNavDataView extends  WatchUi.View {
         var a2 = dc.getFontAscent(fontNumber);
         var d2 = dc.getFontDescent(fontNumber);
     	
-    	var h = height/Utils.min(numberDataFields,3);
+    	var h = height/Data.min(numberDataFields,3);
     	var b = 0.5*(h-a1-a2-d1);
 		var y1 = b + 0.5*h1;
 		var y2 = b + h1 + 0.5*(a2-d2);
@@ -114,7 +115,7 @@ class WormNavDataView extends  WatchUi.View {
     
 		var dataLabelValue = null;
 		for(var i=0; i< numberDataFields; i+= 1) {
-			dataLabelValue = Utils.getDataFieldLabelValue(dataFields[i]);
+			dataLabelValue = Data.getDataFieldLabelValue(dataFields[i]);
 			drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
 		}
     }
@@ -148,6 +149,6 @@ class WormNavLapView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         //System.println("WormNavLapView");
         dc.drawText(dc.getWidth()/2, dc.getFontHeight(Graphics.FONT_LARGE), Graphics.FONT_LARGE, "Lap " + Trace.lapCounter, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Utils.msToTimeWithDecimals(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTimeWithDecimals(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
     }
 }

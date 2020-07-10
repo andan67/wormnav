@@ -69,8 +69,8 @@ class WormNavView extends WatchUi.View {
                     activity_values[1] = "--";
                 }
                 else {
-                    //activity_values[1] = "T: " + Utils.printTime(data);
-                     activity_values[1] = "Time: " + Utils.msToTime(data);
+                    //activity_values[1] = "T: " + Data.printTime(data);
+                     activity_values[1] = "Time: " + Data.msToTime(data);
                 }
             }
         }

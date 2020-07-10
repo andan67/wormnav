@@ -32,7 +32,7 @@ class WormNavApp extends Application.AppBase {
         System.println("onStart");
 
         // start page is map
-        pageIndex=0;
+        mode=TRACK_MODE;
 
         var data= Application.getApp().getProperty("trackData");
 
@@ -50,7 +50,7 @@ class WormNavApp extends Application.AppBase {
             Transform.centerMap=Application.getApp().getProperty("centerMap");
         }
 
-        if(Application.getApp().getProperty("autolapDistance")!=null) {
+    	if(Application.getApp().getProperty("autolapDistance")!=null) {
             Trace.autolapDistance = Application.getApp().getProperty("autolapDistance");
         }
 
@@ -90,7 +90,15 @@ class WormNavApp extends Application.AppBase {
     function onPhone(msg) {
         System.println("onPhone(msg)");
         messageReceived = true;
-        pageIndex=0;
+        mode=TRACK_MODE;
+       	// test data field
+       	if(msg.data.size() == 5) {
+       		System.println("No data fields defined");
+       	} else {
+       		System.print("Defined data fields: ");
+       		System.println(msg.data[5]);
+       	}
+       	System.println(msg.data);
         track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
@@ -109,7 +117,7 @@ class WormNavApp extends Application.AppBase {
         Transform.isTrackCentered = false;
         Transform.setPosition(info);
         Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
-        if($.pageIndex==0) {
+        if($.mode==TRACK_MODE) {
             WatchUi.requestUpdate();
         }
     }
@@ -142,7 +150,7 @@ class WormNavApp extends Application.AppBase {
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if($.lapViewCounter == 0 && $.pageIndex==1) {
+        else if($.lapViewCounter == 0 && $.mode==DATA_MODE) {
             WatchUi.requestUpdate();
         }
     }

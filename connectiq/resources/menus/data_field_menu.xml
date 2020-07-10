@@ -1,0 +1,6 @@
+<menu id="DataFields">
+	<menu-item id="df1" label="Field 1" />
+	<menu-item id="df2" label="Field 2" />
+	<menu-item id="df3" label="Field 3" />
+	<menu-item id="df4" label="Field 4" />
+</menu>

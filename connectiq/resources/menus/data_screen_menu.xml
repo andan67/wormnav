@@ -1,0 +1,5 @@
+<menu id="DataScreens">
+	<menu-item id="ds1" label="Screen 1" />
+	<menu-item id="ds2" label="Screen 2" />
+	<menu-item id="ds3" label="Screen 3" />
+</menu>

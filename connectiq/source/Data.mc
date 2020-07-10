@@ -4,13 +4,13 @@ using Toybox.System as Sys;
 using Toybox.Lang as Lang;
 using Toybox.StringUtil;
 
-module Utils {
+module Data {
 
 	enum {
 		UNSET,
 		TIMER,
 		DISTANCE,
-		AVGERAGE_PACE,
+		AVERAGE_PACE,
 		CURRENT_HEART_RATE,
 		PACE,
 		SPEED,
@@ -20,12 +20,19 @@ module Utils {
 		LAST_LAP_SPEED,
 		LAP_DISTANCE
 	}
+	
+	var dataScreensDefault = [	
+						[TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
+						[DISTANCE,TIMER,AVERAGE_PACE]
+					  ];
+	
+	var dataScreens = dataScreensDefault;
 
 	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
 	
 	function timer() {
 		var data=Activity.getActivityInfo().timerTime;
-		return ["Timer", data!=null? Utils.msToTime(data) : null];
+		return ["Timer", data!=null? Data.msToTime(data) : null];
 	}
 	
 	function distance() {
@@ -35,12 +42,12 @@ module Utils {
 	
 	function averagePace() {
 		var data=Activity.getActivityInfo().averageSpeed;
-		return [AVG_CHAR + " Pace", data!=null?  Utils.convertSpeedToPace(data) : null];
+		return [AVG_CHAR + " Pace", data!=null?  Data.convertSpeedToPace(data) : null];
 	}
 	
 	function currentHeartRate() {
 		var data= Activity.getActivityInfo().currentHeartRate;
-		return ["Heart Rate", data!=null?  Utils.convertSpeedToPace(data) : null];
+		return ["Heart Rate", data!=null?  Data.convertSpeedToPace(data) : null];
 	}
 
 	function getDataFieldLabelValue(i) {
@@ -49,7 +56,7 @@ module Utils {
 				return timer();
 			case DISTANCE:
 				return distance();
-			case AVGERAGE_PACE:
+			case AVERAGE_PACE:
 				return averagePace();
 			case CURRENT_HEART_RATE:
 				return currentHeartRate();

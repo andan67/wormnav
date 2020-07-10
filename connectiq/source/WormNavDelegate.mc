@@ -2,8 +2,14 @@ using Toybox.WatchUi;
 using Transform;
 
 var eventText;
-var pageIndex;
 
+enum {
+	TRACK_MODE,
+	DATA_MODE
+}
+
+var mode;
+var dataPage = 0;
 
 class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
     function initialize() {
@@ -48,8 +54,17 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function onNextPage() {
         System.println("onNextPage()");
-        Transform.zoomOut();
-        WatchUi.requestUpdate();
+        switch(mode) {
+        	case TRACK_MODE:
+        		Transform.zoomOut();
+        		WatchUi.requestUpdate();
+        		break;
+        	case DATA_MODE:
+        		dataPage = (dataPage + 1) % Data.dataScreens.size();
+        		dataView.setDataFields(Data.dataScreens[dataPage]);
+        		WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+				break;
+		}
         return true;
     }
 
@@ -58,6 +73,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onPreviousPage() {
         System.println("onPreviousPage()");
+        
         Transform.zoomIn();
         WatchUi.requestUpdate();
         return true;
@@ -68,26 +84,25 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onBack() {
         System.println("onBack()");
 
-        if(pageIndex==0 && ( session != null ) ) {
+        if(mode==TRACK_MODE && ( session != null ) && Data.dataScreens.size() > 0 ) {
             System.println("session is recording");
-            System.println("page index: " + pageIndex);
 			if(dataView==null) {
-				var dataFields = [Utils.TIMER, Utils.DISTANCE, Utils.AVGERAGE_PACE, Utils.CURRENT_HEART_RATE];
-               	dataView = new WormNavDataView(dataFields);
+				//var dataFields = [Data.TIMER, Data.DISTANCE, Data.AVGERAGE_PACE, Data.CURRENT_HEART_RATE];
+               	dataView = new WormNavDataView(Data.dataScreens[dataPage]);
             }
             System.println("switch to data view");
-			pageIndex=1;
+			mode=DATA_MODE;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
-        else if(pageIndex==0) {
+        else if(mode==TRACK_MODE) {
            System.exit();
         }
-        else if(pageIndex==1) {
+        else if(mode==DATA_MODE) {
             if( session != null  &&  session.isRecording() == false ) {
                 WatchUi.pushView(new Rez.Menus.SaveMenu(), new WormNavSaveMenuDelegate(), WatchUi.SLIDE_UP);
             }
             else if(session !=null) {
-                pageIndex=0;
+                mode=TRACK_MODE;
                 WatchUi.switchToView(mainView, self, WatchUi.SLIDE_IMMEDIATE);
             }
         }
@@ -131,6 +146,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         }
 
         menu.addItem(Rez.Strings.main_menu_label_5, :delete);
+        menu.addItem(Rez.Strings.main_menu_label_6, :screens);
 
         var delegate = new WormNavMainMenuDelegate(); // a WatchUi.MenuInputDelegate
         WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
