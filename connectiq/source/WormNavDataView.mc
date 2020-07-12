@@ -9,7 +9,7 @@ class WormNavDataView extends  WatchUi.View {
     hidden var width;
     hidden var height;
     hidden var data = new [4];
-    hidden var dataFields;
+    hidden var mDataFields;
     hidden var numberDataFields = 0;
     hidden var dfLines;
     hidden var dfCenters;
@@ -24,11 +24,15 @@ class WormNavDataView extends  WatchUi.View {
     }
     
     function setDataFields(dataFields) {
-        System.println("WormNavDataView:setDataFields");
-        self.dataFields = dataFields;
-        System.println(dataFields);
-        numberDataFields = Data.min(4,dataFields.size());
-	
+        System.println("WormNavDataView:setmDataFields");
+        mDataFields = new [dataFields.size()];
+        // deep copy of data fields items (integers)
+        for(var i=0; i< mDataFields.size(); i+=1) {
+        	mDataFields[i] = dataFields[i];
+        }
+        System.println("setDataFields: " + mDataFields);
+        numberDataFields = Data.min(4,mDataFields.size());
+		
 		switch(numberDataFields) {
 			case 1:
 				font = Graphics.FONT_LARGE;
@@ -115,7 +119,7 @@ class WormNavDataView extends  WatchUi.View {
     
 		var dataLabelValue = null;
 		for(var i=0; i< numberDataFields; i+= 1) {
-			dataLabelValue = Data.getDataFieldLabelValue(dataFields[i]);
+			dataLabelValue = Data.getDataFieldLabelValue(mDataFields[i]);
 			drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
 		}
     }

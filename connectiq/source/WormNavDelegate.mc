@@ -9,6 +9,7 @@ enum {
 }
 
 var mode;
+
 var dataPage = 0;
 
 class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
@@ -60,41 +61,57 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         		WatchUi.requestUpdate();
         		break;
         	case DATA_MODE:
-        		dataPage = (dataPage + 1) % Data.dataScreens.size();
-        		dataView.setDataFields(Data.dataScreens[dataPage]);
-        		WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+        		dataPageChange(1);
 				break;
 		}
         return true;
     }
 
-
     // When a previous page behavior occurs, onPreviousPage() is called.
     // @return [Boolean] true if handled, false otherwise
     function onPreviousPage() {
         System.println("onPreviousPage()");
-        
-        Transform.zoomIn();
-        WatchUi.requestUpdate();
-        return true;
+         switch(mode) {
+        	case TRACK_MODE:
+        		Transform.zoomIn();
+        		WatchUi.requestUpdate();
+        		break;
+        	case DATA_MODE:
+        		dataPageChange(-1);
+				break;
+		}
+		return true;
     }
+    
+    
+	private function dataPageChange(n) {
+		if(Data.activeDataScreens.size() == 0) {
+        	// this might happen when data screen settings have been changed
+			onBack();
+        } else {
+			dataPage = (dataPage + n) % Data.activeDataScreens.size();
+			dataView.setDataFields(Data.activeDataScreens[dataPage]);
+			WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+		}
+		return;
+	}
 
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
         System.println("onBack()");
 
-        if(mode==TRACK_MODE && ( session != null ) && Data.dataScreens.size() > 0 ) {
+        if(mode==TRACK_MODE && ( session != null ) && Data.activeDataScreens.size() > 0 ) {
             System.println("session is recording");
 			if(dataView==null) {
 				//var dataFields = [Data.TIMER, Data.DISTANCE, Data.AVGERAGE_PACE, Data.CURRENT_HEART_RATE];
-               	dataView = new WormNavDataView(Data.dataScreens[dataPage]);
+               	dataView = new WormNavDataView(Data.activeDataScreens[dataPage]);
             }
             System.println("switch to data view");
 			mode=DATA_MODE;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
-        else if(mode==TRACK_MODE) {
+        else if(mode==TRACK_MODE && (session == null || session.isRecording() == false)) {
            System.exit();
         }
         else if(mode==DATA_MODE) {
@@ -126,30 +143,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function onMenu() {
         System.println("onMenu()");
-        var menu = new WatchUi.Menu();
-        menu.setTitle("Main Menu");
-
-        if(Transform.northHeading) {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + ": off", :north);
-        } else {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_1) + ": on", :north);
-        }
-
-        menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_2), :autolap);
-
-        menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_3), :breadCrumbs);
-
-        if(Transform.centerMap) {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + ": off", :center);
-        } else {
-            menu.addItem(WatchUi.loadResource(Rez.Strings.main_menu_label_4) + ": on", :center);
-        }
-
-        menu.addItem(Rez.Strings.main_menu_label_5, :delete);
-        menu.addItem(Rez.Strings.main_menu_label_6, :screens);
-
-        var delegate = new WormNavMainMenuDelegate(); // a WatchUi.MenuInputDelegate
-        WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
+       	var menu = new Rez.Menus.MainMenu();
+       	menu.setTitle("Main Menu");
+        WatchUi.pushView(menu, new WormNavMainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
 

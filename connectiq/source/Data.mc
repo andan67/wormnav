@@ -7,62 +7,142 @@ using Toybox.StringUtil;
 module Data {
 
 	enum {
-		UNSET,
 		TIMER,
 		DISTANCE,
-		AVERAGE_PACE,
-		CURRENT_HEART_RATE,
 		PACE,
 		SPEED,
+		AVERAGE_PACE,
+		AVERAGE_SPEED,
+		LAP_TIMER,
+		LAP_DISTANCE,
 		LAP_PACE,
 		LAP_SPEED,
 		LAST_LAP_PACE,
 		LAST_LAP_SPEED,
-		LAP_DISTANCE
+		CURRENT_HEART_RATE
 	}
+	
+	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
 	
 	var dataScreensDefault = [	
 						[TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
-						[DISTANCE,TIMER,AVERAGE_PACE]
+						[DISTANCE,TIMER,AVERAGE_PACE],
+						[]
 					  ];
+					  
+	const dataFieldValues = [
+		TIMER,
+		DISTANCE,
+		PACE,
+		SPEED,
+		AVERAGE_PACE,
+		AVERAGE_SPEED,
+		LAP_TIMER,
+		LAP_DISTANCE,
+		LAP_PACE,
+		LAP_SPEED,
+		LAST_LAP_PACE,
+		LAST_LAP_SPEED,
+		CURRENT_HEART_RATE];
+		
+	const dataFieldMenuLabels = [
+		"Timer",
+		"Dist.",
+		"Pace",
+		"Speed",
+		"Avg\nPace",
+		"Avg\nSpeed",
+		"Lap\nTimer",
+		"Lap\nDist.",
+		"Lap\nPace",
+		"Lap\nSpeed",
+		"Last\nLap\nPace",
+		"Last\nLap\nSpeed",
+		"Heart\nRate"];
+			
+	var dataFieldLabels = [
+		"Timer",
+		"Distance",
+		"Pace",
+		"Speed",
+		AVG_CHAR + " Pace",
+		AVG_CHAR + " Speed",
+		"Lap Timer",
+		"Lap Distance",
+		"Lap Pace",
+		"Lap Speed",
+		"Last lap Pace",
+		"Last lap Speed",
+		"Heart Rate"];
 	
-	var dataScreens = dataScreensDefault;
-
-	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
+ 	var dataScreens = dataScreensDefault;
+	var activeDataScreens = [];
+	
+	function setDataScreens(pDataScreens) {
+		dataScreens = pDataScreens;
+		determineActiveDataScreens();
+	}
+	
+	function getDataScreens() {
+		return dataScreens;
+	}
+	
+	function setDataScreen(i, dataScreen) {
+		if(i < dataScreens.size()) {
+			dataScreens[i] = dataScreen;
+			determineActiveDataScreens();
+		}
+	}
+	
+	function determineActiveDataScreens() {
+		activeDataScreens = [];
+		for(var i=0; i < dataScreens.size(); i+=1) {
+			if(dataScreens[i]!= null && dataScreens[i].size() > 0) {
+				activeDataScreens.add(dataScreens[i]);
+			}
+		}
+		Sys.println("determineActiveDataScreens: " + activeDataScreens);
+	}
 	
 	function timer() {
 		var data=Activity.getActivityInfo().timerTime;
-		return ["Timer", data!=null? Data.msToTime(data) : null];
+		return data!=null? Data.msToTime(data) : null;
 	}
 	
 	function distance() {
 		var data=Activity.getActivityInfo().elapsedDistance;
-		return ["Distance", data!=null? data.format("%.2f") : null];
+		return data!=null? data.format("%.2f") : null;
 	}
 	
 	function averagePace() {
 		var data=Activity.getActivityInfo().averageSpeed;
-		return [AVG_CHAR + " Pace", data!=null?  Data.convertSpeedToPace(data) : null];
+		return data!=null?  Data.convertSpeedToPace(data) : null;
 	}
 	
 	function currentHeartRate() {
 		var data= Activity.getActivityInfo().currentHeartRate;
-		return ["Heart Rate", data!=null?  Data.convertSpeedToPace(data) : null];
+		return data!=null?  Data.convertSpeedToPace(data) : null;
 	}
 
 	function getDataFieldLabelValue(i) {
+		var dataValue = null;
 		switch(i) {
 			case TIMER:
-				return timer();
+				dataValue = timer();
+				break;
 			case DISTANCE:
-				return distance();
+				dataValue = distance();
+				break;
 			case AVERAGE_PACE:
-				return averagePace();
+				dataValue = averagePace();
+				break;
 			case CURRENT_HEART_RATE:
-				return currentHeartRate();
+				dataValue = currentHeartRate();
+				break;
 			default:
-				return [null,null];
+				break;
 		}
+		return [dataFieldLabels[i], dataValue];
 	}
 
     function msToTime(ms) {

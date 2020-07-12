@@ -57,7 +57,13 @@ class WormNavApp extends Application.AppBase {
         if(Application.getApp().getProperty("breadCrumbDist")!=null) {
             Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
-
+        
+        if(Application.getApp().getProperty("dataScreens")!=null) {
+            Data.setDataScreens(Application.getApp().getProperty("dataScreens"));
+        } else {
+        	Data.setDataScreens(Data.dataScreensDefault);
+        }
+        
 
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
