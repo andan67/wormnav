@@ -15,6 +15,7 @@ module Trace {
     var lon_last_pos;
 
     var lapTime = 0;
+    var lapDistance = 0;
     var elapsedlapTimeP = 0;
     var elapsedLapDistanceP = 0.0;
     var elapsedlapTime = 0;
@@ -24,6 +25,7 @@ module Trace {
     var lapCounter = 0;
     var autolapDistance = 1000;
     var lapPace = "";
+    var isAutoLapActive = false;
 
     function reset() {
         pos_nelements = 0;
@@ -66,7 +68,7 @@ module Trace {
     function isAutolap() {
         var isLap = false;
         if(autolapDistance > 0 && $.session!=null && session.isRecording() && Activity.getActivityInfo()!=null) {
-
+			isAutoLapActive = true;
             var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
             var elapsedTime = Activity.getActivityInfo().elapsedTime;
             if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
@@ -74,15 +76,11 @@ module Trace {
                 elapsedLapDistance = elapsedDistance - lapInitDistance;
                 //System.println("AutoLap on Timer():" + elapsedDistance + "|" + elapsedLapDistance + "|" + lapInitDistance + "|" + autolapDistance);
 
-                var lapVel = 0;
-                if ( elapsedlapTime > 0 && elapsedLapDistance > 0 ) {
-                    lapVel = elapsedLapDistance.toDouble()/(elapsedlapTime.toDouble()/1000);
-                }
-
                 if(elapsedLapDistance > autolapDistance) {
                     lapTime = elapsedlapTimeP + (autolapDistance - elapsedLapDistanceP)/(elapsedDistance - elapsedLapDistanceP)*(elapsedTime - elapsedlapTimeP);
                     lapInitTime = lapInitTime + lapTime;
-                    lapInitDistance = lapInitDistance + autolapDistance;
+                    lapDistance = autolapDistance;
+                    lapInitDistance = lapInitDistance + lapDistance;
                     lapCounter++;
                     isLap = true;
                     session.addLap();
@@ -90,6 +88,8 @@ module Trace {
                 elapsedlapTimeP = elapsedlapTime;
                 elapsedLapDistanceP = elapsedLapDistance;
             }
+        } else {
+        	isAutoLapActive = false;
         }
         return isLap;
     }

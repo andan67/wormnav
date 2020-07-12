@@ -13,13 +13,14 @@ module Data {
 		SPEED,
 		AVERAGE_PACE,
 		AVERAGE_SPEED,
+		CURRENT_HEART_RATE,
 		LAP_TIMER,
 		LAP_DISTANCE,
 		LAP_PACE,
 		LAP_SPEED,
 		LAST_LAP_PACE,
 		LAST_LAP_SPEED,
-		CURRENT_HEART_RATE
+		LAP
 	}
 	
 	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
@@ -37,13 +38,14 @@ module Data {
 		SPEED,
 		AVERAGE_PACE,
 		AVERAGE_SPEED,
+		CURRENT_HEART_RATE,
 		LAP_TIMER,
 		LAP_DISTANCE,
 		LAP_PACE,
 		LAP_SPEED,
 		LAST_LAP_PACE,
 		LAST_LAP_SPEED,
-		CURRENT_HEART_RATE];
+		LAP];
 		
 	const dataFieldMenuLabels = [
 		"Timer",
@@ -52,13 +54,14 @@ module Data {
 		"Speed",
 		"Avg\nPace",
 		"Avg\nSpeed",
+		"Heart\nRate",
 		"Lap\nTimer",
 		"Lap\nDist.",
 		"Lap\nPace",
 		"Lap\nSpeed",
 		"Last\nLap\nPace",
 		"Last\nLap\nSpeed",
-		"Heart\nRate"];
+		"Laps"];
 			
 	var dataFieldLabels = [
 		"Timer",
@@ -67,13 +70,14 @@ module Data {
 		"Speed",
 		AVG_CHAR + " Pace",
 		AVG_CHAR + " Speed",
+		"Heart Rate",
 		"Lap Timer",
 		"Lap Distance",
 		"Lap Pace",
 		"Lap Speed",
-		"Last lap Pace",
-		"Last lap Speed",
-		"Heart Rate"];
+		"LL Pace",
+		"LL Speed",
+		"Laps"];
 	
  	var dataScreens = dataScreensDefault;
 	var activeDataScreens = [];
@@ -123,6 +127,27 @@ module Data {
 		var data= Activity.getActivityInfo().currentHeartRate;
 		return data!=null?  Data.convertSpeedToPace(data) : null;
 	}
+	
+	function lastLapPace() {
+		if(Trace.isAutoLapActive && Trace.lapTime > 0) {
+			return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime); 
+		}
+		return null;
+	}
+	
+	function lapPace() {
+		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
+			return Data.convertSpeedToPace(1000*Trace.elapsedLapDistance/Trace.elapsedlapTime); 
+		}
+		return null;
+	}
+
+	function lap() {
+		if(Trace.isAutoLapActive){
+			return Trace.lapCounter;
+		}
+		return null;
+	}
 
 	function getDataFieldLabelValue(i) {
 		var dataValue = null;
@@ -133,11 +158,41 @@ module Data {
 			case DISTANCE:
 				dataValue = distance();
 				break;
+			case PACE:
+				//dataValue = pace();
+				break;
+			case SPEED:
+				//dataValue = speed();
+				break;		
 			case AVERAGE_PACE:
 				dataValue = averagePace();
 				break;
+			case AVERAGE_SPEED:
+				//dataValue = averageSpeed();
+				break;	
 			case CURRENT_HEART_RATE:
 				dataValue = currentHeartRate();
+				break;
+			case LAP_TIMER:
+				//dataValue = lapTimer();
+				break;
+			case LAP_DISTANCE:
+				//dataValue = lapDistance();
+				break;
+			case LAP_PACE:
+				dataValue = lapPace();
+				break;
+			case LAP_SPEED:
+				//dataValue = lapSpeed();
+				break;
+			case LAST_LAP_PACE:
+				dataValue = lastLapPace();
+				break;
+			case LAST_LAP_SPEED:
+				//dataValue = lastLapSpeed();
+				break;
+			case LAP:
+				dataValue = lap();
 				break;
 			default:
 				break;

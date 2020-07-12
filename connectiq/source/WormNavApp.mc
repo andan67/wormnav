@@ -128,7 +128,7 @@ class WormNavApp extends Application.AppBase {
         }
     }
 
-     function onTimer() {
+	function onTimer() {
         if(lapViewCounter == 0 && Trace.isAutolap()) {
             lapViewCounter = 1;
         }

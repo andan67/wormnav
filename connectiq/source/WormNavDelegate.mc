@@ -90,6 +90,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 			onBack();
         } else {
 			dataPage = (dataPage + n) % Data.activeDataScreens.size();
+			if(dataPage<0) {
+				dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
+			}
 			dataView.setDataFields(Data.activeDataScreens[dataPage]);
 			WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
 		}
