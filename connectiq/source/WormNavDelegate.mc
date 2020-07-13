@@ -119,11 +119,11 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         }
         else if(mode==DATA_MODE) {
             if( session != null  &&  session.isRecording() == false ) {
-                WatchUi.pushView(new Rez.Menus.SaveMenu(), new WormNavSaveMenuDelegate(), WatchUi.SLIDE_UP);
+                WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
             }
             else if(session !=null) {
                 mode=TRACK_MODE;
-                WatchUi.switchToView(mainView, self, WatchUi.SLIDE_IMMEDIATE);
+                WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
             }
         }
         return true;
@@ -148,7 +148,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         System.println("onMenu()");
        	var menu = new Rez.Menus.MainMenu();
        	menu.setTitle("Main Menu");
-        WatchUi.pushView(menu, new WormNavMainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
 

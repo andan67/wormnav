@@ -2,7 +2,7 @@ using Toybox.WatchUi;
 using Transform;
 using Trace;
 
-class WormNavView extends WatchUi.View {
+class TrackView extends WatchUi.View {
 
     var screenShape;
 

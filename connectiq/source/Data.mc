@@ -14,6 +14,7 @@ module Data {
 		AVERAGE_PACE,
 		AVERAGE_SPEED,
 		CURRENT_HEART_RATE,
+		AVERAGE_HEART_RATE,
 		LAP_TIMER,
 		LAP_DISTANCE,
 		LAP_PACE,
@@ -27,8 +28,8 @@ module Data {
 	
 	var dataScreensDefault = [	
 						[TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
-						[DISTANCE,TIMER,AVERAGE_PACE],
-						[]
+						[LAP_DISTANCE,LAP_PACE,LAP_TIMER,TIMER,AVERAGE_PACE],
+						[SPEED,AVERAGE_SPEED,LAST_LAP_SPEED]
 					  ];
 					  
 	const dataFieldValues = [
@@ -39,6 +40,7 @@ module Data {
 		AVERAGE_PACE,
 		AVERAGE_SPEED,
 		CURRENT_HEART_RATE,
+		AVERAGE_HEART_RATE,
 		LAP_TIMER,
 		LAP_DISTANCE,
 		LAP_PACE,
@@ -55,6 +57,7 @@ module Data {
 		"Avg\nPace",
 		"Avg\nSpeed",
 		"Heart\nRate",
+		"Avg\nHeart\nRate",
 		"Lap\nTimer",
 		"Lap\nDist.",
 		"Lap\nPace",
@@ -63,7 +66,7 @@ module Data {
 		"Last\nLap\nSpeed",
 		"Laps"];
 			
-	var dataFieldLabels = [
+	const dataFieldLabels = [
 		"Timer",
 		"Distance",
 		"Pace",
@@ -71,6 +74,7 @@ module Data {
 		AVG_CHAR + " Pace",
 		AVG_CHAR + " Speed",
 		"Heart Rate",
+		AVG_CHAR + "Heart Rate",
 		"Lap Timer",
 		"Lap Distance",
 		"Lap Pace",
@@ -115,7 +119,18 @@ module Data {
 	
 	function distance() {
 		var data=Activity.getActivityInfo().elapsedDistance;
-		return data!=null? data.format("%.2f") : null;
+		Sys.println("distance: " + Activity.getActivityInfo().elapsedDistance);
+		return data!=null? (0.001*data).format("%.2f") : null;
+	}
+	
+	function pace() {
+		var data=Activity.getActivityInfo().currentSpeed;
+		return data!=null? Data.convertSpeedToPace(data) : null;
+	}
+	
+	function speed() {
+		var data=Activity.getActivityInfo().currentSpeed;
+		return data!=null? (3.6*data).format("%.2f") : null;
 	}
 	
 	function averagePace() {
@@ -123,9 +138,47 @@ module Data {
 		return data!=null?  Data.convertSpeedToPace(data) : null;
 	}
 	
+	function averageSpeed() {
+		var data=Activity.getActivityInfo().averageSpeed;
+		return data!=null?  (3.6*data).format("%.2f") : null;
+	}
+	
 	function currentHeartRate() {
 		var data= Activity.getActivityInfo().currentHeartRate;
-		return data!=null?  Data.convertSpeedToPace(data) : null;
+		return data!=null?  data : null;
+	}
+	
+	function averageHeartRate() {
+		var data= Activity.getActivityInfo().averageHeartRate;
+		return data!=null?  data : null;
+	}
+	
+	function lapTimer() {
+		if(Trace.isAutoLapActive) {
+			return Data.msToTime(Trace.elapsedlapTime.toLong()); 
+		}
+		return null;
+	}
+
+	function lapDistance() {
+		if(Trace.isAutoLapActive) {
+			return (0.001*Data.Trace.elapsedLapDistance).format("%.2f") ; 
+		}
+		return null;
+	}
+
+	function lapPace() {
+		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
+			return Data.convertSpeedToPace(1000*Trace.elapsedLapDistance/Trace.elapsedlapTime); 
+		}
+		return null;
+	}
+	
+	function lapSpeed() {
+		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
+			return (3600*Trace.elapsedLapDistance/Trace.elapsedlapTime).format("%.2f"); 
+		}
+		return null;
 	}
 	
 	function lastLapPace() {
@@ -135,9 +188,9 @@ module Data {
 		return null;
 	}
 	
-	function lapPace() {
-		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
-			return Data.convertSpeedToPace(1000*Trace.elapsedLapDistance/Trace.elapsedlapTime); 
+	function lastLapSpeed() {
+		if(Trace.isAutoLapActive && Trace.lapTime > 0) {
+			return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f"); 
 		}
 		return null;
 	}
@@ -148,6 +201,7 @@ module Data {
 		}
 		return null;
 	}
+	
 
 	function getDataFieldLabelValue(i) {
 		var dataValue = null;
@@ -159,37 +213,40 @@ module Data {
 				dataValue = distance();
 				break;
 			case PACE:
-				//dataValue = pace();
+				dataValue = pace();
 				break;
 			case SPEED:
-				//dataValue = speed();
+				dataValue = speed();
 				break;		
 			case AVERAGE_PACE:
 				dataValue = averagePace();
 				break;
 			case AVERAGE_SPEED:
-				//dataValue = averageSpeed();
+				dataValue = averageSpeed();
 				break;	
 			case CURRENT_HEART_RATE:
 				dataValue = currentHeartRate();
 				break;
+			case AVERAGE_HEART_RATE:
+				dataValue = averageHeartRate();
+				break;	
 			case LAP_TIMER:
-				//dataValue = lapTimer();
+				dataValue = lapTimer();
 				break;
 			case LAP_DISTANCE:
-				//dataValue = lapDistance();
+				dataValue = lapDistance();
 				break;
 			case LAP_PACE:
 				dataValue = lapPace();
 				break;
 			case LAP_SPEED:
-				//dataValue = lapSpeed();
+				dataValue = lapSpeed();
 				break;
 			case LAST_LAP_PACE:
 				dataValue = lastLapPace();
 				break;
 			case LAST_LAP_SPEED:
-				//dataValue = lastLapSpeed();
+				dataValue = lastLapSpeed();
 				break;
 			case LAP:
 				dataValue = lap();

@@ -2,7 +2,7 @@ using Toybox.WatchUi;
 using Toybox.System;
 using Trace;
 
-class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
+class MainMenuDelegate extends WatchUi.MenuInputDelegate {
 
     function initialize() {
         MenuInputDelegate.initialize();
@@ -26,21 +26,21 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
             	}
             	return true;
         	case :north:
-        		defaultValue = Application.getApp().getProperty("northHeading");
+        		defaultValue = Transform.northHeading;
      			factory =  new GenericListItemFactory(
      				[true,false],["North\nup","Move-\nment"],{:font => Graphics.FONT_MEDIUM});
      			picker = new GenericListItemPicker("Map orientation", [factory], [defaultValue], null);	
         		WatchUi.pushView(picker, new MapOrientationPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
             	return true;
      		case :center:
-     			defaultValue = Application.getApp().getProperty("centerMap");
+     			defaultValue = Transform.centerMap;
      			factory =  new GenericListItemFactory(
      				[true,false],["on","off"],{:font => Graphics.FONT_LARGE});
      			picker = new GenericListItemPicker("Center map", [factory], [defaultValue], null);	
         		WatchUi.pushView(picker, new CenterMapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
             	return true;
             case :autolap:
- 				defaultValue = Application.getApp().getProperty("autolapDistance");
+ 				defaultValue = Trace.autolapDistance;
  				factory = new GenericListItemFactory(
 					[0,100,200,400,500,1000,2000,5000],
  					["off","100m","200m","400m","500m","1km","2km","5km"],
@@ -49,7 +49,7 @@ class WormNavMainMenuDelegate extends WatchUi.MenuInputDelegate {
  				WatchUi.pushView(picker, new AutoLapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
             	return true;
             case :breadCrumbs:
-				defaultValue = Application.getApp().getProperty("breadCrumbDist");
+				defaultValue = Trace.breadCrumbDist;
 				factory = new GenericListItemFactory(
 					[0,100,200,400,500,1000,2000,5000],
  					["off","100m","200m","400m","500m","1km","2km","5km"],

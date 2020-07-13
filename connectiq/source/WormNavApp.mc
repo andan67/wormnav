@@ -9,7 +9,7 @@ var messageReceived = false;
 var mailMethod;
 var phoneMethod;
 var crashOnMessage = false;
-var mainView;
+var trackView;
 var dataView;
 var lapView;
 var viewDelegate;
@@ -79,9 +79,9 @@ class WormNavApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        mainView = new WormNavView();
+        trackView = new TrackView();
         if(track!= null) {
-             mainView.isNewTrack=true;
+             trackView.isNewTrack=true;
         }
         viewDelegate = new WormNavDelegate();
         phoneMethod = method(:onPhone);
@@ -90,7 +90,7 @@ class WormNavApp extends Application.AppBase {
         } else {
             Communications.setMailboxListener(mailMethod);
         }
-        return [mainView, viewDelegate];
+        return [trackView, viewDelegate];
     }
 
     function onPhone(msg) {
@@ -108,7 +108,7 @@ class WormNavApp extends Application.AppBase {
         track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
-            $.mainView.isNewTrack=true;
+            $.trackView.isNewTrack=true;
             WatchUi.requestUpdate();
         }
         catch( ex ) {
