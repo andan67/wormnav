@@ -20,10 +20,9 @@ It consists of two apps:
 - Standalone navigation along selected track using Garmin device
 - Configurable auto lap and bread crumb navigation
 - Map zoom in/out and center
-- Show activity data
+- Show activity data on configurable data screens
        
  
 **Limitations**
 - The ConnectIQ app currently only runs on the Garmin devices Forerunner 230/235 and Vivoactive 3.
 - For performance and memory reasons, the number of track/way points used for the navigation on the Garmin device is limited. Thus it might be necessary to reduce the number of points of existing tracks or routes by the 'optimize' feature of the companion app.
-- Only one data page with four fixed fields

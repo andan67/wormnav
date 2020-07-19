@@ -136,6 +136,7 @@ Of course, other accessible locations can also be used.
 - Start/stop/save activity
 - Configurable auto lap
 - Configurable 'bread crumbs' (i.e. trace)
+- Configurable data screens
 - Zoom in/out of map with showing scale
 - Show position or track in view center
 - Fixed north or heads-up map orientation
@@ -146,7 +147,7 @@ Of course, other accessible locations can also be used.
 Vivoactive has a touch screen. All operations perform on touch screen rather then button.
 - tap: start/pause activity
 - long tap: menu
-- swipe up/down: zoom out/in
+- swipe up/down: zoom out/in or previous/next data screen
 - swipe right: 
   - switch data fields and map view (when activity started)
   - Resume, save or discard activity (when activity paused)
@@ -162,9 +163,10 @@ Vivoactive has a touch screen. All operations perform on touch screen rather the
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
 Available menu items:
-- Map orientation (north or heads-up)
-- Auto lap distance (0 means off)
-- Bread crumbs distance (0 means off)
+- Map orientation
+- Auto lap distance
+- Bread crumbs distance
+- Data screens
 - Track center view on/off
 - Delete track
 
@@ -205,14 +207,14 @@ Heads-up view of map/track
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Map view (track centered)
+##### Track view (track centered)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_centered_2.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Show track and current position with center of track as view center
+Shows track and current position with center of track as view center
 - North is always in up-direction
 - Useful for getting an overview of current position in relation to the track
 - Zoom in/out possible
@@ -221,18 +223,19 @@ Show track and current position with center of track as view center
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Data page
+##### Data screen
 <div style="float: left; width: 50%">
 <img src="images/garmin_data_page_2.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Data page with 4 fixed data fields
-- Elapsed time
-- Elapsed distance in km
-- Average pace in min/km
-- Heart rate (if sensor exists and activated)
+Maximum number of three data screens can be configured with up to 4 data fields:
+- Time: total/lap/last lap time in hh:mm:ss
+- Distance: total/lap/last lap distance in km
+- Pace: current/average/lap/last lap pace in mm:ss/km
+- Speed: current/average/lap/last lap speed in km/h  
+- Heart rate: current/average heart rate in bpm (if sensor exists and activated)
 
 </div>
 {::options parse_block_html="true" /}
