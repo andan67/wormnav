@@ -28,8 +28,8 @@ module Data {
 	
 	var dataScreensDefault = [	
 						[TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
-						[LAP_DISTANCE,LAP_PACE,LAP_TIMER,TIMER,AVERAGE_PACE],
-						[SPEED,AVERAGE_SPEED,LAST_LAP_SPEED]
+						[LAP_TIMER,LAP_DISTANCE,LAP_PACE,LAP],
+						[SPEED,AVERAGE_SPEED,LAST_LAP_SPEED,LAP_DISTANCE]
 					  ];
 					  
 	const dataFieldValues = [
@@ -76,7 +76,7 @@ module Data {
 		"Heart Rate",
 		AVG_CHAR + "Heart Rate",
 		"Lap Timer",
-		"Lap Distance",
+		"Lap Dist.",
 		"Lap Pace",
 		"Lap Speed",
 		"LL Pace",
@@ -119,8 +119,7 @@ module Data {
 	
 	function distance() {
 		var data=Activity.getActivityInfo().elapsedDistance;
-		Sys.println("distance: " + Activity.getActivityInfo().elapsedDistance);
-		return data!=null? (0.001*data).format("%.2f") : null;
+		return data!=null? (0.001*data+0.0001).format("%.2f") : null;
 	}
 	
 	function pace() {
@@ -154,49 +153,49 @@ module Data {
 	}
 	
 	function lapTimer() {
-		if(Trace.isAutoLapActive) {
-			return Data.msToTime(Trace.elapsedlapTime.toLong()); 
+		if(Trace.autolapDistance > 0) {
+			return Data.msToTime(Trace.lapTime.toLong()); 
 		}
 		return null;
 	}
 
 	function lapDistance() {
-		if(Trace.isAutoLapActive) {
-			return (0.001*Data.Trace.elapsedLapDistance).format("%.2f") ; 
+		if(Trace.autolapDistance > 0) {
+			return (0.001*Data.Trace.lapDistance).format("%.2f") ; 
 		}
 		return null;
 	}
 
 	function lapPace() {
-		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
-			return Data.convertSpeedToPace(1000*Trace.elapsedLapDistance/Trace.elapsedlapTime); 
-		}
-		return null;
-	}
-	
-	function lapSpeed() {
-		if(Trace.isAutoLapActive && Trace.elapsedlapTime > 0) {
-			return (3600*Trace.elapsedLapDistance/Trace.elapsedlapTime).format("%.2f"); 
-		}
-		return null;
-	}
-	
-	function lastLapPace() {
-		if(Trace.isAutoLapActive && Trace.lapTime > 0) {
+		if(Trace.autolapDistance > 0 && Trace.lapTime > 0) {
 			return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime); 
 		}
 		return null;
 	}
 	
-	function lastLapSpeed() {
-		if(Trace.isAutoLapActive && Trace.lapTime > 0) {
+	function lapSpeed() {
+		if(Trace.autolapDistance > 0  && Trace.lapTime > 0) {
 			return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f"); 
+		}
+		return null;
+	}
+	
+	function lastLapPace() {
+		if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
+			return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP); 
+		}
+		return null;
+	}
+	
+	function lastLapSpeed() {
+		if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
+			return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f"); 
 		}
 		return null;
 	}
 
 	function lap() {
-		if(Trace.isAutoLapActive){
+		if(Trace.autolapDistance > 0) {
 			return Trace.lapCounter;
 		}
 		return null;

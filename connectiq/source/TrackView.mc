@@ -5,15 +5,14 @@ using Trace;
 class TrackView extends WatchUi.View {
 
     var screenShape;
-
     var cursorSizePixel;
-
     var posCursor;
-
     var isNewTrack=false;
-
     var activity_values;
-
+	var fontsize = Graphics.FONT_MEDIUM;
+	var topPadding = 0.0;
+	var bottomPadding = 0.0;
+	
     function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
@@ -40,11 +39,14 @@ class TrackView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
-        dc.drawLine(Transform.scale_x1,Transform.scale_y1,Transform.scale_x1,Transform.scale_y2);
-        dc.drawLine(Transform.scale_x1,Transform.scale_y2,Transform.scale_x2,Transform.scale_y2);
-        dc.drawLine(Transform.scale_x2,Transform.scale_y2,Transform.scale_x2,Transform.scale_y1);
-        dc.drawText(Transform.pixelWidth2, Transform.scale_y2-dc.getFontHeight( Graphics.FONT_MEDIUM ),
-            Graphics.FONT_MEDIUM , Transform.formatScale(Transform.refScale), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawLine(Transform.scale_x1,Transform.scale_y1 - bottomPadding,
+        			Transform.scale_x1,Transform.scale_y2 - bottomPadding);
+        dc.drawLine(Transform.scale_x1,Transform.scale_y2 - bottomPadding,
+        			Transform.scale_x2,Transform.scale_y2 - bottomPadding);
+        dc.drawLine(Transform.scale_x2,Transform.scale_y2 - bottomPadding,
+        			Transform.scale_x2,Transform.scale_y1 - bottomPadding);
+        dc.drawText(Transform.pixelWidth2, Transform.scale_y2-dc.getFontHeight(fontsize) - bottomPadding,
+            fontsize , Transform.formatScale(Transform.refScale), Graphics.TEXT_JUSTIFY_CENTER);
 
     }
 
@@ -53,30 +55,12 @@ class TrackView extends WatchUi.View {
         var data;
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            if( Activity.getActivityInfo().elapsedDistance!= null) {
-               data = Activity.getActivityInfo().elapsedDistance/1000;
-               if(data == null) {
-                   activity_values[0] = "--";
-               }
-               else {
-                    activity_values[0] = "Dist.: " + data.format("%.2f");
-               }
-
-            }
-            if(Activity.getActivityInfo().elapsedTime!=null) {
-               data = Activity.getActivityInfo().timerTime;
-                if(data == null) {
-                    activity_values[1] = "--";
-                }
-                else {
-                    //activity_values[1] = "T: " + Data.printTime(data);
-                     activity_values[1] = "Time: " + Data.msToTime(data);
-                }
-            }
+        	activity_values[0] = "Dist.: " + Data.distance();
+        	activity_values[1] = "Time: " + Data.timer();          
         }
-        var y = 0.5*dc.getFontAscent(Graphics.FONT_MEDIUM);
-        dc.drawText(Transform.pixelWidth2, y, Graphics.FONT_MEDIUM , activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(Transform.pixelWidth2, 3*y, Graphics.FONT_MEDIUM , activity_values[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        var y = 0.5*dc.getFontAscent(fontsize);
+        dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(Transform.pixelWidth2, topPadding + 3*y, fontsize, activity_values[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
 
@@ -176,15 +160,15 @@ class TrackView extends WatchUi.View {
         }
 
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-        var points = [[Transform.compass_x + dx1, Transform.compass_y + dy1],
-                      [Transform.compass_x - dx2, Transform.compass_y - dy2],
-                      [Transform.compass_x + dx3, Transform.compass_y + dy3]];
+        var points = [[Transform.compass_x + dx1, Transform.compass_y + dy1 - bottomPadding],
+                      [Transform.compass_x - dx2, Transform.compass_y - dy2 - bottomPadding],
+                      [Transform.compass_x + dx3, Transform.compass_y + dy3 - bottomPadding]];
         dc.fillPolygon(points);
 
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        points = [[Transform.compass_x + dx1, Transform.compass_y + dy1],
-                  [Transform.compass_x + dx2, Transform.compass_y + dy2],
-                  [Transform.compass_x + dx3, Transform.compass_y + dy3]];
+        points = [[Transform.compass_x + dx1, Transform.compass_y + dy1 - bottomPadding],
+                  [Transform.compass_x + dx2, Transform.compass_y + dy2 - bottomPadding],
+                  [Transform.compass_x + dx3, Transform.compass_y + dy3 - bottomPadding]];
         dc.fillPolygon(points);
 
         if(Trace.breadCrumbDist > 0) {
@@ -194,6 +178,9 @@ class TrackView extends WatchUi.View {
 
     function initialize() {
         System.println("initialize()");
+        if($.device.equals("vivoactive3")) {
+        	fontsize=Graphics.FONT_XTINY;
+        }
         View.initialize();
         Trace.reset();
         activity_values = new[2];
@@ -202,17 +189,21 @@ class TrackView extends WatchUi.View {
 
     // Load your resources here
     function onLayout(dc) {
-        System.println("onLayout(dc)");
+        //System.println("onLayout(dc)");
         screenShape = System.getDeviceSettings().screenShape;
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
+        if($.device.equals("vivoactive3")) {
+        	topPadding=0.5*dc.getFontAscent(fontsize);
+        	bottomPadding=0.5*dc.getFontAscent(fontsize);
+        }
     }
 
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        System.println("onShow()");
+        //System.println("onShow()");
         View.onShow();
         if(track==null) {
             Transform.setZoomLevel(5);

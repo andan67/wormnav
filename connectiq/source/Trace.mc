@@ -1,4 +1,6 @@
 using Toybox.Activity;
+using Toybox.System;
+using Toybox.Position;
 
 module Trace {
 
@@ -14,19 +16,20 @@ module Trace {
     var lat_last_pos;
     var lon_last_pos;
 
-    var lapTime = 0;
-    var lapDistance = 0;
-    var elapsedlapTimeP = 0;
-    var elapsedLapDistanceP = 0.0;
-    var elapsedlapTime = 0;
-    var elapsedLapDistance = 0.0;
+  	var time = 0;
+    var distance = 0.0;
+    var lapTime = 0.0;
+    var lapDistance = 0.0;
     var lapInitDistance = 0.0;
-    var lapInitTime = 0;
+    var lapInitTime = 0.0;
+    var lapTimeP = 0.0;
+    var lapDistanceP = 0.0;
     var lapCounter = 0;
-    var autolapDistance = 1000;
+    //var autolapDistance = 1000;
+    var autolapDistance = 200;
     var lapPace = "";
     var isAutoLapActive = false;
-
+    
     function reset() {
         pos_nelements = 0;
         pos_start_index = 0;
@@ -65,29 +68,58 @@ module Trace {
         }
     }
 
-    function isAutolap() {
-        var isLap = false;
-        if(autolapDistance > 0 && $.session!=null && session.isRecording() && Activity.getActivityInfo()!=null) {
-			isAutoLapActive = true;
-            var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
-            var elapsedTime = Activity.getActivityInfo().elapsedTime;
-            if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
-                elapsedlapTime = elapsedTime - lapInitTime;
-                elapsedLapDistance = elapsedDistance - lapInitDistance;
-                //System.println("AutoLap on Timer():" + elapsedDistance + "|" + elapsedLapDistance + "|" + lapInitDistance + "|" + autolapDistance);
+	function setAutolapDistance(distance) {
+		autolapDistance	= distance;
+		if(autolapDistance == 0) {
+			// reset autolap
+			lapTime = 0.0;
+    		lapDistance = 0.0;
+    		lapInitTime = 0.0;
+    		lapInitDistance = 0.0;
+    		lapTimeP = 0.0;
+    		lapDistanceP = 0.0;
+    		lapCounter = 0;
+		}
+		isAutolap(true);
+	}
 
-                if(elapsedLapDistance > autolapDistance) {
-                    lapTime = elapsedlapTimeP + (autolapDistance - elapsedLapDistanceP)/(elapsedDistance - elapsedLapDistanceP)*(elapsedTime - elapsedlapTimeP);
-                    lapInitTime = lapInitTime + lapTime;
-                    lapDistance = autolapDistance;
-                    lapInitDistance = lapInitDistance + lapDistance;
+    function isAutolap(setNewLap) {
+        var isLap = false;
+        if(autolapDistance > 0 && $.session!=null && $.session.isRecording() && Activity.getActivityInfo()!=null) {
+			isAutoLapActive = true;
+            var distance = Activity.getActivityInfo().elapsedDistance;
+            var time = Activity.getActivityInfo().timerTime;
+            if ( time != null && time > 0 && distance != null  && distance > 0) {
+                lapTime = time - lapInitTime;
+                lapDistance = distance - lapInitDistance;
+                if(lapDistance > autolapDistance || setNewLap ) {
+                	// adjusted lap time for lap
+                	if(!setNewLap) {
+                    	lapTime *= autolapDistance/lapDistance;
+                    	lapDistance = autolapDistance;
+                    }
+                    lapTimeP = lapTime;
+            		lapDistanceP = lapDistance;
+                    lapInitTime += lapTime;
+                    lapInitDistance += lapDistance;
                     lapCounter++;
                     isLap = true;
-                    session.addLap();
+                    session.addLap();                   
                 }
-                elapsedlapTimeP = elapsedlapTime;
-                elapsedLapDistanceP = elapsedLapDistance;
             }
+//            System.println("==========================");
+//            System.println("time=" + time);
+//            System.println("distance=" +distance);
+//            System.println("position=" + Position.getInfo().position.toGeoString(Position.GEO_DMS));
+//            System.println("setNewLap=" + setNewLap);
+//            System.println("isLap=" + isLap);
+//            System.println("lapCounter=" + lapCounter);
+//            System.println("lapTime=" +lapTime);
+//            System.println("lapDistance=" + lapDistance);
+//            System.println("lapInitTime=" +lapInitTime);
+//            System.println("lapInitDistance=" + lapInitDistance);
+//            System.println("lapTimeP=" +lapTimeP);
+//            System.println("lapDistanceP=" + lapDistanceP);
         } else {
         	isAutoLapActive = false;
         }

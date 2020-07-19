@@ -12,6 +12,10 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
     function onMenuItem(item) {
         var screen = 0;
         switch ( item ) {
+        	case :ds0:
+        		Data.dataScreens = Data.dataScreensDefault;
+        		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        		return true;
            	case :ds1:
 				screen=0;
 				break;

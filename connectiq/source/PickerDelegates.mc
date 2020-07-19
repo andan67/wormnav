@@ -12,16 +12,8 @@ class AutoLapPickerDelegate extends WatchUi.PickerDelegate {
 
     function onAccept(values) {
      	var distance = values[0];
-     	Trace.autolapDistance = distance;
+     	Trace.setAutolapDistance(distance);
      	Application.getApp().setProperty("autolapDistance",distance);
-        if(Trace.autolapDistance > 0 && $.session!=null && session.isRecording() && Activity.getActivityInfo()!=null) {
-            var elapsedDistance = Activity.getActivityInfo().elapsedDistance;
-            var elapsedTime = Activity.getActivityInfo().elapsedTime;
-            if ( elapsedTime != null && elapsedTime > 0 && elapsedDistance != null  && elapsedDistance > 0) {
-                Trace.lapInitTime = elapsedTime;
-                Trace.lapInitDistance = elapsedDistance;
-            }
-        }
     	WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }

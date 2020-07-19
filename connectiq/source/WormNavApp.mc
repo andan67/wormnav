@@ -14,15 +14,17 @@ var dataView;
 var lapView;
 var viewDelegate;
 var appTimer;
-
+var device = "generic";
 var track = null;
 var session = null;
 
-var lapViewCounter = 0;
 var vibrateData = [new Att.VibeProfile(  50, 250 )];
 
 class WormNavApp extends Application.AppBase {
 
+	private var lastPositionTime = System.getTimer();
+	var lapViewCounter = 0;
+    
     function initialize() {
         AppBase.initialize();
     }
@@ -33,7 +35,8 @@ class WormNavApp extends Application.AppBase {
 
         // start page is map
         mode=TRACK_MODE;
-
+		device = WatchUi.loadResource(Rez.Strings.device);
+		System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
 
         if(data!=null) {
@@ -120,28 +123,31 @@ class WormNavApp extends Application.AppBase {
 
     function onPosition(info) {
         //onTimer();
+       	lastPositionTime = System.getTimer();
         Transform.isTrackCentered = false;
         Transform.setPosition(info);
         Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
         if($.mode==TRACK_MODE) {
-            WatchUi.requestUpdate();
+			WatchUi.requestUpdate();
         }
     }
 
 	function onTimer() {
-        if(lapViewCounter == 0 && Trace.isAutolap()) {
+    
+        if(lapViewCounter == 0 && Trace.isAutolap(false)) {
+            // auto lap detected
             lapViewCounter = 1;
         }
 
         // in lapViewMode
         if(lapViewCounter>0) {
             if(lapView == null) {
-                lapView = new WormNavLapView();
+                lapView = new LapView();
             }
-            if($.lapViewCounter==1) {
+            if(lapViewCounter==1) {
                 WatchUi.pushView(lapView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
             }
-            if($.lapViewCounter==2) {
+            if(lapViewCounter==2) {
                 if (Attention has :vibrate) {
                     Att.vibrate( vibrateData );
                 }
@@ -151,12 +157,13 @@ class WormNavApp extends Application.AppBase {
             }
             lapViewCounter++;
 
-            if($.lapViewCounter==10) {
-                $.lapViewCounter = 0;
+            if(lapViewCounter==10) {
+                lapViewCounter = 0;
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if($.lapViewCounter == 0 && $.mode==DATA_MODE) {
+        else if(lapViewCounter == 0 && 
+        		($.mode==DATA_MODE || (System.getTimer()-lastPositionTime > 2000) )) {
             WatchUi.requestUpdate();
         }
     }

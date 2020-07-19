@@ -1,5 +1,6 @@
 <strings>
     <string id="AppName">WormNav</string>
+    <string id="device">generic</string>
 
     <string id="prompt">Click the menu button</string>
 

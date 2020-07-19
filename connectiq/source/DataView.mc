@@ -4,7 +4,7 @@ using Data;
 using Trace;
 
 
-class WormNavDataView extends  WatchUi.View {
+class DataView extends  WatchUi.View {
 
     hidden var width;
     hidden var height;
@@ -18,19 +18,19 @@ class WormNavDataView extends  WatchUi.View {
     
     // Set the label of the field here
     function initialize(dataFields) {
-    	System.println("WormNavDataView:initialize");
+    	//System.println("WormNavDataView:initialize");
         View.initialize();
         setDataFields(dataFields);
     }
     
     function setDataFields(dataFields) {
-        System.println("WormNavDataView:setmDataFields");
+        //System.println("WormNavDataView:setmDataFields");
         mDataFields = new [dataFields.size()];
         // deep copy of data fields items (integers)
         for(var i=0; i< mDataFields.size(); i+=1) {
         	mDataFields[i] = dataFields[i];
         }
-        System.println("setDataFields: " + mDataFields);
+        //System.println("setDataFields: " + mDataFields);
         numberDataFields = Data.min(4,mDataFields.size());
 		
 		switch(numberDataFields) {
@@ -42,10 +42,17 @@ class WormNavDataView extends  WatchUi.View {
 				font = Graphics.FONT_LARGE;
            		fontNumber = Graphics.FONT_NUMBER_HOT;
 				break;
+			case 3:
 			case 4:
 			default:
-				font = Graphics.FONT_MEDIUM;
-           		fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+				if($.device=="vivoactive3") {
+					font = Graphics.FONT_SMALL;
+	           		fontNumber = Graphics.FONT_NUMBER_HOT;
+           		} else 
+           		{
+           			font = Graphics.FONT_MEDIUM;
+	           		fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+           		}
            		break;
 		}
 		
@@ -63,7 +70,7 @@ class WormNavDataView extends  WatchUi.View {
     	width=dc.getWidth();
         height=dc.getHeight();
         
-        System.println("onLayout: " + numberDataFields);
+        //System.println("onLayout: " + numberDataFields);
         
         if(numberDataFields==0) {
         	return;
@@ -133,14 +140,14 @@ class WormNavDataView extends  WatchUi.View {
         
         }
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         return;
     }
 }
 
 
-class WormNavLapView extends WatchUi.View {
+class LapView extends WatchUi.View {
 
     // Set the label of the field here
     function initialize() {
