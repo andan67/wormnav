@@ -9,29 +9,19 @@ class TrackView extends WatchUi.View {
     var posCursor;
     var isNewTrack=false;
     var activity_values;
-	var fontsize = Graphics.FONT_MEDIUM;
-	var topPadding = 0.0;
-	var bottomPadding = 0.0;
-	
+    var fontsize = Graphics.FONT_MEDIUM;
+    var topPadding = 0.0;
+    var bottomPadding = 0.0;
+    
     function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
 
-        if(Transform.northHeading || Transform.centerMap) {
-            for(var i=0; i < Trace.pos_nelements; i+=1) {
-                var j = (Trace.pos_start_index +i) % Trace.BUFFER_SIZE;
-                xy_pos = Transform.xy_2_screen(Trace.x_array[j], Trace.y_array[j]);
-                dc.fillCircle(xy_pos[0],xy_pos[1] , 3);
-            }
+        for(var i=0; i < Trace.pos_nelements; i+=1) {
+            var j = (Trace.pos_start_index +i) % Trace.BUFFER_SIZE;
+            xy_pos = Transform.xy_2_screen(Trace.x_array[j], Trace.y_array[j]);
+            dc.fillCircle(xy_pos[0],xy_pos[1] , 3);
         }
-        else {
-           for(var i=0; i < Trace.pos_nelements; i+=1) {
-                var j = (Trace.pos_start_index +i) % Trace.BUFFER_SIZE;
-                xy_pos = Transform.xy_2_rot_screen(Trace.x_array[j], Trace.y_array[j]);
-                dc.fillCircle(xy_pos[0],xy_pos[1] , 3);
-           }
-        }
-
     }
 
 
@@ -40,11 +30,11 @@ class TrackView extends WatchUi.View {
         dc.setPenWidth(2);
 
         dc.drawLine(Transform.scale_x1,Transform.scale_y1 - bottomPadding,
-        			Transform.scale_x1,Transform.scale_y2 - bottomPadding);
+                    Transform.scale_x1,Transform.scale_y2 - bottomPadding);
         dc.drawLine(Transform.scale_x1,Transform.scale_y2 - bottomPadding,
-        			Transform.scale_x2,Transform.scale_y2 - bottomPadding);
+                    Transform.scale_x2,Transform.scale_y2 - bottomPadding);
         dc.drawLine(Transform.scale_x2,Transform.scale_y2 - bottomPadding,
-        			Transform.scale_x2,Transform.scale_y1 - bottomPadding);
+                    Transform.scale_x2,Transform.scale_y1 - bottomPadding);
         dc.drawText(Transform.pixelWidth2, Transform.scale_y2-dc.getFontHeight(fontsize) - bottomPadding,
             fontsize , Transform.formatScale(Transform.refScale), Graphics.TEXT_JUSTIFY_CENTER);
 
@@ -55,8 +45,8 @@ class TrackView extends WatchUi.View {
         var data;
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-        	activity_values[0] = "Dist.: " + Data.distance();
-        	activity_values[1] = "Time: " + Data.timer();          
+            activity_values[0] = "Dist.: " + Data.distance();
+            activity_values[1] = "Time: " + Data.timer();          
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -68,35 +58,17 @@ class TrackView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
-
-        var xy_pos1;
-        var xy_pos2;
-
         var xya = $.track.xyArray;
 
-        var step = 2;
+        // set pos_2 to first position on start
+        var xy_pos1;
+        var xy_pos2 = Transform.xy_2_screen(xya[0],xya[1]);
 
-       var i=0;
-       if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
-           xy_pos1 = Transform.xy_2_screen(xya[i],xya[i+1]);
-           xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
-       } else {
-           xy_pos1 = Transform.xy_2_rot_screen(xya[i],xya[i+1]);
-           xy_pos2 = Transform.xy_2_rot_screen(xya[i+step],xya[i+step+1]);
-       }
-       dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
-
-       for(i = step; i < xya.size()-step-1; i+=step ) {
+        for(var i = 0; i < xya.size()-3; i+=2 ) {
             xy_pos1 = xy_pos2;
-            if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
-                xy_pos2 = Transform.xy_2_screen(xya[i+step],xya[i+step+1]);
-            }
-            else {
-                xy_pos2 = Transform.xy_2_rot_screen(xya[i+step],xya[i+step+1]);
-            }
+            xy_pos2 = Transform.xy_2_screen(xya[i+2],xya[i+3]);
             dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
         }
-
     }
 
     function draw_trace(dc) {
@@ -135,21 +107,30 @@ class TrackView extends WatchUi.View {
         //dc.drawCircle(xy_pos[0], xy_pos[1], 3);
 
         dc.setPenWidth(3);
-        dc.drawLine(xy_pos[0]+dx1, xy_pos[1]+dy1, xy_pos[0]+dx2, xy_pos[1]+dy2);
-        dc.drawLine(xy_pos[0]+dx2, xy_pos[1]+dy2, xy_pos[0]-dx1, xy_pos[1]-dy1);
-        dc.drawLine(xy_pos[0]-dx1, xy_pos[1]-dy1, xy_pos[0]+dx3, xy_pos[1]+dy3);
-        dc.drawLine(xy_pos[0]+dx3, xy_pos[1]+dy3, xy_pos[0]+dx1, xy_pos[1]+dy1);
+        var x1 = xy_pos[0]+dx1;
+        var y1 = xy_pos[1]+dy1;
+        var x2 = xy_pos[0]+dx2;
+        var y2 = xy_pos[1]+dy2;
+        var x3 = xy_pos[0]-dx1;
+        var y3 = xy_pos[1]-dy1;
+        var x4 = xy_pos[0]+dx3;
+        var y4 = xy_pos[1]+dy3;
+        
+        dc.drawLine(x1,y1,x2,y2);
+        dc.drawLine(x2,y2,x3,y3);
+        dc.drawLine(x3,y3,x4,y4);
+        dc.drawLine(x4,y4,x1,y1);
 
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.fillCircle(Transform.compass_x,Transform.compass_y,Transform.compass_size);
 
         if(Transform.northHeading || Transform.centerMap) {
             dx1 = - 0.5*Transform.compass_size;
-            dx2 = 0;
+            dx2 = 0.0;
             dx3 = -dx1;
-            dy1 = 0;
+            dy1 = 0.0;
             dy2 = - Transform.compass_size;
-            dy3 = 0;
+            dy3 = 0.0;
         } else {
             dx1 = -0.5*Transform.compass_size*Transform.cos_heading_smooth;
             dy1 = +0.5*Transform.compass_size*Transform.sin_heading_smooth;
@@ -179,7 +160,7 @@ class TrackView extends WatchUi.View {
     function initialize() {
         System.println("initialize()");
         if($.device.equals("vivoactive3")) {
-        	fontsize=Graphics.FONT_XTINY;
+            fontsize=Graphics.FONT_XTINY;
         }
         View.initialize();
         Trace.reset();
@@ -194,8 +175,8 @@ class TrackView extends WatchUi.View {
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
         if($.device.equals("vivoactive3")) {
-        	topPadding=0.5*dc.getFontAscent(fontsize);
-        	bottomPadding=0.5*dc.getFontAscent(fontsize);
+            topPadding=0.5*dc.getFontAscent(fontsize);
+            bottomPadding=0.5*dc.getFontAscent(fontsize);
         }
     }
 

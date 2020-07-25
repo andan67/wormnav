@@ -1,1 +1,5 @@
 project.manifest = manifest.xml
+vivoactive3.resourcePath = $(vivoactive3.resourcePath);resources-vivoactive3
+vivoactive3d.resourcePath = $(vivoactive3d.resourcePath);resources-vivoactive3
+vivoactive3m.resourcePath = $(vivoactive3m.resourcePath);resources-vivoactive3
+vivoactive3mlte.resourcePath = $(vivoactive3mlte.resourcePath);resources-vivoactive3

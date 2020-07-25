@@ -6,255 +6,255 @@ using Toybox.StringUtil;
 
 module Data {
 
-	enum {
-		TIMER,
-		DISTANCE,
-		PACE,
-		SPEED,
-		AVERAGE_PACE,
-		AVERAGE_SPEED,
-		CURRENT_HEART_RATE,
-		AVERAGE_HEART_RATE,
-		LAP_TIMER,
-		LAP_DISTANCE,
-		LAP_PACE,
-		LAP_SPEED,
-		LAST_LAP_PACE,
-		LAST_LAP_SPEED,
-		LAP
-	}
-	
-	const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
-	
-	var dataScreensDefault = [	
-						[TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
-						[LAP_TIMER,LAP_DISTANCE,LAP_PACE,LAP],
-						[SPEED,AVERAGE_SPEED,LAST_LAP_SPEED,LAP_DISTANCE]
-					  ];
-					  
-	const dataFieldValues = [
-		TIMER,
-		DISTANCE,
-		PACE,
-		SPEED,
-		AVERAGE_PACE,
-		AVERAGE_SPEED,
-		CURRENT_HEART_RATE,
-		AVERAGE_HEART_RATE,
-		LAP_TIMER,
-		LAP_DISTANCE,
-		LAP_PACE,
-		LAP_SPEED,
-		LAST_LAP_PACE,
-		LAST_LAP_SPEED,
-		LAP];
-		
-	const dataFieldMenuLabels = [
-		"Timer",
-		"Dist.",
-		"Pace",
-		"Speed",
-		"Avg\nPace",
-		"Avg\nSpeed",
-		"Heart\nRate",
-		"Avg\nHeart\nRate",
-		"Lap\nTimer",
-		"Lap\nDist.",
-		"Lap\nPace",
-		"Lap\nSpeed",
-		"Last\nLap\nPace",
-		"Last\nLap\nSpeed",
-		"Laps"];
-			
-	const dataFieldLabels = [
-		"Timer",
-		"Distance",
-		"Pace",
-		"Speed",
-		AVG_CHAR + " Pace",
-		AVG_CHAR + " Speed",
-		"Heart Rate",
-		AVG_CHAR + "Heart Rate",
-		"Lap Timer",
-		"Lap Dist.",
-		"Lap Pace",
-		"Lap Speed",
-		"LL Pace",
-		"LL Speed",
-		"Laps"];
-	
- 	var dataScreens = dataScreensDefault;
-	var activeDataScreens = [];
-	
-	function setDataScreens(pDataScreens) {
-		dataScreens = pDataScreens;
-		determineActiveDataScreens();
-	}
-	
-	function getDataScreens() {
-		return dataScreens;
-	}
-	
-	function setDataScreen(i, dataScreen) {
-		if(i < dataScreens.size()) {
-			dataScreens[i] = dataScreen;
-			determineActiveDataScreens();
-		}
-	}
-	
-	function determineActiveDataScreens() {
-		activeDataScreens = [];
-		for(var i=0; i < dataScreens.size(); i+=1) {
-			if(dataScreens[i]!= null && dataScreens[i].size() > 0) {
-				activeDataScreens.add(dataScreens[i]);
-			}
-		}
-		Sys.println("determineActiveDataScreens: " + activeDataScreens);
-	}
-	
-	function timer() {
-		var data=Activity.getActivityInfo().timerTime;
-		return data!=null? Data.msToTime(data) : null;
-	}
-	
-	function distance() {
-		var data=Activity.getActivityInfo().elapsedDistance;
-		return data!=null? (0.001*data+0.0001).format("%.2f") : null;
-	}
-	
-	function pace() {
-		var data=Activity.getActivityInfo().currentSpeed;
-		return data!=null? Data.convertSpeedToPace(data) : null;
-	}
-	
-	function speed() {
-		var data=Activity.getActivityInfo().currentSpeed;
-		return data!=null? (3.6*data).format("%.2f") : null;
-	}
-	
-	function averagePace() {
-		var data=Activity.getActivityInfo().averageSpeed;
-		return data!=null?  Data.convertSpeedToPace(data) : null;
-	}
-	
-	function averageSpeed() {
-		var data=Activity.getActivityInfo().averageSpeed;
-		return data!=null?  (3.6*data).format("%.2f") : null;
-	}
-	
-	function currentHeartRate() {
-		var data= Activity.getActivityInfo().currentHeartRate;
-		return data!=null?  data : null;
-	}
-	
-	function averageHeartRate() {
-		var data= Activity.getActivityInfo().averageHeartRate;
-		return data!=null?  data : null;
-	}
-	
-	function lapTimer() {
-		if(Trace.autolapDistance > 0) {
-			return Data.msToTime(Trace.lapTime.toLong()); 
-		}
-		return null;
-	}
+    enum {
+        TIMER,
+        DISTANCE,
+        PACE,
+        SPEED,
+        AVERAGE_PACE,
+        AVERAGE_SPEED,
+        CURRENT_HEART_RATE,
+        AVERAGE_HEART_RATE,
+        LAP_TIMER,
+        LAP_DISTANCE,
+        LAP_PACE,
+        LAP_SPEED,
+        LAST_LAP_PACE,
+        LAST_LAP_SPEED,
+        LAP
+    }
+    
+    const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
+    
+    var dataScreensDefault = [    
+                        [TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
+                        [LAP_TIMER,LAP_DISTANCE,LAP_PACE,LAP],
+                        [SPEED,AVERAGE_SPEED,LAST_LAP_SPEED,LAP_DISTANCE]
+                      ];
+                      
+    const dataFieldValues = [
+        TIMER,
+        DISTANCE,
+        PACE,
+        SPEED,
+        AVERAGE_PACE,
+        AVERAGE_SPEED,
+        CURRENT_HEART_RATE,
+        AVERAGE_HEART_RATE,
+        LAP_TIMER,
+        LAP_DISTANCE,
+        LAP_PACE,
+        LAP_SPEED,
+        LAST_LAP_PACE,
+        LAST_LAP_SPEED,
+        LAP];
+        
+    const dataFieldMenuLabels = [
+        "Timer",
+        "Dist.",
+        "Pace",
+        "Speed",
+        "Avg\nPace",
+        "Avg\nSpeed",
+        "Heart\nRate",
+        "Avg\nHeart\nRate",
+        "Lap\nTimer",
+        "Lap\nDist.",
+        "Lap\nPace",
+        "Lap\nSpeed",
+        "Last\nLap\nPace",
+        "Last\nLap\nSpeed",
+        "Laps"];
+            
+    const dataFieldLabels = [
+        "Timer",
+        "Distance",
+        "Pace",
+        "Speed",
+        AVG_CHAR + " Pace",
+        AVG_CHAR + " Speed",
+        "Heart Rate",
+        AVG_CHAR + "Heart Rate",
+        "Lap Timer",
+        "Lap Dist.",
+        "Lap Pace",
+        "Lap Speed",
+        "LL Pace",
+        "LL Speed",
+        "Laps"];
+    
+     var dataScreens = dataScreensDefault;
+    var activeDataScreens = [];
+    
+    function setDataScreens(pDataScreens) {
+        dataScreens = pDataScreens;
+        determineActiveDataScreens();
+    }
+    
+    function getDataScreens() {
+        return dataScreens;
+    }
+    
+    function setDataScreen(i, dataScreen) {
+        if(i < dataScreens.size()) {
+            dataScreens[i] = dataScreen;
+            determineActiveDataScreens();
+        }
+    }
+    
+    function determineActiveDataScreens() {
+        activeDataScreens = [];
+        for(var i=0; i < dataScreens.size(); i+=1) {
+            if(dataScreens[i]!= null && dataScreens[i].size() > 0) {
+                activeDataScreens.add(dataScreens[i]);
+            }
+        }
+        Sys.println("determineActiveDataScreens: " + activeDataScreens);
+    }
+    
+    function timer() {
+        var data=Activity.getActivityInfo().timerTime;
+        return data!=null? Data.msToTime(data) : null;
+    }
+    
+    function distance() {
+        var data=Activity.getActivityInfo().elapsedDistance;
+        return data!=null? (0.001*data+0.0001).format("%.2f") : null;
+    }
+    
+    function pace() {
+        var data=Activity.getActivityInfo().currentSpeed;
+        return data!=null? Data.convertSpeedToPace(data) : null;
+    }
+    
+    function speed() {
+        var data=Activity.getActivityInfo().currentSpeed;
+        return data!=null? (3.6*data).format("%.2f") : null;
+    }
+    
+    function averagePace() {
+        var data=Activity.getActivityInfo().averageSpeed;
+        return data!=null?  Data.convertSpeedToPace(data) : null;
+    }
+    
+    function averageSpeed() {
+        var data=Activity.getActivityInfo().averageSpeed;
+        return data!=null?  (3.6*data).format("%.2f") : null;
+    }
+    
+    function currentHeartRate() {
+        var data= Activity.getActivityInfo().currentHeartRate;
+        return data!=null?  data : null;
+    }
+    
+    function averageHeartRate() {
+        var data= Activity.getActivityInfo().averageHeartRate;
+        return data!=null?  data : null;
+    }
+    
+    function lapTimer() {
+        if(Trace.autolapDistance > 0) {
+            return Data.msToTime(Trace.lapTime.toLong()); 
+        }
+        return null;
+    }
 
-	function lapDistance() {
-		if(Trace.autolapDistance > 0) {
-			return (0.001*Data.Trace.lapDistance).format("%.2f") ; 
-		}
-		return null;
-	}
+    function lapDistance() {
+        if(Trace.autolapDistance > 0) {
+            return (0.001*Data.Trace.lapDistance).format("%.2f") ; 
+        }
+        return null;
+    }
 
-	function lapPace() {
-		if(Trace.autolapDistance > 0 && Trace.lapTime > 0) {
-			return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime); 
-		}
-		return null;
-	}
-	
-	function lapSpeed() {
-		if(Trace.autolapDistance > 0  && Trace.lapTime > 0) {
-			return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f"); 
-		}
-		return null;
-	}
-	
-	function lastLapPace() {
-		if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-			return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP); 
-		}
-		return null;
-	}
-	
-	function lastLapSpeed() {
-		if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-			return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f"); 
-		}
-		return null;
-	}
+    function lapPace() {
+        if(Trace.autolapDistance > 0 && Trace.lapTime > 0) {
+            return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime); 
+        }
+        return null;
+    }
+    
+    function lapSpeed() {
+        if(Trace.autolapDistance > 0  && Trace.lapTime > 0) {
+            return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f"); 
+        }
+        return null;
+    }
+    
+    function lastLapPace() {
+        if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
+            return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP); 
+        }
+        return null;
+    }
+    
+    function lastLapSpeed() {
+        if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
+            return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f"); 
+        }
+        return null;
+    }
 
-	function lap() {
-		if(Trace.autolapDistance > 0) {
-			return Trace.lapCounter;
-		}
-		return null;
-	}
-	
+    function lap() {
+        if(Trace.autolapDistance > 0) {
+            return Trace.lapCounter;
+        }
+        return null;
+    }
+    
 
-	function getDataFieldLabelValue(i) {
-		var dataValue = null;
-		switch(i) {
-			case TIMER:
-				dataValue = timer();
-				break;
-			case DISTANCE:
-				dataValue = distance();
-				break;
-			case PACE:
-				dataValue = pace();
-				break;
-			case SPEED:
-				dataValue = speed();
-				break;		
-			case AVERAGE_PACE:
-				dataValue = averagePace();
-				break;
-			case AVERAGE_SPEED:
-				dataValue = averageSpeed();
-				break;	
-			case CURRENT_HEART_RATE:
-				dataValue = currentHeartRate();
-				break;
-			case AVERAGE_HEART_RATE:
-				dataValue = averageHeartRate();
-				break;	
-			case LAP_TIMER:
-				dataValue = lapTimer();
-				break;
-			case LAP_DISTANCE:
-				dataValue = lapDistance();
-				break;
-			case LAP_PACE:
-				dataValue = lapPace();
-				break;
-			case LAP_SPEED:
-				dataValue = lapSpeed();
-				break;
-			case LAST_LAP_PACE:
-				dataValue = lastLapPace();
-				break;
-			case LAST_LAP_SPEED:
-				dataValue = lastLapSpeed();
-				break;
-			case LAP:
-				dataValue = lap();
-				break;
-			default:
-				break;
-		}
-		return [dataFieldLabels[i], dataValue];
-	}
+    function getDataFieldLabelValue(i) {
+        var dataValue = null;
+        switch(i) {
+            case TIMER:
+                dataValue = timer();
+                break;
+            case DISTANCE:
+                dataValue = distance();
+                break;
+            case PACE:
+                dataValue = pace();
+                break;
+            case SPEED:
+                dataValue = speed();
+                break;        
+            case AVERAGE_PACE:
+                dataValue = averagePace();
+                break;
+            case AVERAGE_SPEED:
+                dataValue = averageSpeed();
+                break;    
+            case CURRENT_HEART_RATE:
+                dataValue = currentHeartRate();
+                break;
+            case AVERAGE_HEART_RATE:
+                dataValue = averageHeartRate();
+                break;    
+            case LAP_TIMER:
+                dataValue = lapTimer();
+                break;
+            case LAP_DISTANCE:
+                dataValue = lapDistance();
+                break;
+            case LAP_PACE:
+                dataValue = lapPace();
+                break;
+            case LAP_SPEED:
+                dataValue = lapSpeed();
+                break;
+            case LAST_LAP_PACE:
+                dataValue = lastLapPace();
+                break;
+            case LAST_LAP_SPEED:
+                dataValue = lastLapSpeed();
+                break;
+            case LAP:
+                dataValue = lap();
+                break;
+            default:
+                break;
+        }
+        return [dataFieldLabels[i], dataValue];
+    }
 
     function msToTime(ms) {
         var seconds = (ms / 1000) % 60;
@@ -392,18 +392,18 @@ module Data {
     }
     
     function max(x,y) {
-    	if(x>=y) {
-    		return x;
-    	} else {
-    		return y;
-    	} 
+        if(x>=y) {
+            return x;
+        } else {
+            return y;
+        } 
     }
     
      function min(x,y) {
-    	if(x<y) {
-    		return x;
-    	} else {
-    		return y;
-    	} 
+        if(x<y) {
+            return x;
+        } else {
+            return y;
+        } 
     }
 }

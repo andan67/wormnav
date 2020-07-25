@@ -22,8 +22,8 @@ var vibrateData = [new Att.VibeProfile(  50, 250 )];
 
 class WormNavApp extends Application.AppBase {
 
-	private var lastPositionTime = System.getTimer();
-	var lapViewCounter = 0;
+    private var lastPositionTime = System.getTimer();
+    var lapViewCounter = 0;
     
     function initialize() {
         AppBase.initialize();
@@ -35,10 +35,10 @@ class WormNavApp extends Application.AppBase {
 
         // start page is map
         mode=TRACK_MODE;
-		device = WatchUi.loadResource(Rez.Strings.device);
-		System.println("Device: " + device);
+        device = WatchUi.loadResource(Rez.Strings.device);
+        System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
-
+      
         if(data!=null) {
             System.println("load data from property store");
             track = new TrackModel(data);
@@ -53,7 +53,7 @@ class WormNavApp extends Application.AppBase {
             Transform.centerMap=Application.getApp().getProperty("centerMap");
         }
 
-    	if(Application.getApp().getProperty("autolapDistance")!=null) {
+        if(Application.getApp().getProperty("autolapDistance")!=null) {
             Trace.autolapDistance = Application.getApp().getProperty("autolapDistance");
         }
 
@@ -64,7 +64,7 @@ class WormNavApp extends Application.AppBase {
         if(Application.getApp().getProperty("dataScreens")!=null) {
             Data.setDataScreens(Application.getApp().getProperty("dataScreens"));
         } else {
-        	Data.setDataScreens(Data.dataScreensDefault);
+            Data.setDataScreens(Data.dataScreensDefault);
         }
         
 
@@ -100,14 +100,6 @@ class WormNavApp extends Application.AppBase {
         System.println("onPhone(msg)");
         messageReceived = true;
         mode=TRACK_MODE;
-       	// test data field
-       	if(msg.data.size() == 5) {
-       		System.println("No data fields defined");
-       	} else {
-       		System.print("Defined data fields: ");
-       		System.println(msg.data[5]);
-       	}
-       	System.println(msg.data);
         track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
@@ -123,16 +115,14 @@ class WormNavApp extends Application.AppBase {
 
     function onPosition(info) {
         //onTimer();
-       	lastPositionTime = System.getTimer();
-        Transform.isTrackCentered = false;
-        Transform.setPosition(info);
-        Trace.new_pos(info.position.toRadians()[0],info.position.toRadians()[1]);
+           lastPositionTime = System.getTimer();
+        Trace.newLatLonPosition(info.position.toRadians()[0].toFloat(),info.position.toRadians()[1].toFloat());
         if($.mode==TRACK_MODE) {
-			WatchUi.requestUpdate();
+            WatchUi.requestUpdate();
         }
     }
 
-	function onTimer() {
+    function onTimer() {
     
         if(lapViewCounter == 0 && Trace.isAutolap(false)) {
             // auto lap detected
@@ -163,7 +153,7 @@ class WormNavApp extends Application.AppBase {
             }
         }
         else if(lapViewCounter == 0 && 
-        		($.mode==DATA_MODE || (System.getTimer()-lastPositionTime > 2000) )) {
+                ($.mode==DATA_MODE || (System.getTimer()-lastPositionTime > 2000) )) {
             WatchUi.requestUpdate();
         }
     }

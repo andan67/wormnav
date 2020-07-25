@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/android-Application.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/android-Application.iml" group="android/Application" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Karambola/android-Karambola.iml" filepath="$PROJECT_DIR$/.idea/modules/Karambola/android-Karambola.iml" group="android/Karambola" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/wormnav-2-android.iml" filepath="$PROJECT_DIR$/.idea/modules/wormnav-2-android.iml" group="android" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/wormnav-github-android.iml" filepath="$PROJECT_DIR$/.idea/modules/wormnav-github-android.iml" group="android" />
     </modules>
   </component>

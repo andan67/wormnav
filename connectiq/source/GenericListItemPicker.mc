@@ -3,21 +3,21 @@ using Toybox.Graphics;
 using Toybox.WatchUi;
 
 class GenericListItemPicker extends WatchUi.Picker {
- 	var mContext;
- 	
+     var mContext;
+     
     function initialize(title, pattern, defaultValues, context) {
-    	var defaults = null;
-    	mContext = context;
-    	if(defaultValues!=null && pattern.size()==defaultValues.size()) {
-    		defaults = new [pattern.size()];
-    		for(var i=0; i<defaults.size(); i+=1) {
-    			if(defaultValues[i]!=null && pattern[i] has :getIndex) {
-    				defaults[i] = pattern[i].getIndex(defaultValues[i]);
-    			} else {
-    				defaults[i] = null;
-    			}
-    		}
-    	}
+        var defaults = null;
+        mContext = context;
+        if(defaultValues!=null && pattern.size()==defaultValues.size()) {
+            defaults = new [pattern.size()];
+            for(var i=0; i<defaults.size(); i+=1) {
+                if(defaultValues[i]!=null && pattern[i] has :getIndex) {
+                    defaults[i] = pattern[i].getIndex(defaultValues[i]);
+                } else {
+                    defaults[i] = null;
+                }
+            }
+        }
         mTitle = new WatchUi.Text({:text=>title, :locX =>WatchUi.LAYOUT_HALIGN_CENTER, :locY=>WatchUi.LAYOUT_VALIGN_BOTTOM, :color=>Graphics.COLOR_WHITE});
 
         Picker.initialize({:title=>mTitle, :pattern=>pattern, :defaults=>defaults});
@@ -30,11 +30,11 @@ class GenericListItemPicker extends WatchUi.Picker {
     }
     
     function getContext() {
-    	return mContext;
+        return mContext;
     }
     
     function setContext(context) {
-    	mContext=context;
+        mContext=context;
     }
     
     

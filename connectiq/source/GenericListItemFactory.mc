@@ -12,25 +12,25 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
         PickerFactory.initialize();
         
         for(var i=0; i< itemValueList.size(); i+=1) {
-        	switch(itemValueList[i]) {
-        		case instanceof String:
-        		case instanceof Char:
-        		case instanceof Number:
-        		case instanceof Long:
-        		case instanceof Boolean:
-        		case instanceof Float:
-        		case instanceof Double:
-        			mItemValueList.add(itemValueList[i]);
-        			if(itemTextList!=null && itemValueList.size()==itemTextList.size() && 
-        				itemTextList[i] instanceof String) {
-        				mItemTextList.add(itemTextList[i]);
-        			} else {
-        				mItemTextList.add(itemValueList[i].toString());
-        			}
-        			break;
-        		default:
-        			break;
-        	}
+            switch(itemValueList[i]) {
+                case instanceof String:
+                case instanceof Char:
+                case instanceof Number:
+                case instanceof Long:
+                case instanceof Boolean:
+                case instanceof Float:
+                case instanceof Double:
+                    mItemValueList.add(itemValueList[i]);
+                    if(itemTextList!=null && itemValueList.size()==itemTextList.size() && 
+                        itemTextList[i] instanceof String) {
+                        mItemTextList.add(itemTextList[i]);
+                    } else {
+                        mItemTextList.add(itemValueList[i].toString());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
         
 
@@ -55,9 +55,9 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
     
     function getIndex(value) {
         for(var i=0; i < mItemValueList.size(); i +=1) {
-        	if(mItemValueList[i]==value) {
-        		return i;
-        	}
+            if(mItemValueList[i]==value) {
+                return i;
+            }
         }
         return 0;
     }

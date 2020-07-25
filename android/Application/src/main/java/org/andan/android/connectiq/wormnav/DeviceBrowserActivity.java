@@ -385,13 +385,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         dataAsList = new ArrayList();
                         for(int i=0; i< mTrackPoints.length; i++) dataAsList.add(mTrackPoints[i]);
                         message.add(dataAsList);
-                        // test adding data fields
-                        // first index is page, second is data field
-                        int[][] dataFields = {{1,2,3,4},{1,3}};
-                        dataAsList = new ArrayList();
-                        dataAsList.add(Arrays.asList(1,2,3,4));
-                        dataAsList.add(Arrays.asList(1,3));
-                        message.add(dataAsList);
 
                         Bundle messageBundle = new Bundle();
                         messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);

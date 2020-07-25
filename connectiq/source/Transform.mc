@@ -3,15 +3,15 @@ using Toybox.System;
 
 module Transform {
 
-    const EARTH_RADIUS = 6371000;
-    const PI2_3 = 0.6666667*Math.PI;
-    const ANGLE_R =0.5*Math.PI+Math.atan2(3, 2);
-    const ANGLE_L =1.5*Math.PI-Math.atan2(3, 2);
+    const EARTH_RADIUS = 6371000.0;
+    const PI = 3.1415927;
+    const PI2_3 = 0.6666667*PI;
+    const ANGLE_R =0.5*PI+Math.atan2(3.0, 2.0);
+    const ANGLE_L =1.5*PI-Math.atan2(3.0, 2.0);
 
     var refScale = 2.0;
     const SCALE_PIXEL = 0.1;
-    const DEFAULT_ZOOM_LEVEL = 5;
-
+  
     var zoomLevel;
     var scaleFactor;
 
@@ -37,7 +37,7 @@ module Transform {
     var centerMap=false;
     var sin_heading;
     var cos_heading;
-    var heading_smooth=-1;
+    var heading_smooth=-1.0;
     var cos_heading_smooth;
     var sin_heading_smooth;
     const SMOOTH_FACTOR=0.3;
@@ -87,39 +87,28 @@ module Transform {
             }
         }
         else {
-           x_d=0;
-           y_d=0;
+           x_d=0.0;
+           y_d=0.0;
            xs_center = pixelWidth2;
            ys_center = pixelHeight2;
         }
     }
 
-    function setHeading(info) {
-        /*
-        var heading = info.heading;
-        cos_heading = Math.cos(heading);
-        sin_heading = Math.sin(heading);
-        if(heading_smooth==-1) {
-            heading_smooth = heading;
-        }
-        else {
-            heading_smooth = (1-SMOOTH_FACTOR)*heading + SMOOTH_FACTOR*heading_smooth;
-        }
-        */
+    function setHeading() {
         if(last_x_pos != null) {
             heading_smooth = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
         }
         else {
-            heading_smooth = 0;
+            heading_smooth = 0.0;
         }
-        if(heading_smooth < 0) {
-            heading_smooth = 2*Math.PI+heading_smooth;
+        if(heading_smooth < 0.0) {
+            heading_smooth = 2.0*PI+heading_smooth;
         }
         cos_heading_smooth = Math.cos(heading_smooth);
         sin_heading_smooth = Math.sin(heading_smooth);
     }
 
-    function resetHeading(info) {
+    function resetHeading() {
         heading_smooth = 0.0;
         cos_heading_smooth = 1.0;
         sin_heading_smooth = 0.0;
@@ -134,17 +123,17 @@ module Transform {
         isTrackCentered = true;
         calcZoomToFitLevel();
         setViewCenter(lat_view_center, lon_view_center);
-        Transform.setHeading(0);
+        Transform.setHeading();
     }
 
-    function setPosition(info) {
+    function setPosition(lat_pos,lon_pos) {
         if(x_pos != null) {
             last_x_pos = x_pos;
             last_y_pos = y_pos;
         }
         if(lat_first_position==null) {
-            lat_first_position = info.position.toRadians()[0];
-            lon_first_position = info.position.toRadians()[1];
+            lat_first_position = lat_pos;
+            lon_first_position = lon_pos;
         }
         if(track==null) {
             lat_view_center = lat_first_position;
@@ -152,15 +141,22 @@ module Transform {
             cos_lat_view_center = Math.cos(lat_view_center);
             sin_lat_view_center = Math.sin(lat_view_center);
         }
-        var xy = ll_2_xy(info.position.toRadians()[0], info.position.toRadians()[1]);
+        var xy = ll_2_xy(lat_pos, lon_pos);
         x_pos = xy[0];
         y_pos = xy[1];
-        setViewCenter(info.position.toRadians()[0],info.position.toRadians()[1]);
-        setHeading(info);
+        setViewCenter(lat_pos,lon_pos);
+        setHeading();
     }
 
     function xy_2_screen(x, y) {
-        return [xs_center+scaleFactor*(x-x_d), ys_center-scaleFactor*(y-y_d)];
+        var xr = scaleFactor*(x-x_d);
+        var yr = scaleFactor*(y-y_d);
+        if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
+            return [xs_center+scaleFactor*(x-x_d), ys_center-scaleFactor*(y-y_d)];
+        } else {
+            return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
+                    ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
+        }
     }
 
     function ll_2_screen(lat, lon) {
@@ -171,12 +167,12 @@ module Transform {
         return xy_2_screen(x, y);
     }
 
-    function xy_2_rot_screen(x, y) {
-        var xr = scaleFactor*(x-x_d);
-        var yr = scaleFactor*(y-y_d);
-        return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
-                ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
-    }
+//    function xy_2_rot_screen(x, y) {
+//        var xr = scaleFactor*(x-x_d);
+//        var yr = scaleFactor*(y-y_d);
+//        return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
+//                ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
+//    }
 
     function ll_2_xy(lat, lon) {
         var ll = lon-lon_view_center;
@@ -224,34 +220,19 @@ module Transform {
     }
 
     function setZoomLevel(l) {
-        if(l>=0 && l <= 25) {
+        if(l == -1 && zoomLevel > 0) {
+            zoomLevel -=1; 
+        } else if(l ==-2 && zoomLevel < 24) {
+            zoomLevel +=1;
+        } else if(l >=0 && l <= 25) {
             zoomLevel = l;
+        } else {
+            zoomLevel = 5;
         }
-        else {
-            zoomLevel=DEFAULT_ZOOM_LEVEL;
-        }
+                
         refScale = refScaleFromLevel(zoomLevel);
         scaleFactor = 0.2*pixelWidth/refScale*EARTH_RADIUS;
         return zoomLevel;
-    }
-
-    function zoomIn() {
-        if(zoomLevel > 0) {
-            zoomLevel-=1;
-        }
-        refScale = refScaleFromLevel(zoomLevel);
-        scaleFactor = 0.2*pixelWidth/refScale*EARTH_RADIUS;
-        return;
-    }
-
-    function zoomOut() {
-        if(zoomLevel < 24) {
-            zoomLevel+=1;
-
-        }
-        refScale = refScaleFromLevel(zoomLevel);
-        scaleFactor = 0.2*pixelWidth/refScale*EARTH_RADIUS;
-        return;
     }
 
     function formatScale(scale) {
@@ -268,6 +249,6 @@ module Transform {
         var a = Math.sin(0.5*dphi)*Math.sin(0.5*dphi) +
             Math.cos(lat1)*Math.cos(lat2) *
             Math.sin(0.5*dlambda)*Math.sin(0.5*dlambda);
-        return EARTH_RADIUS*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return EARTH_RADIUS*2.0*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 }

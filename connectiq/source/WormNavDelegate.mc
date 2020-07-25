@@ -4,8 +4,8 @@ using Transform;
 var eventText;
 
 enum {
-	TRACK_MODE,
-	DATA_MODE
+    TRACK_MODE,
+    DATA_MODE
 }
 
 var mode;
@@ -56,14 +56,14 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onNextPage() {
         //System.println("onNextPage()");
         switch(mode) {
-        	case TRACK_MODE:
-        		Transform.zoomOut();
-        		WatchUi.requestUpdate();
-        		break;
-        	case DATA_MODE:
-        		dataPageChange(1);
-				break;
-		}
+            case TRACK_MODE:
+                Transform.setZoomLevel(-2);
+                //WatchUi.requestUpdate();
+                break;
+            case DATA_MODE:
+                dataPageChange(1);
+                break;
+        }
         return true;
     }
 
@@ -72,32 +72,32 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onPreviousPage() {
         // System.println("onPreviousPage()");
          switch(mode) {
-        	case TRACK_MODE:
-        		Transform.zoomIn();
-        		WatchUi.requestUpdate();
-        		break;
-        	case DATA_MODE:
-        		dataPageChange(-1);
-				break;
-		}
-		return true;
+            case TRACK_MODE:
+                Transform.setZoomLevel(-1);
+                //WatchUi.requestUpdate();
+                break;
+            case DATA_MODE:
+                dataPageChange(-1);
+                break;
+        }
+        return true;
     }
     
     
-	private function dataPageChange(n) {
-		if(Data.activeDataScreens.size() == 0) {
-        	// this might happen when data screen settings have been changed
-			onBack();
+    private function dataPageChange(n) {
+        if(Data.activeDataScreens.size() == 0) {
+            // this might happen when data screen settings have been changed
+            onBack();
         } else {
-			dataPage = (dataPage + n) % Data.activeDataScreens.size();
-			if(dataPage<0) {
-				dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
-			}
-			dataView.setDataFields(Data.activeDataScreens[dataPage]);
-			WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
-		}
-		return;
-	}
+            dataPage = (dataPage + n) % Data.activeDataScreens.size();
+            if(dataPage<0) {
+                dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
+            }
+            dataView.setDataFields(Data.activeDataScreens[dataPage]);
+            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+        }
+        return;
+    }
 
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
@@ -106,12 +106,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
         if(mode==TRACK_MODE && ( session != null ) && Data.activeDataScreens.size() > 0 ) {
             // System.println("session is recording");
-			if(dataView==null) {
-				//var dataFields = [Data.TIMER, Data.DISTANCE, Data.AVGERAGE_PACE, Data.CURRENT_HEART_RATE];
-               	dataView = new DataView(Data.activeDataScreens[dataPage]);
+            if(dataView==null) {
+                //var dataFields = [Data.TIMER, Data.DISTANCE, Data.AVGERAGE_PACE, Data.CURRENT_HEART_RATE];
+                   dataView = new DataView(Data.activeDataScreens[dataPage]);
             }
             // System.println("switch to data view");
-			mode=DATA_MODE;
+            mode=DATA_MODE;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         else if(mode==TRACK_MODE && (session == null || session.isRecording() == false)) {
@@ -146,8 +146,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function onMenu() {
         // System.println("onMenu()");
-       	var menu = new Rez.Menus.MainMenu();
-       	menu.setTitle("Main Menu");
+           var menu = new Rez.Menus.MainMenu();
+           menu.setTitle("Main Menu");
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
@@ -163,12 +163,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                     session = ActivityRecording.createSession({:name=>"RUN", :sport=>ActivityRecording.SPORT_RUNNING});
                 }
                 session.start();
-                WatchUi.requestUpdate();
+                //WatchUi.requestUpdate();
             }
             else if( ( session != null ) && session.isRecording() ) {
                 // System.println("stop session");
                 session.stop();
-                WatchUi.requestUpdate();
+                //WatchUi.requestUpdate();
             }
         }
 
