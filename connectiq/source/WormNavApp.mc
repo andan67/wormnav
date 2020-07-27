@@ -24,7 +24,7 @@ class WormNavApp extends Application.AppBase {
 
     private var lastPositionTime = System.getTimer();
     var lapViewCounter = 0;
-    
+
     function initialize() {
         AppBase.initialize();
     }
@@ -38,7 +38,7 @@ class WormNavApp extends Application.AppBase {
         device = WatchUi.loadResource(Rez.Strings.device);
         System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
-      
+
         if(data!=null) {
             System.println("load data from property store");
             track = new TrackModel(data);
@@ -60,13 +60,13 @@ class WormNavApp extends Application.AppBase {
         if(Application.getApp().getProperty("breadCrumbDist")!=null) {
             Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
-        
+
         if(Application.getApp().getProperty("dataScreens")!=null) {
             Data.setDataScreens(Application.getApp().getProperty("dataScreens"));
         } else {
             Data.setDataScreens(Data.dataScreensDefault);
         }
-        
+
 
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
@@ -115,7 +115,7 @@ class WormNavApp extends Application.AppBase {
 
     function onPosition(info) {
         //onTimer();
-           lastPositionTime = System.getTimer();
+        lastPositionTime = System.getTimer();
         Trace.newLatLonPosition(info.position.toRadians()[0].toFloat(),info.position.toRadians()[1].toFloat());
         if($.mode==TRACK_MODE) {
             WatchUi.requestUpdate();
@@ -123,7 +123,7 @@ class WormNavApp extends Application.AppBase {
     }
 
     function onTimer() {
-    
+
         if(lapViewCounter == 0 && Trace.isAutolap(false)) {
             // auto lap detected
             lapViewCounter = 1;
@@ -152,7 +152,7 @@ class WormNavApp extends Application.AppBase {
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if(lapViewCounter == 0 && 
+        else if(lapViewCounter == 0 &&
                 ($.mode==DATA_MODE || (System.getTimer()-lastPositionTime > 2000) )) {
             WatchUi.requestUpdate();
         }
