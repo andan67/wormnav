@@ -162,6 +162,9 @@ class TrackView extends WatchUi.View {
         if($.device.equals("vivoactive3")) {
             fontsize=Graphics.FONT_XTINY;
         }
+        else if($.device.equals("vivoactive4")) {
+            fontsize=Graphics.FONT_XTINY;
+        }
         View.initialize();
         Trace.reset();
         activity_values = new[2];
@@ -175,6 +178,10 @@ class TrackView extends WatchUi.View {
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
         if($.device.equals("vivoactive3")) {
+            topPadding=0.5*dc.getFontAscent(fontsize);
+            bottomPadding=0.5*dc.getFontAscent(fontsize);
+        }
+        else if($.device.equals("vivoactive4")) {
             topPadding=0.5*dc.getFontAscent(fontsize);
             bottomPadding=0.5*dc.getFontAscent(fontsize);
         }

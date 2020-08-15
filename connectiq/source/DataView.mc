@@ -48,6 +48,9 @@ class DataView extends  WatchUi.View {
                 if($.device=="vivoactive3") {
                     font = Graphics.FONT_SMALL;
                        fontNumber = Graphics.FONT_NUMBER_HOT;
+                   } else if($.device=="vivoactive4") {
+                    font = Graphics.FONT_SMALL;
+                       fontNumber = Graphics.FONT_NUMBER_HOT;
                    } else 
                    {
                        font = Graphics.FONT_MEDIUM;
