@@ -24,5 +24,5 @@ It consists of two apps:
        
  
 **Limitations**
-- The ConnectIQ app currently only runs on the Garmin devices Forerunner 230/235 and Vivoactive 3.
+- The ConnectIQ app currently only runs on the Garmin devices Forerunner 230/235/245 and Vivoactive 3.
 - For performance and memory reasons, the number of track/way points used for the navigation on the Garmin device is limited. Thus it might be necessary to reduce the number of points of existing tracks or routes by the 'optimize' feature of the companion app.
