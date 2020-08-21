@@ -15,14 +15,14 @@ class DataView extends  WatchUi.View {
     hidden var dfCenters;
     hidden var font;
     hidden var fontNumber;
-    
+
     // Set the label of the field here
     function initialize(dataFields) {
         //System.println("WormNavDataView:initialize");
         View.initialize();
         setDataFields(dataFields);
     }
-    
+
     function setDataFields(dataFields) {
         //System.println("WormNavDataView:setmDataFields");
         mDataFields = new [dataFields.size()];
@@ -32,7 +32,7 @@ class DataView extends  WatchUi.View {
         }
         //System.println("setDataFields: " + mDataFields);
         numberDataFields = Data.min(4,mDataFields.size());
-        
+
         switch(numberDataFields) {
             case 1:
                 font = Graphics.FONT_LARGE;
@@ -45,17 +45,17 @@ class DataView extends  WatchUi.View {
             case 3:
             case 4:
             default:
-                if($.device=="vivoactive3") {
+                if($.device=="vivoactive") {
                     font = Graphics.FONT_SMALL;
                        fontNumber = Graphics.FONT_NUMBER_HOT;
-                   } else 
+                   } else
                    {
                        font = Graphics.FONT_MEDIUM;
                        fontNumber = Graphics.FONT_NUMBER_MEDIUM;
                    }
                    break;
         }
-        
+
         // Set up a 1Hz update timer because we aren't registering
         // for any data callbacks that can kick our display update.
     }
@@ -69,26 +69,26 @@ class DataView extends  WatchUi.View {
     function onLayout(dc) {
         width=dc.getWidth();
         height=dc.getHeight();
-        
+
         //System.println("onLayout: " + numberDataFields);
-        
+
         if(numberDataFields==0) {
             return;
         }
-        
+
         var h1 = dc.getFontHeight(font);
         var a1 = dc.getFontAscent(font);
         var d1 = dc.getFontDescent(font);
         var h2 = dc.getFontHeight(fontNumber);
         var a2 = dc.getFontAscent(fontNumber);
         var d2 = dc.getFontDescent(fontNumber);
-        
+
         var h = height/Data.min(numberDataFields,3);
         var b = 0.5*(h-a1-a2-d1);
         var y1 = b + 0.5*h1;
         var y2 = b + h1 + 0.5*(a2-d2);
         var w2= 0.5*width;
-        
+
         switch(numberDataFields) {
             case 1:
                 //
@@ -102,7 +102,7 @@ class DataView extends  WatchUi.View {
             case 3:
                 dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]]];
                 dfCenters = [[w2,y1,y2],[w2,h+y1,h+y2],[w2,2*h+y1,2*h+y2]];
-                break;    
+                break;
             case 4:
             default:
                 dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]],[[w2,h],[w2,2*h]]];
@@ -110,7 +110,7 @@ class DataView extends  WatchUi.View {
                 break;
         }
     }
-    
+
     // Handle the update event
     function onUpdate(dc) {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
@@ -123,21 +123,21 @@ class DataView extends  WatchUi.View {
         for(var i=0; i < dfLines.size(); i +=1) {
             dc.drawLine(dfLines[i][0][0],dfLines[i][0][1],dfLines[i][1][0],dfLines[i][1][1]);
         }
-    
+
         var dataLabelValue = null;
         for(var i=0; i< numberDataFields; i+= 1) {
             dataLabelValue = Data.getDataFieldLabelValue(mDataFields[i]);
             drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
         }
     }
-    
+
     function drawField(dc, label, value, x, y1, y2) {
         if(value==null) {
             value="--";
         }
         if( label == null ) {
             label = "";
-        
+
         }
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);

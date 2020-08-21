@@ -12,7 +12,7 @@ class TrackView extends WatchUi.View {
     var fontsize = Graphics.FONT_MEDIUM;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
-    
+
     function draw_bread_crumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
@@ -46,7 +46,7 @@ class TrackView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
             activity_values[0] = "Dist.: " + Data.distance();
-            activity_values[1] = "Time: " + Data.timer();          
+            activity_values[1] = "Time: " + Data.timer();
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -115,7 +115,7 @@ class TrackView extends WatchUi.View {
         var y3 = xy_pos[1]-dy1;
         var x4 = xy_pos[0]+dx3;
         var y4 = xy_pos[1]+dy3;
-        
+
         dc.drawLine(x1,y1,x2,y2);
         dc.drawLine(x2,y2,x3,y3);
         dc.drawLine(x3,y3,x4,y4);
@@ -159,7 +159,7 @@ class TrackView extends WatchUi.View {
 
     function initialize() {
         System.println("initialize()");
-        if($.device.equals("vivoactive3")) {
+        if($.device.equals("vivoactive")) {
             fontsize=Graphics.FONT_XTINY;
         }
         View.initialize();
@@ -174,7 +174,7 @@ class TrackView extends WatchUi.View {
         screenShape = System.getDeviceSettings().screenShape;
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
-        if($.device.equals("vivoactive3")) {
+        if($.device.equals("vivoactive")) {
             topPadding=0.5*dc.getFontAscent(fontsize);
             bottomPadding=0.5*dc.getFontAscent(fontsize);
         }
