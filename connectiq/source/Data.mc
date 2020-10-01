@@ -21,17 +21,20 @@ module Data {
         LAP_SPEED,
         LAST_LAP_PACE,
         LAST_LAP_SPEED,
-        LAP
+        LAP,
+        ALTITUDE,
+        CLOCK_TIME,
+        BATTERY
     }
-    
+
     const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
-    
-    var dataScreensDefault = [    
+
+    var dataScreensDefault = [
                         [TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
                         [LAP_TIMER,LAP_DISTANCE,LAP_PACE,LAP],
                         [SPEED,AVERAGE_SPEED,LAST_LAP_SPEED,LAP_DISTANCE]
                       ];
-                      
+
     const dataFieldValues = [
         TIMER,
         DISTANCE,
@@ -47,8 +50,11 @@ module Data {
         LAP_SPEED,
         LAST_LAP_PACE,
         LAST_LAP_SPEED,
-        LAP];
-        
+        LAP,
+        ALTITUDE,
+        CLOCK_TIME,
+        BATTERY];
+
     const dataFieldMenuLabels = [
         "Timer",
         "Dist.",
@@ -64,8 +70,11 @@ module Data {
         "Lap\nSpeed",
         "Last\nLap\nPace",
         "Last\nLap\nSpeed",
-        "Laps"];
-            
+        "Laps",
+        "Alt",
+        "Clock\nTime",
+        "Bat."];
+
     const dataFieldLabels = [
         "Timer",
         "Distance",
@@ -81,27 +90,30 @@ module Data {
         "Lap Speed",
         "LL Pace",
         "LL Speed",
-        "Laps"];
-    
-     var dataScreens = dataScreensDefault;
+        "Laps",
+        "Altitude",
+        "Clock Time",
+        "Battery"];
+
+    var dataScreens = dataScreensDefault;
     var activeDataScreens = [];
-    
+
     function setDataScreens(pDataScreens) {
         dataScreens = pDataScreens;
         determineActiveDataScreens();
     }
-    
+
     function getDataScreens() {
         return dataScreens;
     }
-    
+
     function setDataScreen(i, dataScreen) {
         if(i < dataScreens.size()) {
             dataScreens[i] = dataScreen;
             determineActiveDataScreens();
         }
     }
-    
+
     function determineActiveDataScreens() {
         activeDataScreens = [];
         for(var i=0; i < dataScreens.size(); i+=1) {
@@ -111,85 +123,85 @@ module Data {
         }
         Sys.println("determineActiveDataScreens: " + activeDataScreens);
     }
-    
+
     function timer() {
         var data=Activity.getActivityInfo().timerTime;
         return data!=null? Data.msToTime(data) : null;
     }
-    
+
     function distance() {
         var data=Activity.getActivityInfo().elapsedDistance;
         return data!=null? (0.001*data+0.0001).format("%.2f") : null;
     }
-    
+
     function pace() {
         var data=Activity.getActivityInfo().currentSpeed;
         return data!=null? Data.convertSpeedToPace(data) : null;
     }
-    
+
     function speed() {
         var data=Activity.getActivityInfo().currentSpeed;
         return data!=null? (3.6*data).format("%.2f") : null;
     }
-    
+
     function averagePace() {
         var data=Activity.getActivityInfo().averageSpeed;
         return data!=null?  Data.convertSpeedToPace(data) : null;
     }
-    
+
     function averageSpeed() {
         var data=Activity.getActivityInfo().averageSpeed;
         return data!=null?  (3.6*data).format("%.2f") : null;
     }
-    
+
     function currentHeartRate() {
         var data= Activity.getActivityInfo().currentHeartRate;
         return data!=null?  data : null;
     }
-    
+
     function averageHeartRate() {
         var data= Activity.getActivityInfo().averageHeartRate;
         return data!=null?  data : null;
     }
-    
+
     function lapTimer() {
         if(Trace.autolapDistance > 0) {
-            return Data.msToTime(Trace.lapTime.toLong()); 
+            return Data.msToTime(Trace.lapTime.toLong());
         }
         return null;
     }
 
     function lapDistance() {
         if(Trace.autolapDistance > 0) {
-            return (0.001*Data.Trace.lapDistance).format("%.2f") ; 
+            return (0.001*Data.Trace.lapDistance).format("%.2f") ;
         }
         return null;
     }
 
     function lapPace() {
         if(Trace.autolapDistance > 0 && Trace.lapTime > 0) {
-            return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime); 
+            return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime);
         }
         return null;
     }
-    
+
     function lapSpeed() {
         if(Trace.autolapDistance > 0  && Trace.lapTime > 0) {
-            return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f"); 
+            return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f");
         }
         return null;
     }
-    
+
     function lastLapPace() {
         if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-            return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP); 
+            return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP);
         }
         return null;
     }
-    
+
     function lastLapSpeed() {
         if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-            return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f"); 
+            return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f");
         }
         return null;
     }
@@ -200,7 +212,28 @@ module Data {
         }
         return null;
     }
-    
+
+    function altitude() {
+       var data=Activity.getActivityInfo().altitude;
+       return data!=null? data.format("%.0f") : null;
+    }
+
+    function clockTime() {
+        var data = Sys.getClockTime();
+
+        return data!=null?
+            data.hour.format("%02d") + ":" +
+            data.min.format("%02d") + ":" +
+            data.sec.format("%02d"): null;
+    }
+
+    function battery() {
+        var data = Sys.getSystemStats().battery;
+        return data!=null? data.format("%.0f") : null;
+    }
+
+
+
 
     function getDataFieldLabelValue(i) {
         var dataValue = null;
@@ -216,19 +249,19 @@ module Data {
                 break;
             case SPEED:
                 dataValue = speed();
-                break;        
+                break;
             case AVERAGE_PACE:
                 dataValue = averagePace();
                 break;
             case AVERAGE_SPEED:
                 dataValue = averageSpeed();
-                break;    
+                break;
             case CURRENT_HEART_RATE:
                 dataValue = currentHeartRate();
                 break;
             case AVERAGE_HEART_RATE:
                 dataValue = averageHeartRate();
-                break;    
+                break;
             case LAP_TIMER:
                 dataValue = lapTimer();
                 break;
@@ -249,6 +282,15 @@ module Data {
                 break;
             case LAP:
                 dataValue = lap();
+                break;
+            case ALTITUDE:
+                dataValue = altitude();
+                break;
+            case CLOCK_TIME:
+                dataValue = clockTime();
+                break;
+            case BATTERY:
+                dataValue = battery();
                 break;
             default:
                 break;
@@ -390,20 +432,20 @@ module Data {
 
         return speed.toNumber()+seconds;
     }
-    
+
     function max(x,y) {
         if(x>=y) {
             return x;
         } else {
             return y;
-        } 
+        }
     }
-    
+
      function min(x,y) {
         if(x<y) {
             return x;
         } else {
             return y;
-        } 
+        }
     }
 }

@@ -5,7 +5,7 @@ class AutoLapPickerDelegate extends WatchUi.PickerDelegate {
     function initialize() {
         PickerDelegate.initialize();
     }
-    
+
     function onCancel() {
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
@@ -41,7 +41,7 @@ class MapOrientationPickerDelegate extends WatchUi.PickerDelegate {
     function initialize() {
         PickerDelegate.initialize();
     }
-    
+
     function onCancel() {
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
@@ -58,7 +58,7 @@ class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
     function initialize() {
            PickerDelegate.initialize();
     }
-    
+
     function onCancel() {
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
@@ -66,6 +66,23 @@ class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
     function onAccept(values) {
         Transform.centerMap = values[0];
         Application.getApp().setProperty("centerMap", Transform.northHeading);
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+}
+
+class ActivityTypeDelegate extends WatchUi.PickerDelegate {
+
+    function initialize() {
+           PickerDelegate.initialize();
+    }
+
+    function onCancel() {
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+
+    function onAccept(values) {
+        $.activityType = values[0];
+        Application.getApp().setProperty("activityType", $.activityType);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }

@@ -4,7 +4,7 @@ using Trace;
 
 class DataMenuDelegate extends WatchUi.MenuInputDelegate {
 
-    var dataMenuContext = [];
+    var dataMenuContext = null;
     function initialize() {
         MenuInputDelegate.initialize();
     }
@@ -13,10 +13,10 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
         var screen = 0;
         switch ( item ) {
             case :ds0:
-                Data.dataScreens = Data.dataScreensDefault;
+                Data.setDataScreens(Data.dataScreensDefault);
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
                 return true;
-               case :ds1:
+            case :ds1:
                 screen=0;
                 break;
             case :ds2:
@@ -28,14 +28,13 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
             default:
                 return false;
         }
-        dataMenuContext.add(screen);
+        dataMenuContext = screen;
         var defaultValue = Data.dataScreens[screen].size();
-        var factory =  new GenericListItemFactory(
-                 [0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
-         var picker = new GenericListItemPicker("# Data Fields", [factory], [defaultValue], dataMenuContext);    
+        var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
+        var picker = new GenericListItemPicker("# Data Fields", [factory], [defaultValue], dataMenuContext);
         WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(dataMenuContext), WatchUi.SLIDE_IMMEDIATE);
         return true;
-      
+
     }
 
 }
@@ -56,9 +55,9 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     function onAccept(values) {
         //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-        var screen = mContext[0];
+        var screen = mContext;
         var nDataFields = values[0];
-        
+
         if(nDataFields==0) {
              Data.setDataScreen(screen,[]);
              Application.getApp().setProperty("dataScreens",Data.getDataScreens());
@@ -69,9 +68,9 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
             for(var i=0; i<nDataFields; i+=1) {
                 factories[i] = new GenericListItemFactory(
                     Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => Graphics.FONT_SMALL});
-                defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;    
+                defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
             }
-            var picker = new GenericListItemPicker("# Data Fields", factories, defaults, mContext);    
+            var picker = new GenericListItemPicker("# Data Fields", factories, defaults, mContext);
             WatchUi.pushView(picker, new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
         }
     }
@@ -92,11 +91,12 @@ class DataFieldsPickerDelegate extends WatchUi.PickerDelegate {
 
     function onAccept(values) {
         System.println("on Accept()");
-        var screen = mContext[0];
+        var screen = mContext;
         System.println("on Accept() screen: " + screen);
         Data.setDataScreen(screen, values);
         System.println("on Accept() values: " + values);
         Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+        System.println("on Accept() dataScreens: " + Data.getDataScreens());
         System.println("on Accept() setProperty ");
         //WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);

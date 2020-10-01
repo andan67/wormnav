@@ -2,6 +2,8 @@ using Toybox.Application;
 using Toybox.WatchUi;
 using Toybox.Timer;
 using Toybox.Attention as Att;
+using Toybox.ActivityRecording;
+
 using Trace;
 
 var messageReceived = false;
@@ -17,6 +19,7 @@ var appTimer;
 var device = "generic";
 var track = null;
 var session = null;
+var activityType = ActivityRecording.SPORT_RUNNING;
 
 var vibrateData = [new Att.VibeProfile(  50, 250 )];
 
@@ -67,6 +70,9 @@ class WormNavApp extends Application.AppBase {
             Data.setDataScreens(Data.dataScreensDefault);
         }
 
+        if(Application.getApp().getProperty("activityType")!=null) {
+            activityType = Application.getApp().getProperty("activityType");
+        }
 
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
 
