@@ -3,6 +3,7 @@ using Toybox.WatchUi;
 using Toybox.Timer;
 using Toybox.Attention as Att;
 using Toybox.ActivityRecording;
+using Toybox.Sensor;
 
 using Trace;
 
@@ -41,6 +42,8 @@ class WormNavApp extends Application.AppBase {
         device = WatchUi.loadResource(Rez.Strings.device);
         System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
+
+        Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
         if(data!=null) {
             System.println("load data from property store");

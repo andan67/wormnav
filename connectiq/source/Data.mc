@@ -3,6 +3,7 @@ using Toybox.Activity;
 using Toybox.System as Sys;
 using Toybox.Lang as Lang;
 using Toybox.StringUtil;
+using Toybox.Sensor;
 
 module Data {
 
@@ -156,6 +157,7 @@ module Data {
 
     function currentHeartRate() {
         var data= Activity.getActivityInfo().currentHeartRate;
+        //var data = Sensor.Info.heartRate;
         return data!=null?  data : null;
     }
 

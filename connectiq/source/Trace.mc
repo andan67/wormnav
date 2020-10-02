@@ -29,7 +29,8 @@ module Trace {
     var autolapDistance = 200.0;
     var lapPace = "";
     var isAutoLapActive = false;
-    
+    var lastPositionTime = 0;
+
     function reset() {
         pos_nelements = 0;
         pos_start_index = 0;
@@ -106,7 +107,7 @@ module Trace {
                     lapInitDistance += lapDistance;
                     lapCounter++;
                     isLap = true;
-                    session.addLap();                   
+                    session.addLap();
                 }
             }
 //            System.println("==========================");

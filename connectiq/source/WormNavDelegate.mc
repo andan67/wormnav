@@ -82,8 +82,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         }
         return true;
     }
-    
-    
+
+
     private function dataPageChange(n) {
         if(Data.activeDataScreens.size() == 0) {
             // this might happen when data screen settings have been changed
@@ -160,7 +160,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             if( ( session == null ) || ( session.isRecording() == false ) ) {
                 // System.println("start/resume session");
                 if(session==null) {
-                    session = ActivityRecording.createSession({:name=>"RUN", :sport=>ActivityRecording.SPORT_RUNNING});
+                    session = ActivityRecording.createSession({:name=>"RUN", :sport=>$.activityType});
                 }
                 session.start();
                 //WatchUi.requestUpdate();
