@@ -58,6 +58,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
+                $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
@@ -74,6 +75,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
          switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-1);
+                $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
@@ -163,11 +165,13 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                     session = ActivityRecording.createSession({:name=>"RUN", :sport=>$.activityType});
                 }
                 session.start();
+                $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
             }
             else if( ( session != null ) && session.isRecording() ) {
                 // System.println("stop session");
                 session.stop();
+                $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
             }
         }

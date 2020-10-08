@@ -73,7 +73,7 @@ module Transform {
     }
 
     function setViewCenter(lat, lon) {
-        if(!centerMap) {
+        if(!centerMap & lon_view_center!= null) {
             var ll = lon-lon_view_center;
             var cos_lat = Math.cos(lat);
             x_d = cos_lat*Math.sin(ll);
@@ -116,8 +116,8 @@ module Transform {
 
     function newTrack() {
         System.println("newTrack()");
-        lat_view_center=track.lat_center;
-        lon_view_center=track.lon_center;
+        lat_view_center=$.track.lat_center;
+        lon_view_center=$.track.lon_center;
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
         isTrackCentered = true;
@@ -135,7 +135,7 @@ module Transform {
             lat_first_position = lat_pos;
             lon_first_position = lon_pos;
         }
-        if(track==null) {
+        if($.track==null) {
             lat_view_center = lat_first_position;
             lon_view_center = lon_first_position;
             cos_lat_view_center = Math.cos(lat_view_center);
@@ -211,7 +211,7 @@ module Transform {
         zoomLevel = 0;
         for(zoomLevel= 0; zoomLevel < 25; zoomLevel+=1 ) {
             refScale = refScaleFromLevel(zoomLevel);
-            if(minPixels/(0.2*pixelWidth)*refScaleFromLevel(zoomLevel)*0.95>track.diagonal) {
+            if(minPixels/(0.2*pixelWidth)*refScaleFromLevel(zoomLevel)*0.95>$.track.diagonal) {
                 break;
             }
         }

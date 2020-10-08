@@ -127,12 +127,12 @@ module Data {
 
     function timer() {
         var data=Activity.getActivityInfo().timerTime;
-        return data!=null? Data.msToTime(data) : null;
+        return data!=null? Data.msToTime(data) : "--";
     }
 
     function distance() {
         var data=Activity.getActivityInfo().elapsedDistance;
-        return data!=null? (0.001*data+0.0001).format("%.2f") : null;
+        return data!=null? (0.001*data+0.0001).format("%.2f") : "--";
     }
 
     function pace() {

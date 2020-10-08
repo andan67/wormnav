@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="android/Application/build/generated/not_namespaced_r_class_sources/debug/processDebugResources/r"/>
+	<classpathentry kind="src" path="android/Application/build/generated/not_namespaced_r_class_sources/release/processReleaseResources/r"/>
+	<classpathentry kind="src" path="android/Application/build/generated/source/buildConfig/debug"/>
+	<classpathentry kind="src" path="android/Application/build/generated/source/buildConfig/release"/>
+	<classpathentry kind="src" path="android/Application/src/main/java"/>
+	<classpathentry kind="src" path="android/Karambola/build/generated/source/buildConfig/debug"/>
+	<classpathentry kind="src" path="android/Karambola/build/generated/source/buildConfig/release"/>
+	<classpathentry kind="src" path="android/Karambola/src/main/java"/>
+	<classpathentry kind="lib" path="android/Application/build/intermediates/transforms/mergeJavaRes/debug/0.jar"/>
+	<classpathentry kind="lib" path="android/Application/build/intermediates/transforms/mergeJavaRes/release/0.jar"/>
+	<classpathentry kind="lib" path="android/Application/build/intermediates/transforms/r8/release/1.jar"/>
+	<classpathentry kind="lib" path="android/Application/libs/connectiq.jar"/>
+	<classpathentry kind="lib" path="android/Application/libs/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="android/Application/libs/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="android/Application/libs/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="android/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/compile_library_classes/debug/classes.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/compile_library_classes/release/classes.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/compile_only_not_namespaced_r_class_jar/release/generateReleaseRFile/R.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/full_jar/debug/createFullJarDebug/full.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/library_java_res/debug/res.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/library_java_res/release/res.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/runtime_library_classes/debug/classes.jar"/>
+	<classpathentry kind="lib" path="android/Karambola/build/intermediates/runtime_library_classes/release/classes.jar"/>
+	<classpathentry kind="output" path="android/Application/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes"/>
+</classpath>

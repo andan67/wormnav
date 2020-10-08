@@ -5,5 +5,6 @@
 	<menu-item id="center" label="@Strings.main_menu_label_center" />
 	<menu-item id="screens" label="@Strings.main_menu_label_screens" />
 	<menu-item id="activityType" label="@Strings.main_menu_label_activity_type" />
-	<menu-item id="delete" label="@Strings.main_menu_label_del" />
+	<menu-item id="updatePeriods" label="@Strings.main_menu_label_update_periods" />
+	<menu-item id="track" label="@Strings.main_menu_label_track" />
 </menu>

@@ -8,8 +8,9 @@
     <string id="main_menu_label_lap">Auto lap</string>
     <string id="main_menu_label_bc">Bread crumbs</string>
     <string id="main_menu_label_center">Center map</string>
-    <string id="main_menu_label_del">Delete track</string>
+    <string id="main_menu_label_track">Track</string>
     <string id="main_menu_label_screens">Data screens</string>
+    <string id="main_menu_label_update_periods">Update periods</string>
     <string id="main_menu_label_activity_type">Activity type</string>
 
     <string id="save_menu_label_1">Resume</string>

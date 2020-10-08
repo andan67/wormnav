@@ -1,0 +1,5 @@
+<menu id="UpdatePeriods">	
+	<menu-item id="upt" label="Track screen" />
+	<menu-item id="upd" label="Data screen" />
+	<menu-item id="upl" label="Auto lap screen" />
+</menu>

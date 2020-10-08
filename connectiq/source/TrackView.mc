@@ -45,8 +45,8 @@ class TrackView extends WatchUi.View {
         var data;
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = "Dist.: " + Data.distance();
-            activity_values[1] = "Time: " + Data.timer();
+            activity_values[0] = "D: " + Data.distance();
+            activity_values[1] = "T: " + Data.timer();
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -186,7 +186,7 @@ class TrackView extends WatchUi.View {
     function onShow() {
         //System.println("onShow()");
         View.onShow();
-        if(track==null) {
+        if($.track==null) {
             Transform.setZoomLevel(5);
         }
     }
@@ -199,13 +199,13 @@ class TrackView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.clear();
 
-        if(isNewTrack && track!=null) {
+        if(isNewTrack && $.track!=null) {
             isNewTrack = false;
             Trace.reset();
             Transform.newTrack();
         }
 
-        if(track!=null) {
+        if($.track!=null) {
             draw_track(dc);
         }
 
