@@ -134,12 +134,14 @@ Of course, other accessible locations can also be used.
 #### Key features and capabilities:
 - Show track and current position
 - Start/stop/save activity
+- Set activity type
 - Configurable auto lap
 - Configurable 'bread crumbs' (i.e. trace)
 - Configurable data screens
 - Zoom in/out of map with showing scale
 - Show position or track in view center
 - Fixed north or heads-up map orientation
+- Support for external heart rate monitor
 
 #### Button usage
 <img src="images/garmin_description_export.png" width="1024"/>
@@ -162,13 +164,17 @@ Vivoactive has a touch screen. All operations perform on touch screen rather the
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Available menu items:
-- Map orientation
-- Auto lap distance
-- Bread crumbs distance
-- Data screens
-- Track center view on/off
-- Delete track
+Available (sub-) menu items:
+- **Map orientation:** define orientation of track, see below)
+- **Activity type:** set type of activity
+- **Track**
+    - **Info:** shows basic track information)
+    - **Delete:** delete track)
+- **Auto lap:** set distance for auto lap
+- **Bread crumbs:** set distance for bread crumbs
+- **Center map:** set track center view on/off, see below)
+- **Data screens:** set number of screens and data fields, see below
+- **Refresh periods:** set refresh period/duration for track, data, and auto lap view to reduce power consumption 
 
 </div>
 {::options parse_block_html="true" /}
@@ -236,6 +242,7 @@ Maximum number of three data screens can be configured with up to 4 data fields:
 - Pace: current/average/lap/last lap pace in mm:ss/km
 - Speed: current/average/lap/last lap speed in km/h  
 - Heart rate: current/average heart rate in bpm (if sensor exists and activated)
+- System: clock time, battery level
 
 </div>
 {::options parse_block_html="true" /}
