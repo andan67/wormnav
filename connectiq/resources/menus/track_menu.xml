@@ -1,4 +1,4 @@
 <menu id="TrackMenu">
-	<menu-item id="tdel" label="Delete" />
 	<menu-item id="tinfo" label="Info" />
+	<menu-item id="tdel" label="Delete" />
 </menu>

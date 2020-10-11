@@ -15,7 +15,12 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
 
         var factory;
         var defaultValue;
+        
+    	var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
+    	var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
+        
         switch(item) {
+            
             case :delete:
                 if(track!=null) {
                     var message = "Continue?";
@@ -44,8 +49,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
             case :autolap:
                  defaultValue = Trace.autolapDistance;
                  factory = new GenericListItemFactory(
-                    [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0],
-                     ["off","100m","200m","400m","500m","1km","2km","5km"],
+                    distanceValues,
+                    distanceLabels,
                     null);
                 picker = new GenericListItemPicker("Auto lap", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new AutoLapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
@@ -53,8 +58,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
             case :breadCrumbs:
                 defaultValue = Trace.breadCrumbDist;
                 factory = new GenericListItemFactory(
-                    [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0],
-                     ["off","100m","200m","400m","500m","1km","2km","5km"],
+                    distanceValues,
+                    distanceLabels,
                     null);
                 picker = new GenericListItemPicker("Bread crumbs", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new WormNavBreadCrumbsPickerDelegate(), WatchUi.SLIDE_UP);
@@ -71,8 +76,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
             case :screens:
                 WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
                 return true;
-            case :updatePeriods:
-                WatchUi.pushView(new Rez.Menus.UpdatePeriods(), new PeriodsMenuDelegate(), WatchUi.SLIDE_UP);
+            case :refreshPeriods:
+                WatchUi.pushView(new Rez.Menus.RefreshPeriods(), new PeriodsMenuDelegate(), WatchUi.SLIDE_UP);
                 return true;
             case :track:
                 WatchUi.pushView(new Rez.Menus.TrackMenu(), new TrackMenuDelegate(), WatchUi.SLIDE_UP);
@@ -279,17 +284,20 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
         var picker;
         var key;
         
+        var periodValues = [1,2,5,10,15,30,60];
+        var periodLabels = ["1s", "2s", "5s", "10s", "15s", "30s", "60s"];
+        
         switch ( item ) {
             case :upt:
             	defaultValue = $.trackViewPeriod;
             	key = "trackViewPeriod";
-            	factory =  new GenericListItemFactory([1,2,5,10,15,30,60],["1s", "2s", "5s", "10s", "15s", "30s", "60s"],null);
+            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
                 picker = new GenericListItemPicker("Track viev", [factory], [defaultValue], key);
                 break;
             case :upd:
             	defaultValue = $.dataViewPeriod;
             	key = "dataViewPeriod";
-            	factory =  new GenericListItemFactory([1,2,5,10,15, 30,60],["1s", "2s", "5s", "10s", "15s", "30s", "60s"],null);
+            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
             	picker = new GenericListItemPicker("Data view", [factory], [defaultValue], key);
                 break;
             case :upl:
@@ -358,13 +366,6 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
                 return true;	
     		case :tinfo:
     			if(track!=null) {
-    				//var menu = new WatchUi.Menu();
-			        //var delegate;
-			        //menu.setTitle("Track Info");
-			        //menu.addItem("Item One dkjdflkjds ösdkfjg ösdlfgj dlskfgj", "one");
-			        //menu.addItem("Item Two", "two");
-			        //var delegate = new WatchUi.MenuInputDelegate(); // a WatchUi.MenuInputDelegate
-			        //WatchUi.pushView(menu, delegate, WatchUi.SLIDE_IMMEDIATE);
     				WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);	
     			}
     			return true;
@@ -373,6 +374,12 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
 }        
 
 class DeleteConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+    
+    function initialize() {
+        ConfirmationDelegate.initialize();
+    }
+    
+    
     function onResponse(response) {
         if (response == WatchUi.CONFIRM_NO) {
             //System.println("Cancel");
@@ -387,6 +394,11 @@ class DeleteConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 }
 
 class TrackInfoDelegate extends WatchUi.BehaviorDelegate {
+
+    function initialize() {
+        BehaviorDelegate.initialize();
+    }   
+
 	function onBack() {
 		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);	
 	}

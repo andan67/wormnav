@@ -15,9 +15,7 @@ module Trace {
 
     var lat_last_pos;
     var lon_last_pos;
-
-    var time = 0;
-    var distance = 0.0;
+  
     var lapTime = 0.0;
     var lapDistance = 0.0;
     var lapInitDistance = 0.0;
@@ -29,14 +27,21 @@ module Trace {
     var autolapDistance = 200.0;
     var lapPace = "";
     var isAutoLapActive = false;
+    
+    var positionTime = 0;
     var lastPositionTime = 0;
+	var positionDistance = 0.0;
 
+	
     function reset() {
         pos_nelements = 0;
         pos_start_index = 0;
         cumDistance=breadCrumbDist;
         lat_last_pos=null;
         lon_last_pos=null;
+        positionTime = 0;
+        lastPositionTime = 0;
+        positionDistance = 0.0;
     }
 
     function put_pos(lat,lon) {
@@ -59,7 +64,8 @@ module Trace {
         Transform.isTrackCentered = false;
         Transform.setPosition(lat_pos,lon_pos);
         if(lat_last_pos!=null) {
-            cumDistance += Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
+        	positionDistance = Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
+            cumDistance += positionDistance;            
         }
 
         lat_last_pos=lat_pos;

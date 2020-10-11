@@ -1,5 +1,6 @@
 using Toybox.Math;
 using Toybox.System;
+using Trace;
 
 module Transform {
 
@@ -35,14 +36,10 @@ module Transform {
 
     var northHeading=true;
     var centerMap=false;
-    var sin_heading;
-    var cos_heading;
     var heading_smooth=-1.0;
     var cos_heading_smooth;
     var sin_heading_smooth;
-    const SMOOTH_FACTOR=0.3;
-
-
+   
     var pixelHeight;
     var pixelWidth;
     var pixelWidth2;
@@ -73,7 +70,7 @@ module Transform {
     }
 
     function setViewCenter(lat, lon) {
-        if(!centerMap & lon_view_center!= null) {
+        if(!centerMap) {
             var ll = lon-lon_view_center;
             var cos_lat = Math.cos(lat);
             x_d = cos_lat*Math.sin(ll);
@@ -96,14 +93,20 @@ module Transform {
 
     function setHeading() {
         if(last_x_pos != null) {
-            heading_smooth = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
+            //heading_smooth = (1-SMOOTH_FACTOR)*Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos) + SMOOTH_FACTOR*heading_smooth ;
+            //System.println("Trace.positionDistance: " +Trace.positionDistance);
+            var sf = (1 - Math.pow(Math.E, -0.1*Trace.positionDistance));
+            heading_smooth = heading_smooth + sf*(Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos) - heading_smooth) ;
+            //heading_smooth = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
         }
         else {
             heading_smooth = 0.0;
         }
+        /*
         if(heading_smooth < 0.0) {
             heading_smooth = 2.0*PI+heading_smooth;
         }
+        */
         cos_heading_smooth = Math.cos(heading_smooth);
         sin_heading_smooth = Math.sin(heading_smooth);
     }

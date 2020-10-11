@@ -104,30 +104,29 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
-        // System.println("onBack()");
-
-        if(mode==TRACK_MODE && ( session != null ) && Data.activeDataScreens.size() > 0 ) {
-            // System.println("session is recording");
-            if(dataView==null) {
-                //var dataFields = [Data.TIMER, Data.DISTANCE, Data.AVGERAGE_PACE, Data.CURRENT_HEART_RATE];
-                   dataView = new DataView(Data.activeDataScreens[dataPage]);
-            }
-            // System.println("switch to data view");
-            mode=DATA_MODE;
-            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+		
+		// If active session is stopped asked for discard/save/resume		
+		if( $.session != null  &&  $.session.isRecording() == false ) {
+        	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
+            return true;    
         }
-        else if(mode==TRACK_MODE && (session == null || session.isRecording() == false)) {
-           System.exit();
+        
+        // If there is no session exit;
+        if ($.session == null || $.session.isRecording() == false) {
+        	System.exit();
+        	return true;
+        }
+        if(mode==TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
+            if(dataView==null) {
+            	dataView = new DataView(Data.activeDataScreens[dataPage]);
+            }
+            mode=DATA_MODE;
+            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);             
         }
         else if(mode==DATA_MODE) {
-            if( session != null  &&  session.isRecording() == false ) {
-                WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
-            }
-            else if(session !=null) {
-                mode=TRACK_MODE;
-                WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
-            }
-        }
+        	mode=TRACK_MODE;
+            WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
+        }      
         return true;
     }
 
@@ -159,18 +158,18 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onSelect() {
         // System.println("onSelect()");
         if( Toybox has :ActivityRecording ) {
-            if( ( session == null ) || ( session.isRecording() == false ) ) {
+            if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
                 // System.println("start/resume session");
-                if(session==null) {
-                    session = ActivityRecording.createSession({:name=>"RUN", :sport=>$.activityType});
+                if($.session==null) {
+                    $.session = ActivityRecording.createSession({:name=>"WormNavActivity", :sport=>$.activityType});
                 }
-                session.start();
+                $.session.start();
                 $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
             }
-            else if( ( session != null ) && session.isRecording() ) {
+            else if( ( $.session != null ) && $.session.isRecording() ) {
                 // System.println("stop session");
-                session.stop();
+                $.session.stop();
                 $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
             }

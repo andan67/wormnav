@@ -1,0 +1,5 @@
+<menu id="RefreshPeriods">	
+	<menu-item id="upt" label="Track view" />
+	<menu-item id="upd" label="Data view" />
+	<menu-item id="upl" label="Auto lap view" />
+</menu>

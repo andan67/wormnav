@@ -1,10 +1,10 @@
 <menu id="MainMenu">
 	<menu-item id="north" label="@Strings.main_menu_label_orient" />
+	<menu-item id="activityType" label="@Strings.main_menu_label_activity_type" />
+	<menu-item id="track" label="@Strings.main_menu_label_track" />
 	<menu-item id="autolap" label="@Strings.main_menu_label_lap" />
 	<menu-item id="breadCrumbs" label="@Strings.main_menu_label_bc" />
 	<menu-item id="center" label="@Strings.main_menu_label_center" />
-	<menu-item id="screens" label="@Strings.main_menu_label_screens" />
-	<menu-item id="activityType" label="@Strings.main_menu_label_activity_type" />
-	<menu-item id="updatePeriods" label="@Strings.main_menu_label_update_periods" />
-	<menu-item id="track" label="@Strings.main_menu_label_track" />
+	<menu-item id="screens" label="@Strings.main_menu_label_screens" />	
+	<menu-item id="refreshPeriods" label="@Strings.main_menu_label_refresh_periods" />
 </menu>
