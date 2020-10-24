@@ -114,7 +114,9 @@
     <string name="dialog_select_pois">Select POI to import</string>
     <string name="dialog_select_routes_export">Select Routes to export</string>
     <string name="dialog_select_routes_import">Select Routes to import</string>
-    <string name="dialog_select_tracks">Select Tracks to convert</string>
+    <string name="dialog_select_routes_optimize">Select Routes to optimize/merge</string>
+    <string name="dialog_select_tracks_convert">Select Tracks to convert</string>
+    <string name="dialog_select_tracks_merge">Select Tracks to merge</string>
     <string name="dialog_select_tracks_export">Select Tracks to export</string>
     <string name="dialog_select_tracks_import">Select Tracks to import</string>
     <string name="dialog_selected">Selected</string>
@@ -272,6 +274,7 @@
     <string name="routes_new_auto">Draw automatically</string>
     <string name="routes_new_manually">Draw manually</string>
     <string name="routes_simplify_selected">Optimize selected</string>
+    <string name="routes_simplify_merge_routes">Optimize/merge routes routes</string>
 
     <string name="sample_loaded">Sample data loaded. Take a look at them.</string>
 
@@ -318,15 +321,21 @@
     <string name="track_reduce">Optimization</string>
 
     <string name="tracks_clear_all">Clear all tracks</string>
-    <string name="tracks_cleared">Routes cleared</string>
+    <string name="tracks_cleared">Tracks cleared</string>
     <string name="tracks_convert">Convert into routes</string>
     <string name="tracks_converted">%1$d tracks converted</string>
+    <string name="tracks_merge">Merge tracks</string>
+    <string name="tracks_merge_name_label">Name</string>
+    <string name="tracks_merged">%1$d tracks merged</string>
     <string name="tracks_delete_selected">Delete selected</string>
     <string name="tracks_edit_properties">Edit properties</string>
     <string name="tracks_export">Export tracks</string>
     <string name="tracks_send_selected_to_device">Send selected to device</string>
     <string name="tracks_import">Import tracks</string>
     <string name="tracks_loaded">%1$d tracks</string>
+
+    <string name="apply_reduce">Optimization</string>
+    <string name="apply_merge">Merge</string>
 
     <string name="translations">German translations: Stefan Scherrer</string>
 

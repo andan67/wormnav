@@ -7,8 +7,6 @@ package org.andan.android.connectiq.wormnav;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -17,7 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,12 +41,7 @@ import com.garmin.android.connectiq.IQDevice.IQDeviceStatus;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 
-import org.andan.android.connectiq.wormnav.R;
 import org.osmdroid.util.GeoPoint;
-
-import pt.karambola.gpx.beans.Route;
-import pt.karambola.gpx.beans.Track;
-import pt.karambola.gpx.util.GpxUtils;
 
 public class DeviceBrowserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 

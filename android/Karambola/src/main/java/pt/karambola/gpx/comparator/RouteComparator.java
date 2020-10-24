@@ -34,6 +34,7 @@ RouteComparator
 	public static final Comparator<Route> HORIZONTALLENGTH		= new RouteComparator_HorizontalLength( ) ;
 	public static final Comparator<Route> LENGTH				= new RouteComparator_Length( ) ;
 	public static final Comparator<Route> NAME					= new RouteComparator_Name( ) ;
+	public static final Comparator<Route> NONE					= new RouteComparator_None( ) ;
 	public static final Comparator<Route> NUMBER				= new RouteComparator_Number( ) ;
 	public static final Comparator<Route> TIME_OLDER2YOUNGER	= new RouteComparator_Time_Older2Younger( ) ;
 	public static final Comparator<Route> TIME_YOUNGER2OLDER	= new RouteComparator_Time_Younger2Older( ) ;

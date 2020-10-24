@@ -72,7 +72,7 @@ final class Data {
     static int defaultMaxPathWpt = 0;
     static double defaultMaxPathError = 10d;
 
-    static Integer sLastZoom;
+    static Double sLastZoom;
     static GeoPoint sLastCenter;
     static Float sLastRotation;
 
@@ -102,8 +102,10 @@ final class Data {
     /**
      * Comparator used in browsers
      */
-    static Comparator<Route> rteComparator = RouteComparator.NAME;
-    static Comparator<Track> trkComparator = TrackComparator.NAME;
+    //static Comparator<Route> rteComparator = RouteComparator.NAME;
+    static Comparator<Route> rteComparator = RouteComparator.NONE;
+    //static Comparator<Track> trkComparator = TrackComparator.NAME;
+    static Comparator<Track> trkComparator = TrackComparator.NONE;
 
     /**
      * Common setting in the main activity

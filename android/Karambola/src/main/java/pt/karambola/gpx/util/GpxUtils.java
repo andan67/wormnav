@@ -441,6 +441,20 @@ GpxUtils
 									   ) ;
 	}
 
+	public static <R extends Route>
+	List<String>
+	getRouteNamesUnsorted_LengthTypeArity( final Iterable<R>	rtes
+			, final Units		units
+			, List<R>			rtesSorted		// Optional output parameter.
+	)
+	{
+		return NamedUtils
+				.getNamesSortedDecorated( rtes
+						, RouteComparator.NONE						// Unsorted
+						, new RouteDecorator_LengthTypeArity( units )	// Decorate with (length, type, #pts) info
+						, rtesSorted
+				) ;
+	}
 
 	public static <R extends Route>
 	List<String>
@@ -709,8 +723,38 @@ GpxUtils
                                        ) ;
     }
 
+	public static <T extends Track>
+	List<String>
+	getTrackNamesUnsorted( final Iterable<T> trks
+			, final Units       units
+			, List<T>           trksSorted  // Optional output parameter
+	)
+	{
+		return NamedUtils
+				.getNamesSortedDecorated( trks
+						, TrackComparator.NONE           // Sort by ascending track name.
+						, null                           // No decorators
+						, trksSorted
+				) ;
+	}
 
-    public static <T extends Track>
+	public static <T extends Track>
+	List<String>
+	getTrackNamesSUnsorted_LengthTypeArity( final Iterable<T> trks
+			, final Units       units
+			, List<T>           trksSorted  // Optional output parameter
+	)
+	{
+		return NamedUtils
+				.getNamesSortedDecorated( trks
+						, TrackComparator.NONE                          // Sort by ascending track name.
+						, new TrackDecorator_LengthTypeArity( units )    // Decorate with (length, type) info
+						, trksSorted
+				) ;
+	}
+
+
+	public static <T extends Track>
     List<String>
     getTrackNamesSortedAlphabeticaly_LengthTypeArity( final Iterable<T> trks
                                                     , final Units       units

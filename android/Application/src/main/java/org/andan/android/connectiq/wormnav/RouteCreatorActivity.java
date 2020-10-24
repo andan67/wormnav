@@ -17,7 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,8 +68,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.andan.android.connectiq.wormnav.BuildConfig;
-import org.andan.android.connectiq.wormnav.R;
 import pt.karambola.commons.collections.ListUtils;
 import pt.karambola.gpx.beans.Point;
 import pt.karambola.gpx.beans.Route;
@@ -81,21 +79,15 @@ import static org.andan.android.connectiq.wormnav.R.id.osmmap;
 /**
  * Route Creator activity created by piotr on 02.05.17.
  */
-public class RouteCreatorActivity extends Utils
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class RouteCreatorActivity extends Utils {
 
     private final String TAG = "Creator";
 
     private Map<Marker, GeoPoint> markerToCardinalWaypoint;
 
-    private final int MAX_ZOOM_LEVEL = 19;
-    private final int MIN_ZOOM_LEVEL = 4;
+    private final double MAX_ZOOM_LEVEL = 19.0;
+    private final double MIN_ZOOM_LEVEL = 4.0;
 
-
-
-    Button locationButton;
     Button pencilButton;
     Button fitButton;
     Button zoomInButton;
@@ -140,11 +132,9 @@ public class RouteCreatorActivity extends Utils
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_route_creator);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        createLocationCallback();
+        createLocationRequest();
 
         if (Data.sCardinalGeoPoints == null) {
             Data.sCardinalGeoPoints = new ArrayList<>();
@@ -168,7 +158,7 @@ public class RouteCreatorActivity extends Utils
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
 
         TilesOverlay tilesOverlay = mMapView.getOverlayManager().getTilesOverlay();
-        tilesOverlay.setOvershootTileCache(tilesOverlay.getOvershootTileCache() * 2);
+        //tilesOverlay.setOvershootTileCache(tilesOverlay.getOvershootTileCache() * 2);
 
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
         mLocationOverlay.enableMyLocation();
@@ -202,7 +192,7 @@ public class RouteCreatorActivity extends Utils
 
         restoreMapPosition();
 
-        mMapView.setMapListener(new MapListener() {
+        mMapView.addMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
 
@@ -227,7 +217,7 @@ public class RouteCreatorActivity extends Utils
     private void restoreMapPosition() {
 
         if (Data.sLastZoom == null) {
-            mapController.setZoom(3);
+            mapController.setZoom(3.0);
         } else {
             mapController.setZoom(Data.sLastZoom);
         }
@@ -267,7 +257,7 @@ public class RouteCreatorActivity extends Utils
 
         if (Data.osrmRoute == null || Data.osrmRoute.getRoutePoints().size() == 0) {
 
-            routeOverlay.setColor(Color.parseColor("#006666"));
+            routeOverlay.getOutlinePaint().setColor(Color.parseColor("#006666"));
             routeOverlay.setPoints(Data.sCardinalGeoPoints);
 
             routePrompt.setText(String.format(getResources().getString(R.string.map_prompt_route), Data.sCardinalGeoPoints.size()));
@@ -448,7 +438,7 @@ public class RouteCreatorActivity extends Utils
             @Override
             public void onClick(View v) {
                 if (Data.sCardinalGeoPoints != null && Data.sCardinalGeoPoints.size() > 1) {
-                    mMapView.zoomToBoundingBox(findBoundingBox(Data.sCardinalGeoPoints), false);
+                    mMapView.zoomToBoundingBox(findBoundingBox(Data.sCardinalGeoPoints).increaseByScale(1.1f), false);
                 }
                 refreshMap();
                 setButtonsState();
@@ -755,7 +745,7 @@ public class RouteCreatorActivity extends Utils
         //Configuration.getInstance().save(this, prefs);
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
 
-        mGoogleApiClient.connect();
+        startLocationUpdates();
         restoreMapPosition();
 
         loadSettings();
@@ -763,72 +753,13 @@ public class RouteCreatorActivity extends Utils
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-
-        try {
-
-            Data.sCurrentPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-            locationButton.setEnabled(true);
-            locationButton.getBackground().setAlpha(255);
-
-        } catch (Exception e) {
-
-            locationButton.setEnabled(false);
-            locationButton.getBackground().setAlpha(0);
-
-            Log.d(TAG, "Error getting location: " + e);
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnected: " + connectionHint);
-        }
-
-        try {
-            LocationRequest locationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(30000)
-                    .setSmallestDisplacement(0);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-            }
-
-        } catch (Exception e) {
-
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Error getting location: " + e);
-            }
-        }
-    }
-
-    @Override // GoogleApiClient.ConnectionCallbacks
-    public void onConnectionSuspended(int cause) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionSuspended: " + cause);
-        }
-    }
-
-    @Override // GoogleApiClient.OnConnectionFailedListener
-    public void onConnectionFailed(ConnectionResult result) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionFailed: " + result);
-        }
-    }
-
-    @Override
     protected void onPause() {
 
         super.onPause();
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-        Data.sLastZoom = mMapView.getZoomLevel();
+        if(mFusedLocationClient != null)
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        Data.sLastZoom = mMapView.getZoomLevelDouble();
         Data.sLastCenter = new GeoPoint(mMapView.getMapCenter().getLatitude(), mMapView.getMapCenter().getLongitude());
 
         saveSettings();

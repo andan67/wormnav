@@ -1,11 +1,11 @@
 package org.andan.android.connectiq.wormnav;
 
 import android.Manifest;
-import android.media.MediaScannerConnection;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,11 +18,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatImageButton;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;

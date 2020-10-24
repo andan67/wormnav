@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -71,8 +72,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.andan.android.connectiq.wormnav.BuildConfig;
-import org.andan.android.connectiq.wormnav.R;
 import pt.karambola.commons.collections.ListUtils;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.beans.Point;
@@ -86,19 +85,15 @@ import static org.andan.android.connectiq.wormnav.R.id.osmmap;
 /**
  * Route Creator activity created by piotr on 02.05.17.
  */
-public class PoiActivity extends Utils
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class PoiActivity extends Utils {
 
-    private final String TAG = "Creator";
+    private final String TAG = PoiActivity.class.getName();
 
     private Map<Marker, Point> markerToPoi;
 
-    private final int MAX_ZOOM_LEVEL = 19;
-    private final int MIN_ZOOM_LEVEL = 4;
+    private final double MAX_ZOOM_LEVEL = 19.0;
+    private final double MIN_ZOOM_LEVEL = 4.0;
 
-    private Button locationButton;
     private Button fitButton;
     private Button zoomInButton;
     private Button zoomOutButton;
@@ -156,11 +151,9 @@ public class PoiActivity extends Utils
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_poi);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        createLocationCallback();
+        createLocationRequest();
 
         setUpMap();
 
@@ -187,7 +180,7 @@ public class PoiActivity extends Utils
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
 
         TilesOverlay tilesOverlay = mMapView.getOverlayManager().getTilesOverlay();
-        tilesOverlay.setOvershootTileCache(tilesOverlay.getOvershootTileCache() * 2);
+        //tilesOverlay.setOvershootTileCache(tilesOverlay.getOvershootTileCache() * 2);
 
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
         mLocationOverlay.enableMyLocation();
@@ -233,7 +226,7 @@ public class PoiActivity extends Utils
          * mMapDragged boolean here, check it on the @onTouchEvent / MotionEvent.ACTION_UP,
          * and refresh the map view if dragged.
          */
-        mMapView.setMapListener(new MapListener() {
+        mMapView.addMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
 
@@ -258,7 +251,7 @@ public class PoiActivity extends Utils
     private void restoreMapPosition() {
 
         if (Data.sLastZoom == null) {
-            mapController.setZoom(3);
+            mapController.setZoom(3.0);
         } else {
             mapController.setZoom(Data.sLastZoom);
         }
@@ -406,7 +399,7 @@ public class PoiActivity extends Utils
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapController.setZoom(18);
+                mapController.setZoom(18.0);
                 mapController.setCenter(Data.sCurrentPosition);
                 refreshMap();
                 setButtonsState();
@@ -418,7 +411,7 @@ public class PoiActivity extends Utils
             @Override
             public void onClick(View v) {
                 if (Data.sFilteredPoi != null && Data.sFilteredPoi.size() > 0) {
-                    mMapView.zoomToBoundingBox(findBoundingBox(pointsToGeoPoints(Data.sFilteredPoi)), false);
+                    mMapView.zoomToBoundingBox(findBoundingBox(pointsToGeoPoints(Data.sFilteredPoi)).increaseByScale(1.1f), false);
                     refreshMap();
                     setButtonsState();
                 } else {
@@ -1297,66 +1290,8 @@ public class PoiActivity extends Utils
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-
-        mGoogleApiClient.connect();
+        startLocationUpdates();
         restoreMapPosition();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        try {
-
-            Data.sCurrentPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-            locationButton.setEnabled(true);
-            locationButton.getBackground().setAlpha(255);
-
-        } catch (Exception e) {
-
-            locationButton.setEnabled(false);
-            locationButton.getBackground().setAlpha(0);
-
-            Log.d(TAG, "Error getting location: " + e);
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnected: " + connectionHint);
-        }
-
-        try {
-            LocationRequest locationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(30000)
-                    .setSmallestDisplacement(0);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-            }
-
-        } catch (Exception e) {
-
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Error getting location: " + e);
-            }
-        }
-    }
-
-    @Override // GoogleApiClient.ConnectionCallbacks
-    public void onConnectionSuspended(int cause) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionSuspended: " + cause);
-        }
-    }
-
-    @Override // GoogleApiClient.OnConnectionFailedListener
-    public void onConnectionFailed(ConnectionResult result) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionFailed: " + result);
-        }
     }
 
     @Override
@@ -1364,11 +1299,10 @@ public class PoiActivity extends Utils
 
         super.onPause();
 
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-        Data.sLastZoom = mMapView.getZoomLevel();
+        if(mFusedLocationClient != null)
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+
+        Data.sLastZoom = mMapView.getZoomLevelDouble();
         Data.sLastCenter = new GeoPoint(mMapView.getMapCenter().getLatitude(), mMapView.getMapCenter().getLongitude());
     }
 

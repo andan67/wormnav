@@ -1,7 +1,9 @@
 package org.andan.android.connectiq.wormnav;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,19 +15,24 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
-
-import com.google.android.gms.common.api.GoogleApiClient;
+import android.widget.Button;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,8 +40,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.andan.android.connectiq.wormnav.R;
 import pt.karambola.geo.Units;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.beans.Point;
@@ -57,8 +61,11 @@ public class Utils extends AppCompatActivity {
 
     private static final String TAG = "Utils";
 
-    protected GoogleApiClient mGoogleApiClient;
+    protected FusedLocationProviderClient mFusedLocationClient;
+    protected LocationRequest mLocationRequest;
+    protected LocationCallback mLocationCallback;
 
+    protected Button locationButton;
     protected String responseString;
 
     protected String sdRootTxt = "";
@@ -83,6 +90,65 @@ public class Utils extends AppCompatActivity {
     protected boolean showPoi;
 
     boolean mMapDragged = false;
+
+    /**
+     * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
+     * runtime permission has been granted.
+     */
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback, Looper.myLooper());
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(30000);
+        mLocationRequest.setSmallestDisplacement(0);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
+    /**
+     * Creates a callback for receiving location events.
+     */
+    protected void createLocationCallback() {
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+
+                try {
+                    Location location = locationResult.getLastLocation();
+                    Data.sCurrentPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
+
+                    locationButton.setEnabled(true);
+                    locationButton.getBackground().setAlpha(255);
+
+                } catch (Exception e) {
+
+                    locationButton.setEnabled(false);
+                    locationButton.getBackground().setAlpha(0);
+
+                    Log.d(TAG, "Error getting location: " + e);
+                }
+            }
+        };
+    }
 
     /**
      * Calculate bounding box for given List of GeoPoints

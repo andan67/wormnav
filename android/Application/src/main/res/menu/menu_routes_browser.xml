@@ -26,6 +26,11 @@
         android:title="@string/routes_simplify_selected" />
 
     <item
+        android:id="@+id/routes_simplify_merge_routes"
+        android:orderInCategory="120"
+        android:title="@string/routes_simplify_merge_routes" />
+
+    <item
         android:id="@+id/routes_delete_selected"
         android:orderInCategory="130"
         android:title="@string/routes_delete_selected" />

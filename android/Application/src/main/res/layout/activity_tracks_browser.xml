@@ -1,4 +1,4 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout_routes"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -148,4 +148,4 @@
 
     <!-- Side navigation drawer UI -->
 
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

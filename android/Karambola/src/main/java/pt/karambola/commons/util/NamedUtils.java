@@ -75,6 +75,7 @@ NamedUtils
 		if (items != null)
 		{
 			List<I> sortedItems = new ArrayList<>() ;
+
 			CollectionUtils.addAllIgnoreNull( sortedItems, items ) ;
 			Collections.sort( sortedItems, comparator ) ;
 

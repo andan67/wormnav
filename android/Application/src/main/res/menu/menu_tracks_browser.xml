@@ -18,6 +18,12 @@
         android:title="@string/tracks_convert" />
 
     <item
+        android:id="@+id/tracks_merge"
+        android:enabled="false"
+        android:orderInCategory="106"
+        android:title="@string/tracks_merge" />
+
+    <item
         android:id="@+id/tracks_delete_selected"
         android:enabled="false"
         android:orderInCategory="110"

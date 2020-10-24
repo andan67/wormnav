@@ -2,7 +2,8 @@ package org.andan.android.connectiq.wormnav;
 
 import android.Manifest;
 import android.app.ActionBar;
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,17 +14,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +33,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,10 +45,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.api.IMapController;
@@ -62,7 +64,6 @@ import org.osmdroid.views.overlay.MapEventsOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
-import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -86,15 +87,13 @@ import pt.karambola.gpx.parser.GpxParserOptions;
 import pt.karambola.gpx.predicate.RouteFilter;
 import pt.karambola.gpx.util.GpxUtils;
 
+import static android.view.View.GONE;
 import static org.andan.android.connectiq.wormnav.R.id.osmmap;
 
 /**
  * Route Picker activity created by piotr on 02.05.17.
  */
-public class RoutesBrowserActivity extends Utils
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class RoutesBrowserActivity extends Utils {
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -106,10 +105,10 @@ public class RoutesBrowserActivity extends Utils
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private final String TAG = "Picker";
+    private final String TAG = RoutesBrowserActivity.class.getName();
 
-    private final int MAX_ZOOM_LEVEL = 19;
-    private final int MIN_ZOOM_LEVEL = 4;
+    private final double MAX_ZOOM_LEVEL = 19;
+    private final double MIN_ZOOM_LEVEL = 4;
 
     private int filePickerAction;
     private final int ACTION_IMPORT_ROUTES = 1;
@@ -121,7 +120,6 @@ public class RoutesBrowserActivity extends Utils
     private final int REQUEST_CODE_PICK_DIR = 1;
     private final int REQUEST_CODE_PICK_FILE = 2;
 
-    private Button locationButton;
     private Button fitButton;
     private Button nextButton;
     private Button previousButton;
@@ -195,11 +193,9 @@ public class RoutesBrowserActivity extends Utils
         addDrawerItems(web);
         setupDrawer();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        createLocationCallback();
+        createLocationRequest();
 
         setUpMap();
 
@@ -213,9 +209,6 @@ public class RoutesBrowserActivity extends Utils
         mMapView.setTilesScaledToDpi(true);
 
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
-
-        TilesOverlay tilesOverlay = mMapView.getOverlayManager().getTilesOverlay();
-        tilesOverlay.setOvershootTileCache(tilesOverlay.getOvershootTileCache() * 2);
 
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mMapView);
         mLocationOverlay.enableMyLocation();
@@ -250,7 +243,7 @@ public class RoutesBrowserActivity extends Utils
 
         restoreMapPosition();
 
-        mMapView.setMapListener(new MapListener() {
+        mMapView.addMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
 
@@ -275,7 +268,7 @@ public class RoutesBrowserActivity extends Utils
     private void restoreMapPosition() {
 
         if (Data.sLastZoom == null) {
-            mapController.setZoom(3);
+            mapController.setZoom(3.0);
         } else {
             mapController.setZoom(Data.sLastZoom);
         }
@@ -477,7 +470,7 @@ public class RoutesBrowserActivity extends Utils
         routesSummary.setText(String.format(getResources().getString(R.string.x_of_y_routes), mFilteredRoutesNumber, allRoutesNumber));
 
         if (zoom_to_fit && mAllGeopoints.size() > 0) {
-            mMapView.zoomToBoundingBox(findBoundingBox(mAllGeopoints), false);
+            mMapView.zoomToBoundingBox(findBoundingBox(mAllGeopoints).increaseByScale(1.1f), false);
         }
 
         if (showPoi) {
@@ -559,7 +552,7 @@ public class RoutesBrowserActivity extends Utils
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapController.setZoom(18);
+                mapController.setZoom(18.0);
                 mapController.setCenter(Data.sCurrentPosition);
                 setButtonsState();
             }
@@ -571,7 +564,7 @@ public class RoutesBrowserActivity extends Utils
             public void onClick(View v) {
 
                 if (mAllGeopoints != null && mAllGeopoints.size() > 0) {
-                    mMapView.zoomToBoundingBox(findBoundingBox(mAllGeopoints), false);
+                    mMapView.zoomToBoundingBox(findBoundingBox(mAllGeopoints).increaseByScale(1.1f), false);
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.no_routes_in_view), Toast.LENGTH_SHORT).show();
                 }
@@ -706,8 +699,7 @@ public class RoutesBrowserActivity extends Utils
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-
-        mGoogleApiClient.connect();
+        startLocationUpdates();
         restoreMapPosition();
         mMapDragged = true;
         loadSettings();
@@ -715,71 +707,13 @@ public class RoutesBrowserActivity extends Utils
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-
-        try {
-
-            Data.sCurrentPosition = new GeoPoint(location.getLatitude(), location.getLongitude());
-
-            locationButton.setEnabled(true);
-            locationButton.getBackground().setAlpha(255);
-
-        } catch (Exception e) {
-
-            locationButton.setEnabled(false);
-            locationButton.getBackground().setAlpha(0);
-
-            Log.d(TAG, "Error getting location: " + e);
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnected: " + connectionHint);
-        }
-
-        try {
-            LocationRequest locationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(30000)
-                    .setSmallestDisplacement(0);
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-            }
-
-        } catch (Exception e) {
-
-            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                Log.d(TAG, "Error getting location: " + e);
-            }
-        }
-    }
-
-    @Override // GoogleApiClient.ConnectionCallbacks
-    public void onConnectionSuspended(int cause) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionSuspended: " + cause);
-        }
-    }
-
-    @Override // GoogleApiClient.OnConnectionFailedListener
-    public void onConnectionFailed(ConnectionResult result) {
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, "onConnectionFailed: " + result);
-        }
-    }
-
-    @Override
     protected void onPause() {
 
         super.onPause();
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-        Data.sLastZoom = mMapView.getZoomLevel();
+        if(mFusedLocationClient != null)
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+
+        Data.sLastZoom = mMapView.getZoomLevelDouble();
         Data.sLastCenter = new GeoPoint(mMapView.getMapCenter().getLatitude(), mMapView.getMapCenter().getLongitude());
     }
 
@@ -815,6 +749,7 @@ public class RoutesBrowserActivity extends Utils
         menu.findItem(R.id.routes_edit_selected).setEnabled(Data.sSelectedRouteIdx != null);
         menu.findItem(R.id.routes_simplify_selected).setEnabled(Data.sSelectedRouteIdx != null);
         menu.findItem(R.id.routes_clear).setEnabled(Data.sRoutesGpx.getRoutes().size() > 0);
+        menu.findItem(R.id.routes_simplify_merge_routes).setEnabled(Data.sRoutesGpx.getRoutes().size() > 0);
         menu.findItem(R.id.export).setEnabled(Data.sRoutesGpx.getRoutes().size() > 0);
 
         menu.findItem(R.id.show_poi).setChecked(showPoi);
@@ -865,6 +800,11 @@ public class RoutesBrowserActivity extends Utils
 
                 i = new Intent(RoutesBrowserActivity.this, RouteOptimizerActivity.class);
                 startActivityForResult(i, 90);
+                return true;
+
+
+            case R.id.routes_simplify_merge_routes:
+                displayConvertDialog(null);
                 return true;
 
             case R.id.routes_delete_selected:
@@ -1017,7 +957,7 @@ public class RoutesBrowserActivity extends Utils
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_FILE) {
             Log.d(TAG, "RoutesBrowser resultCode:" + resultCode);
             if (resultCode == RESULT_OK) {
@@ -1033,7 +973,7 @@ public class RoutesBrowserActivity extends Utils
                         break;
 
                     case ACTION_CONVERT_TRACKS:
-                        displayConvertTracksDialog(fileFullPath);
+                        displayConvertDialog(fileFullPath);
                         break;
 
                     case SAVE_SELECTED_ROUTE:
@@ -1309,6 +1249,7 @@ public class RoutesBrowserActivity extends Utils
             return null;
         }
 
+
         Route[] sortedRoutesArray = new Route[Data.sFilteredRoutes.size()];
         sortedRoutesArray = Data.sFilteredRoutes.toArray(sortedRoutesArray);
 
@@ -1498,7 +1439,8 @@ public class RoutesBrowserActivity extends Utils
         }
 
         final List<Route> sortedRoutes = new ArrayList<>();
-        final List<String> sortedRteNames = GpxUtils.getRouteNamesSortedAlphabeticaly(gpxIn.getRoutes(), sortedRoutes);
+        //final List<String> sortedRteNames = GpxUtils.getRouteNamesSortedAlphabeticaly(gpxIn.getRoutes(), sortedRoutes);
+        final List<String> sortedRteNames = GpxUtils.getRouteNamesUnsorted_LengthTypeArity(gpxIn.getRoutes(), Data.sUnitsInUse, sortedRoutes);
 
         if (sortedRteNames.isEmpty()) {
             /*
@@ -1617,39 +1559,46 @@ public class RoutesBrowserActivity extends Utils
         }
     }
 
-    private void displayConvertTracksDialog(final String path_to_file) {
-
-        Gpx gpxOnlyTrks = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_TRACKS);
-
-        List<Track> tracksIn;
-        try {
-            tracksIn = gpxOnlyTrks.getTracks();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), getString(R.string.no_tracks_not_gpx), Toast.LENGTH_LONG).show();
-            return;
-        }
+    private void displayConvertDialog(final String path_to_file) {
 
         final List<Route> importedRoutes = new ArrayList<>();
 
-        if (gpxOnlyTrks.getTracks().size() == 0) {
-            Toast.makeText(getApplicationContext(), getString(R.string.no_tracks_not_gpx), Toast.LENGTH_LONG).show();
-            return;
-        }
+        // import tracks from file and convert into routes
+        if(path_to_file != null) {
+            Gpx gpxOnlyTrks = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_TRACKS);
 
-        for (Track track : tracksIn) {
+            List<Track> tracksIn;
+            try {
+                tracksIn = gpxOnlyTrks.getTracks();
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), getString(R.string.no_tracks_not_gpx), Toast.LENGTH_LONG).show();
+                return;
+            }
 
-            importedRoutes.add(Utils.convertTrackToRoute(track));
+            Log.d(TAG, "tracksIn.size():" + tracksIn.size());
+
+
+            if (gpxOnlyTrks.getTracks().size() == 0) {
+                Toast.makeText(getApplicationContext(), getString(R.string.no_tracks_not_gpx), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            for (Track track : tracksIn) {
+
+                importedRoutes.add(Utils.convertTrackToRoute(track));
+            }
+        } else {
+            importedRoutes.addAll(Data.sRoutesGpx.getRoutes());
         }
 
         final List<Route> sortedRoutes = new ArrayList<>();
-        final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesSortedAlphabeticaly(importedRoutes, sortedRoutes);
-
+        //final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesSortedAlphabeticaly(importedRoutes, sortedRoutes);
+        final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesUnsorted_LengthTypeArity(importedRoutes, Data.sUnitsInUse, sortedRoutes);
 
         if (gpxRteDisplayNames != null && gpxRteDisplayNames.isEmpty()) {
-
             Toast.makeText(RoutesBrowserActivity.this, getString(R.string.no_named_tracks), Toast.LENGTH_SHORT).show();
-
-        } else {
+        }
+        else {
 
             final List<String> allNames = new ArrayList<>();
             if (gpxRteDisplayNames != null) {
@@ -1661,25 +1610,50 @@ public class RoutesBrowserActivity extends Utils
 
             final boolean selected_values[] = new boolean[allNames.size()];
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Dialog_Alert);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
 
             LayoutInflater inflater = getLayoutInflater();
-            final View layout = inflater.inflate(R.layout.import_tracks_dialog, null);
+            final View layout = inflater.inflate(R.layout.convert_dialog, null);
 
             final EditText maxWptEditText = (EditText) layout.findViewById(R.id.reduceMaxPoints);
 
             final EditText maxError = (EditText) layout.findViewById(R.id.reduceMaxError);
 
-            final CheckBox reduceCheckBox = (CheckBox) layout.findViewById(R.id.reduceTrackCheckbox);
-            reduceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    maxWptEditText.setEnabled(isChecked);
-                    maxError.setEnabled(isChecked);
-                }
-            });
+            final CheckBox reduceCheckBox = (CheckBox) layout.findViewById(R.id.reduceCheckbox);
+            if(path_to_file != null) {
+                reduceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        maxWptEditText.setEnabled(isChecked);
+                        maxError.setEnabled(isChecked);
+                    }
+                });
+            } else {
+                layout.findViewById(R.id.reduceRow).setVisibility(GONE);
+                reduceCheckBox.setVisibility(GONE);
+                reduceCheckBox.setChecked(false);
+            }
 
-            String dialogTitle = getResources().getString(R.string.dialog_select_tracks);
+            final EditText mergeNameEditText = (EditText) layout.findViewById(R.id.mergeName);
+            final CheckBox mergeCheckbox = (CheckBox) layout.findViewById(R.id.mergeCheckbox);
+            if(path_to_file != null) {
+                mergeCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        mergeNameEditText.setEnabled(isChecked);
+                    }
+                });
+            } else {
+                mergeCheckbox.setChecked(true);
+                mergeCheckbox.setEnabled(false);
+                mergeNameEditText.setEnabled(true);
+            }
+
+            final CheckBox deleteSourceCheckBox = (CheckBox) layout.findViewById(R.id.deleteSourceCheckbox);
+            deleteSourceCheckBox.setVisibility(GONE);
+
+            String dialogTitle = path_to_file!=null?
+                    getResources().getString(R.string.dialog_select_tracks_import):getResources().getString(R.string.dialog_select_routes_optimize);
             String buttonAll = getResources().getString(R.string.dialog_all);
             String buttonSelected = getResources().getString(R.string.dialog_selected);
             String buttonCancel = getResources().getString(R.string.dialog_cancel);
@@ -1692,17 +1666,18 @@ public class RoutesBrowserActivity extends Utils
                         public void onClick(DialogInterface dialog, int id) {
 
                             List<String> selectedNames = new ArrayList<>();
-
+                            Log.d(TAG, "selected_values.length: " + selected_values.length);
                             for (int i = 0; i < selected_values.length; i++) {
-
+                                Log.d(TAG, "selected_values:" + selected_values[i]);
                                 if (selected_values[i]) {
+
                                     selectedNames.add(allNames.get(i));
                                 }
                             }
 
                             if (selectedNames.size() == 0) {
 
-                                Toast.makeText(RoutesBrowserActivity.this, getResources().getString(R.string.no_tracks_selected), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RoutesBrowserActivity.this, getResources().getString(R.string.no_routes_selected), Toast.LENGTH_SHORT).show();
 
                             } else {
 
@@ -1715,10 +1690,11 @@ public class RoutesBrowserActivity extends Utils
 
                                 }
 
-                                if (reduceCheckBox.isChecked()) {
+                                int maxPathWpt = 100;
+                                double maxPathError = 10d;
 
-                                    int maxPathWpt = 100;
-                                    double maxPathError = 10d;
+                                if (reduceCheckBox.isChecked()) {
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.simplifying), Toast.LENGTH_SHORT).show();
 
                                     if (!maxWptEditText.getText().toString().isEmpty()) {
                                         maxPathWpt = Integer.valueOf(maxWptEditText.getText().toString());
@@ -1727,16 +1703,36 @@ public class RoutesBrowserActivity extends Utils
                                     if (!maxError.getText().toString().isEmpty()) {
                                         maxPathError = Double.valueOf(maxError.getText().toString());
                                     }
-
-                                    for (Route rteToSimplify : gpxRoutesPickedByUser) {
-
-                                        GpxUtils.simplifyRoute(rteToSimplify, maxPathWpt, maxPathError);
-
-                                    }
-
-                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.simplifying), Toast.LENGTH_SHORT).show();
                                 }
-                                Data.sRoutesGpx.addRoutes(gpxRoutesPickedByUser);
+
+                                if (!mergeCheckbox.isChecked()) {
+
+                                    if (reduceCheckBox.isChecked()) {
+                                        for (Route rteToSimplify : gpxRoutesPickedByUser) {
+                                            if (reduceCheckBox.isChecked()) {
+                                                GpxUtils.simplifyRoute(rteToSimplify, maxPathWpt, maxPathError);
+                                            }
+                                        }
+                                    }
+                                    Log.d(TAG,"Data.sRoutesGpx.getRoutes().size():" + Data.sRoutesGpx.getRoutes().size());
+                                    Data.sRoutesGpx.addRoutes(gpxRoutesPickedByUser);
+                                    Log.d(TAG,"gpxRoutesPickedByUser.size():" + gpxRoutesPickedByUser.size());
+                                    Log.d(TAG,"Data.sRoutesGpx.getRoutes().size():" + Data.sRoutesGpx.getRoutes().size());
+
+                                } else {
+                                    final Route mergedRoute = new Route();
+                                    String name = mergeNameEditText.getText().toString();
+                                    if (name.isEmpty()) name = "Merged route";
+                                    mergedRoute.setName(name);
+                                    for (Route rteToSimplify : gpxRoutesPickedByUser) {
+                                        mergedRoute.addRoutePoints(rteToSimplify.getRoutePoints());
+                                    }
+                                    if (reduceCheckBox.isChecked()) {
+
+                                        GpxUtils.simplifyRoute(mergedRoute, maxPathWpt, maxPathError);
+                                    }
+                                    Data.sRoutesGpx.addRoute(mergedRoute);
+                                }
 
                                 int purged_routes = GpxUtils.purgeRoutesOverlapping(Data.sRoutesGpx);
 
@@ -1760,10 +1756,11 @@ public class RoutesBrowserActivity extends Utils
                     .setPositiveButton(buttonAll, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
 
-                            if (reduceCheckBox.isChecked()) {
+                            int maxPathWpt = 100;
+                            double maxPathError = 50d;
 
-                                int maxPathWpt = 100;
-                                double maxPathError = 50d;
+                            if (reduceCheckBox.isChecked()) {
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.simplifying), Toast.LENGTH_SHORT).show();
 
                                 if (!maxWptEditText.getText().toString().isEmpty()) {
                                     maxPathWpt = Integer.valueOf(maxWptEditText.getText().toString());
@@ -1772,16 +1769,35 @@ public class RoutesBrowserActivity extends Utils
                                 if (!maxError.getText().toString().isEmpty()) {
                                     maxPathError = Double.valueOf(maxError.getText().toString());
                                 }
-
-                                for (Route rteToSimplify : importedRoutes) {
-
-                                    GpxUtils.simplifyRoute(rteToSimplify, maxPathWpt, maxPathError);
-
-                                }
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.simplifying), Toast.LENGTH_SHORT).show();
                             }
 
-                            Data.sRoutesGpx.addRoutes(importedRoutes);
+
+                            if (!mergeCheckbox.isChecked()) {
+
+                                if (reduceCheckBox.isChecked()) {
+                                    for (Route rteToSimplify : importedRoutes) {
+
+                                        GpxUtils.simplifyRoute(rteToSimplify, maxPathWpt, maxPathError);
+
+                                    }
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.simplifying), Toast.LENGTH_SHORT).show();
+                                }
+                                Data.sRoutesGpx.addRoutes(importedRoutes);
+                            } else if(mergeCheckbox.isChecked()) {
+                                final Route mergedRoute = new Route();
+                                String name = mergeNameEditText.getText().toString();
+                                if(name.isEmpty()) name = "Merged route";
+                                mergedRoute.setName(name);
+                                for (Route rteToSimplify : importedRoutes) {
+                                    mergedRoute.addRoutePoints(rteToSimplify.getRoutePoints());
+                                }
+
+                                if (reduceCheckBox.isChecked()) {
+
+                                    GpxUtils.simplifyRoute(mergedRoute, maxPathWpt, maxPathError);
+                                }
+                                Data.sRoutesGpx.addRoute(mergedRoute);
+                            }
 
                             int purged_routes = GpxUtils.purgeRoutesOverlapping(Data.sRoutesGpx);
 
@@ -1802,12 +1818,22 @@ public class RoutesBrowserActivity extends Utils
                         }
                     });
 
-            builder.setMultiChoiceItems(menu_entries, selected_values, new DialogInterface.OnMultiChoiceClickListener() {
+            ListView listView = (ListView) layout.findViewById(R.id.listItems);
+            ArrayAdapter<String> adapter = new ArrayAdapter(
+                    this,
+                    //android.R.layout.simple_list_item_multiple_choice,
+                    R.layout.dialog_multi_choice_item,
+                    menu_entries
+            );
 
+            listView.setAdapter(adapter);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            // Set an item click listener for the ListView
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface arg0, int arg1, boolean arg2) {
-
-                    selected_values[arg1] = arg2;
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    SparseBooleanArray clickedItemPositions = listView.getCheckedItemPositions();
+                    selected_values[i] = clickedItemPositions.get(i,false);
                 }
             });
 
@@ -1852,7 +1878,8 @@ public class RoutesBrowserActivity extends Utils
         }
 
         final List<Route> sortedRoutes = new ArrayList<>();
-        final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesSortedAlphabeticaly(Data.sRoutesGpx.getRoutes(), sortedRoutes);
+        //final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesSortedAlphabeticaly(Data.sRoutesGpx.getRoutes(), sortedRoutes);
+        final List<String> gpxRteDisplayNames = GpxUtils.getRouteNamesUnsorted_LengthTypeArity(Data.sRoutesGpx.getRoutes(), Data.sUnitsInUse, sortedRoutes);
 
         final List<String> allNames = new ArrayList<>();
         allNames.addAll(gpxRteDisplayNames);
