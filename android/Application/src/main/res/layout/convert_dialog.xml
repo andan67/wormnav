@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/listItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/divider"
+        android:layout_margin="10dp"
+        android:layout_alignParentTop="true" >
+
+    </ListView>
+
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:layout_above="@+id/options"
+        android:background="@color/grey" />
+
+    <TableLayout
+        android:id="@+id/options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/divider2"
+        >
+
+        <TableRow
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp">
+
+            <CheckBox
+                android:id="@+id/reduceCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/apply_reduce" />
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:id="@+id/reduceRow"
+            >
+
+            <EditText
+                android:id="@+id/reduceMaxPoints"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:enabled="false"
+                android:inputType="number|numberSigned"
+                android:maxLength="3"
+                android:paddingLeft="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/reduceMaxPointsLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Max wpt#" />
+
+            <EditText
+                android:id="@+id/reduceMaxError"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:enabled="false"
+                android:inputType="number|numberSigned"
+                android:maxLength="4"
+                android:text="10" />
+
+            <TextView
+                android:id="@+id/reduceMaxErrorLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Max error" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp">
+
+            <CheckBox
+                android:id="@+id/mergeCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/apply_merge" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <EditText
+                android:id="@+id/mergeName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:enabled="false"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:hint="@string/tracks_merge_name_label"
+                android:text="" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <CheckBox
+                android:id="@+id/deleteSourceCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:checked="false"
+                android:text="@string/delete_source_track" />
+        </TableRow>
+
+    </TableLayout>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/grey" />
+
+
+</RelativeLayout>
