@@ -197,7 +197,11 @@ GpxParser
 				}
 			}
 		}
-
+		try {
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		gpx.resetIsChanged( ) ;
 
 		return gpx ;
@@ -605,7 +609,12 @@ GpxParser
 		DOMSource source = new DOMSource( doc ) ;
 		StreamResult result = new StreamResult( out ) ;
 		transformer.transform( source, result ) ;
-    }
+		try {
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 
     public

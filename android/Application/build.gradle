@@ -60,7 +60,7 @@ android {
     }
     defaultConfig {
         applicationId "org.andan.android.connectiq.wormnav"
-        minSdkVersion 18
+        minSdkVersion 27
         targetSdkVersion 30
         versionCode 105
         versionName '1.0.5'

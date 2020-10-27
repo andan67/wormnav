@@ -1,7 +1,10 @@
 package org.andan.android.connectiq.wormnav;
 
+import android.net.Uri;
+
 import org.osmdroid.util.GeoPoint;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -60,6 +63,12 @@ final class Data {
     static Gpx sRoutesGpx = new Gpx();
     static Gpx sTracksGpx = new Gpx();
 
+    static Uri lastImportedExportedUri;
+    static Uri lastLoadedSavedUri;
+
+    static File applicationFilesDir;
+    static final String applicationRepositoryFilename = "wormnav.gpx";
+    static boolean saveIntoRepositoryOnExit = true;
     static String defaultDirectoryPath = "";
     static String lastImportedFileFullPath = "";
     static String loadedFileFullPath = "";

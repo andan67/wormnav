@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -79,6 +80,7 @@ import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.Track;
 import pt.karambola.gpx.beans.TrackPoint;
 import pt.karambola.gpx.io.GpxFileIo;
+import pt.karambola.gpx.io.GpxStreamIo;
 import pt.karambola.gpx.parser.GpxParserOptions;
 import pt.karambola.gpx.util.GpxUtils;
 
@@ -178,10 +180,9 @@ public class TracksBrowserActivity extends Utils {
         }
 
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-
+        setContentView(R.layout.activity_tracks_browser);
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        setContentView(R.layout.activity_tracks_browser);
 
         mTitle = mDrawerTitle = getTitle();
 
@@ -649,17 +650,6 @@ public class TracksBrowserActivity extends Utils {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-
-        Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
-        Intent i;
-
         switch (item.getItemId()) {
 
             case R.id.tracks_edit_properties:
@@ -724,21 +714,24 @@ public class TracksBrowserActivity extends Utils {
             case R.id.tracks_import_tracks:
 
                 filePickerAction = ACTION_IMPORT_TRACKS;
+                performGpxFileSearch();
 
-                fileExploreIntent.putExtra(
+
+               /* fileExploreIntent.putExtra(
                         FileBrowserActivity.startDirectoryParameter,
                         path
                 );
                 startActivityForResult(
                         fileExploreIntent,
                         REQUEST_CODE_PICK_FILE
-                );
+                );*/
                 return true;
 
             case R.id.tracks_export:
 
                 filePickerAction = SAVE_MULTIPLE_TRACKS;
                 displayExportMultipleDialog();
+                //performGpxFileSave();
                 return true;
 
             case R.id.tracks_send_selected_to_device:
@@ -811,26 +804,29 @@ public class TracksBrowserActivity extends Utils {
         if (requestCode == REQUEST_CODE_PICK_FILE) {
             Log.d(TAG, "resultCode:" + resultCode);
             if (resultCode == RESULT_OK) {
-                String fileFullPath = data.getStringExtra(
-                        FileBrowserActivity.returnFileParameter);
-                Data.lastImportedFileFullPath = fileFullPath;
+                if(data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
 
-                switch (filePickerAction) {
+                    switch (filePickerAction) {
 
-                    case ACTION_IMPORT_TRACKS:
-                        displayImportTracksDialog(fileFullPath);
-                        break;
+                        case ACTION_IMPORT_TRACKS:
 
-                    case SAVE_SELECTED_TRACK:
-                        // saveSelectedTracks(fileFullPath);
-                        break;
+                            displayImportTracksDialog(uri);
+                            break;
 
-                    case SAVE_MULTIPLE_TRACKS:
-                        saveSelectedTracks(fileFullPath);
-                        break;
+                        case SAVE_SELECTED_TRACK:
+                            // saveSelectedTracks(fileFullPath);
+                            break;
 
-                    default:
-                        break;
+                        case SAVE_MULTIPLE_TRACKS:
+                            //saveSelectedTracks(fileFullPath);
+                                saveSelectedTracks(uri);
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
 
             } else {
@@ -990,14 +986,16 @@ public class TracksBrowserActivity extends Utils {
         });
     }
 
-    private void displayImportTracksDialog(final String path_to_file) {
+    private void displayImportTracksDialog(final Uri uri) {
 
         Data.sSelectedTrackIdx = null;
 
         /*
          * Check if the file contains any tracks
          */
-        Gpx gpxIn = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_TRACKS);
+
+        Log.d("import_uri", "uri: " + uri.getPath());
+        Gpx gpxIn = GpxStreamIo.parseIn(getInputStreamFromUri(uri), GpxParserOptions.ONLY_TRACKS);
 
         if (gpxIn == null) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_tracks_not_gpx), Toast.LENGTH_LONG).show();
@@ -1435,7 +1433,7 @@ public class TracksBrowserActivity extends Utils {
         }
 
         final List<Track> sortedTracks = new ArrayList<>();
-        final List<String> gpxTrackDisplayNames = GpxUtils.getTrackNamesSortedAlphabeticaly(Data.sTracksGpx.getTracks(), Data.sUnitsInUse, sortedTracks);
+        final List<String> gpxTrackDisplayNames = GpxUtils.getTrackNamesSUnsorted_LengthTypeArity(Data.sTracksGpx.getTracks(), Data.sUnitsInUse, sortedTracks);
 
         final List<String> allNames = new ArrayList<>();
         allNames.addAll(gpxTrackDisplayNames);
@@ -1451,7 +1449,7 @@ public class TracksBrowserActivity extends Utils {
         String buttonAll = getResources().getString(R.string.dialog_all);
         String buttonSelected = getResources().getString(R.string.dialog_selected);
         String buttonCancel = getResources().getString(R.string.dialog_cancel);
-
+        gpxOut.clearTracks();
         builder.setTitle(dialogTitle)
                 .setIcon(R.drawable.ico_pick_many)
                 .setCancelable(true)
@@ -1483,7 +1481,8 @@ public class TracksBrowserActivity extends Utils {
                             }
                             gpxOut.addTracks(gpxTracksPickedByUser);
 
-                            showSaveTracksDialog();
+                            //showSaveTracksDialog();
+                            exportTracks();
                         }
                     }
                 })
@@ -1496,7 +1495,8 @@ public class TracksBrowserActivity extends Utils {
 
                         gpxOut.addTracks(Data.sTracksGpx.getTracks());
 
-                        showSaveTracksDialog();
+                        //showSaveTracksDialog();
+                        exportTracks();
                     }
                 });
 
@@ -1512,6 +1512,11 @@ public class TracksBrowserActivity extends Utils {
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    private void exportTracks() {
+        performGpxFileSave();
+    }
+
 
     private void showSaveTracksDialog() {
 
@@ -1593,6 +1598,12 @@ public class TracksBrowserActivity extends Utils {
         };
         filename.addTextChangedListener(validate_name);
 
+    }
+
+    private void saveSelectedTracks(Uri uri) {
+        Gpx gpxToSave = new Gpx();
+        gpxToSave.addTracks(gpxOut.getTracks());
+        GpxStreamIo.parseOut(gpxToSave, getOutputStreamFromUri(uri));
     }
 
     private void saveSelectedTracks(String file) {

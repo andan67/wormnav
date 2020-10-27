@@ -2,6 +2,7 @@ package org.andan.android.connectiq.wormnav;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -14,14 +15,17 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.os.Looper;
+import android.provider.DocumentsContract;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -33,9 +37,12 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -54,6 +61,7 @@ import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.RoutePoint;
 import pt.karambola.gpx.beans.Track;
 import pt.karambola.gpx.beans.TrackPoint;
+import pt.karambola.gpx.io.GpxFileIo;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -90,6 +98,74 @@ public class Utils extends AppCompatActivity {
     protected boolean showPoi;
 
     boolean mMapDragged = false;
+
+    /**
+     * Fires an intent to spin up the "file chooser" UI and select an image.
+     */
+    public void performGpxFileSearch() {
+
+        // BEGIN_INCLUDE (use_open_document_intent)
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file browser.
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+        // Filter to only show results that can be "opened", such as a file (as opposed to a list
+        // of contacts or timezones)
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Filter to show only images, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers, it would be
+        // "*/*".
+        intent.setType("*/*");
+
+        if(Data.lastImportedExportedUri !=null) intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.lastImportedExportedUri);
+        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
+        // END_INCLUDE (use_open_document_intent)
+    }
+
+    /**
+     * Fires an intent to spin up the "file chooser" UI and select an image.
+     */
+    protected void performGpxFileSave() {
+
+        // BEGIN_INCLUDE (use_open_document_intent)
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file browser.
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+
+        // Filter to only show results that can be "opened", such as a file (as opposed to a list
+        // of contacts or timezones)
+        //intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Filter to show only images, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers, it would be
+        // "*/*".
+        intent.setType("*/*");
+
+        if(Data.lastImportedExportedUri !=null) intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.lastImportedExportedUri);
+        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
+        // END_INCLUDE (use_open_document_intent)
+    }
+
+    protected InputStream getInputStreamFromUri(Uri uri) {
+        try {
+            return  getContentResolver().openInputStream(uri);
+        }  catch (IOException e) {
+            return null;
+        }
+    }
+
+    protected OutputStream getOutputStreamFromUri(Uri uri) {
+        try {
+            return  getContentResolver().openOutputStream(uri);
+        }  catch (IOException e) {
+            return null;
+        }
+    }
+
+    protected void saveGpx(Gpx gpx, File file) {
+        GpxFileIo.parseOut(gpx, file);
+    }
 
     /**
      * Requests location updates from the FusedLocationApi. Note: we don't call this unless location

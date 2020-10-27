@@ -20,9 +20,12 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
+
+import android.provider.DocumentsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
@@ -46,6 +49,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +60,15 @@ import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.io.GpxFileIo;
 import pt.karambola.gpx.util.GpxUtils;
 
+import static java.nio.file.Paths.get;
+
 public class MainActivity extends Utils implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     Intent fileExploreIntent;
     String currentPath;
     private final int REQUEST_CODE_PICK_DIR = 1;
     private final int REQUEST_CODE_PICK_FILE = 2;
+    //private final int REQUEST_SAVE_FILE = 3;
 
     String fileName = "myfile";
 
@@ -137,13 +145,15 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         }
 
         loadSettings();
-        if (Data.loadLastOpenFile && Data.loadedFileFullPath.length() > 0) {
-            Log.d(TAG, "load last open file");
-            externalGpxFile = Data.loadedFileFullPath;
+
+        Data.applicationFilesDir = getApplicationDir();
+        Log.d(TAG, "applicationFilesDir:" + Data.applicationFilesDir.getPath());
+                //  try loading last saved file from application dir
+        if(Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
+            File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
+            externalGpxFile =  outFile.getPath();
             new openExternalGpxFile().execute();
-        } else {
-            Data.loadedFileFullPath = "";
-            refreshLoadedDataInfo();
+            Log.d(TAG, "onCreate: loaded from into: " + outFile.getPath());
         }
 
         // up-front permission handling
@@ -161,28 +171,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
 
         mLocationAcquired = false;
-
-        // create shared folder
-
-        File folder = new File(Environment.getExternalStorageDirectory() + "/WormNav");
-        if (!folder.exists()) {
-            if (folder.mkdirs()) {
-                Toast.makeText(MainActivity.this, getString(R.string.shared_folder_created), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "failed to create WormNav folder");
-            } else {
-                Toast.makeText(MainActivity.this, getString(R.string.shared_folder_failure), Toast.LENGTH_SHORT).show();
-                folder = new File(Environment.getExternalStorageDirectory() + "");
-            }
-        }
-        Data.defaultDirectoryPath = folder.toString();
-        Log.d(TAG, "Data.defaultDirectoryPath:" + Data.defaultDirectoryPath);
-
-        fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
 
         web[0] = getResources().getString(R.string.new_data);
         web[1] = getResources().getString(R.string.open_gpx);
@@ -280,7 +268,8 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             @Override
             public void onClick(View v) {
 
-                showSaveAsDialog();
+                //showSaveAsDialog();
+                saveFile();
             }
         });
 
@@ -661,26 +650,29 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     @Override
     public void onStart() {
         super.onStart();
-
-        Intent intent = getIntent();
-
-        if (intent != null) {
-
-            final Uri data = intent.getData();
-
-            if (data != null) {
-
-                final String filePath = data.getEncodedPath();
-
-                if (filePath != null && !filePath.isEmpty()) {
-
-                    intent.setData(null);
-                    externalGpxFile = filePath;
-                    new openExternalGpxFile().execute();
-                }
-            }
-        }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Data.mGpx = new Gpx();
+
+        Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
+        Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
+        Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
+        //File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
+        //GpxFileIo.parseOut(Data.mGpx, outFile);
+        GpxFileIo.parseOut(Data.mGpx, Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
+        //Log.d(TAG, "onDestroy: saved into: " + outFile.getPath());
+        Log.d(TAG, "onDestroy: saved into: " + Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
+    }
+
 
     @Override
     protected void onPause() {
@@ -716,7 +708,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         super.onActivityResult(requestCode, resultCode, data);
 
         TextView openFile = (TextView) findViewById(R.id.open_file);
-        Log.d(TAG, "onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
+        //Log.d(TAG, "onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
         if (requestCode == REQUEST_CODE_PICK_FILE) {
             if (resultCode == RESULT_CANCELED) {
                 Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
@@ -744,6 +736,11 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                         mSaveAsDialogPath.setText(getParentFromFullPath(Data.lastPickedFileFullPath));
                         mSaveAsDialogFilename.setText(getBaseFileNameFromFullPath(Data.lastPickedFileFullPath));
                         break;
+                    case ACTION_SAVE_AS_PICKER:
+                        Uri uri = data.getData();
+                        Log.d(TAG, "ACTION_SAVE_AS_PICKER uri: " + uri.getPath());
+                        break;
+
                 }
 
 
@@ -757,6 +754,32 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             }
         }
         refreshLoadedDataInfo();
+    }
+
+    private File getApplicationDir() {
+        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            return getExternalFilesDir(null);
+        } else {
+            return getFilesDir();
+        }
+    }
+
+    private void saveFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+
+        // Filter to only show results that can be "opened", such as a file (as opposed to a list
+        // of contacts or timezones)
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Filter to show only images, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers, it would be
+        // "*/*".
+        intent.setType("*/*");
+        Log.d(TAG,"Data.applicationFilesDir.toURI(): " + Data.applicationFilesDir.toURI());
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.applicationFilesDir.toURI());
+        filePickerAction = ACTION_SAVE_AS_PICKER;
+        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
     }
 
     private void showSaveAsDialog() {
