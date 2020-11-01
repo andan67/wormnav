@@ -47,6 +47,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -78,8 +79,6 @@ public class Utils extends AppCompatActivity {
 
     protected String sdRootTxt = "";
 
-    protected String externalGpxFile;
-
     protected final int REQUEST_CODE_PICK_DIR = 1;
     protected final int REQUEST_CODE_PICK_FILE = 2;
 
@@ -102,7 +101,7 @@ public class Utils extends AppCompatActivity {
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
-    public void performGpxFileSearch() {
+    public void performGpxFileSearch(int requestCode, Uri initialUri) {
 
         // BEGIN_INCLUDE (use_open_document_intent)
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file browser.
@@ -118,15 +117,15 @@ public class Utils extends AppCompatActivity {
         // "*/*".
         intent.setType("*/*");
 
-        if(Data.lastImportedExportedUri !=null) intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.lastImportedExportedUri);
-        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
+        if(initialUri!=null) intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.lastImportedExportedUri);
+        startActivityForResult(intent, requestCode);
         // END_INCLUDE (use_open_document_intent)
     }
 
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
-    protected void performGpxFileSave() {
+    protected void performGpxFileSave(int requestCode, Uri initialUri) {
 
         // BEGIN_INCLUDE (use_open_document_intent)
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file browser.
@@ -142,8 +141,8 @@ public class Utils extends AppCompatActivity {
         // "*/*".
         intent.setType("*/*");
 
-        if(Data.lastImportedExportedUri !=null) intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.lastImportedExportedUri);
-        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI,  initialUri);
+        startActivityForResult(intent, requestCode);
         // END_INCLUDE (use_open_document_intent)
     }
 
@@ -728,10 +727,10 @@ public class Utils extends AppCompatActivity {
         Data.sAllowRotation = preferences.getBoolean("rotation", false);
         Data.sRoutingSource = preferences.getInt("source", Data.ROUTING_SRC_OSRM);
 
-        Data.lastImportedFileFullPath = preferences.getString("lastImportedFile","");
-        Data.loadedFileFullPath = preferences.getString("loadedFile","");
-        Data.savedFileFullPath = preferences.getString("savedFile","");
-        Data.loadLastOpenFile = preferences.getBoolean("loadLastOpenFile", true);
+        Data.lastImportedExportedUri = Uri.parse(preferences.getString("lastImportedExportedUri",""));
+        Data.lastLoadedSavedUri = Uri.parse(preferences.getString("lastLoadedSavedUri",""));
+        Data.loadFromRepositoryOnStart = preferences.getBoolean("loadFromRepositoryOnStart", true);
+        Data.saveIntoRepositoryOnExit = preferences.getBoolean("saveIntoRepositoryOnExit", true);
 
         Data.useDefaultOptimization = preferences.getBoolean("useDefaultOptimization", false);
         Data.defaultMaxPathWpt = preferences.getInt("defaultMaxPathWpt", 0);
@@ -752,10 +751,11 @@ public class Utils extends AppCompatActivity {
         }
 
         editor.putBoolean("rotation", Data.sAllowRotation);
-        editor.putBoolean("loadLastOpenFile", Data.loadLastOpenFile);
-        editor.putString("lastImportedFile", Data.lastImportedFileFullPath);
-        editor.putString("loadedFile", Data.loadedFileFullPath);
-        editor.putString("savedFile", Data.savedFileFullPath);
+
+        editor.putBoolean("saveIntoRepositoryOnExit", Data.saveIntoRepositoryOnExit);
+        editor.putBoolean("loadFromRepositoryOnStart", Data.loadFromRepositoryOnStart);
+        editor.putString("lastImportedExportedUri", Data.lastImportedExportedUri.toString());
+        editor.putString("lastLoadedSavedUri", Data.lastLoadedSavedUri.toString());
 
         editor.putBoolean("useDefaultOptimization", Data.useDefaultOptimization);
         editor.putInt("defaultMaxPathWpt", Data.defaultMaxPathWpt);

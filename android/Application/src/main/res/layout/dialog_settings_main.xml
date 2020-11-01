@@ -36,11 +36,19 @@
             android:textSize="16sp" />
 
         <CheckBox
-            android:id="@+id/loadLastOpenFile"
+            android:id="@+id/loadFromRepoCheckBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/load_last_open_file"
+            android:text="@string/settings_load_from_repository"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/saveIntoRepoCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/settings_save_into_repository"
             android:textSize="16sp" />
 
         <TableLayout

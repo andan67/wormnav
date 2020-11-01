@@ -26,8 +26,6 @@ import pt.karambola.gpx.predicate.RouteFilter;
 
 final class Data {
 
-    static boolean firstRun;
-
     static ArrayList<GeoPoint> sCardinalGeoPoints;
     static GeoPoint sCurrentPosition;
     static Route osrmRoute;
@@ -66,16 +64,11 @@ final class Data {
     static Uri lastImportedExportedUri;
     static Uri lastLoadedSavedUri;
 
+    static boolean saveIntoRepositoryOnExit = true;
+    static boolean loadFromRepositoryOnStart = true;
+
     static File applicationFilesDir;
     static final String applicationRepositoryFilename = "wormnav.gpx";
-    static boolean saveIntoRepositoryOnExit = true;
-    static String defaultDirectoryPath = "";
-    static String lastImportedFileFullPath = "";
-    static String loadedFileFullPath = "";
-    static String savedFileFullPath = "";
-    static String lastPickedDirectory = "";
-    static String lastPickedFileFullPath = "";
-    static boolean loadLastOpenFile = true;
 
     static boolean useDefaultOptimization = false;
     static int defaultMaxPathWpt = 0;

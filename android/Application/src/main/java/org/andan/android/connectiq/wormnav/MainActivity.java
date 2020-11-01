@@ -49,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -64,18 +65,8 @@ import static java.nio.file.Paths.get;
 
 public class MainActivity extends Utils implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    Intent fileExploreIntent;
-    String currentPath;
-    private final int REQUEST_CODE_PICK_DIR = 1;
-    private final int REQUEST_CODE_PICK_FILE = 2;
-    //private final int REQUEST_SAVE_FILE = 3;
-
-    String fileName = "myfile";
-
-    int filePickerAction = -1;
-    private final int ACTION_OPEN = 1;
-    private final int ACTION_SAVE_AS = 2;
-    private final int ACTION_SAVE_AS_PICKER = 3;
+    private final int REQUEST_CODE_LOAD_FILE = 1;
+    private final int REQUEST_CODE_SAVE_FILE = 2;
 
     boolean saveInProgress;
 
@@ -88,7 +79,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getName();
 
     private TextView mSaveAsDialogPath;
     private EditText mSaveAsDialogFilename;
@@ -116,8 +107,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
     /* Id to identify Location permission request. */
     private static final int PERMISSION_REQUEST = 0;
-    private static final int PERMISSION_REQUEST_WRITE_STORAGE = 1;
-    private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 2;
     private static final String APP_PERMISSIONS[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
@@ -135,15 +124,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         preferences = getSharedPreferences("WormNavEditor", MODE_PRIVATE);
 
-        Data.firstRun = preferences.getBoolean("firstRun", true);
-
-        if (Data.firstRun) {
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("firstRun", false);
-            editor.apply();
-        }
-
         loadSettings();
 
         Data.applicationFilesDir = getApplicationDir();
@@ -151,8 +131,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                 //  try loading last saved file from application dir
         if(Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
             File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
-            externalGpxFile =  outFile.getPath();
-            new openExternalGpxFile().execute();
+            new openExternalGpxFile().execute(outFile.getPath());
             Log.d(TAG, "onCreate: loaded from into: " + outFile.getPath());
         }
 
@@ -258,8 +237,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                fileOpen();
+                performGpxFileSearch(REQUEST_CODE_LOAD_FILE, Data.lastLoadedSavedUri);
             }
         });
 
@@ -267,9 +245,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //showSaveAsDialog();
-                saveFile();
+                performGpxFileSave(REQUEST_CODE_SAVE_FILE,  Data.lastLoadedSavedUri);
             }
         });
 
@@ -345,19 +321,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             displayConfirmClearDialog();
         }
         refreshLoadedDataInfo();
-    }
-
-    private void fileOpen() {
-        filePickerAction = ACTION_OPEN;
-        final String path = Data.loadedFileFullPath.length() > 0 ? getParentFromFullPath(Data.loadedFileFullPath) : Data.defaultDirectoryPath;
-        fileExploreIntent.putExtra(
-                FileBrowserActivity.startDirectoryParameter,
-                path
-        );
-        startActivityForResult(
-                fileExploreIntent,
-                REQUEST_CODE_PICK_FILE
-        );
     }
 
     private void setupDrawer() {
@@ -577,21 +540,28 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         final CheckBox rotationCheckBox = (CheckBox) layout.findViewById(R.id.rotationCheckBox);
         rotationCheckBox.setChecked(Data.sAllowRotation);
-        rotationCheckBox.setOnClickListener(new View.OnClickListener() {
+        rotationCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Data.sAllowRotation = !Data.sAllowRotation;
-                rotationCheckBox.setChecked(Data.sAllowRotation);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Data.sAllowRotation = isChecked;
             }
         });
 
-        final CheckBox loadLastOpenFileCheckBox = (CheckBox) layout.findViewById(R.id.loadLastOpenFile);
-        loadLastOpenFileCheckBox.setChecked(Data.loadLastOpenFile);
-        loadLastOpenFileCheckBox.setOnClickListener(new View.OnClickListener() {
+        final CheckBox loadFromRepoCheckBox = (CheckBox) layout.findViewById(R.id.loadFromRepoCheckBox);
+        loadFromRepoCheckBox.setChecked(Data.loadFromRepositoryOnStart);
+        loadFromRepoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Data.loadLastOpenFile = !Data.loadLastOpenFile;
-                loadLastOpenFileCheckBox.setChecked(Data.loadLastOpenFile);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Data.loadFromRepositoryOnStart = isChecked;
+            }
+        });
+
+        final CheckBox saveIntoRepoCheckBox = (CheckBox) layout.findViewById(R.id.saveIntoRepoCheckBox);
+        saveIntoRepoCheckBox.setChecked(Data.saveIntoRepositoryOnExit);
+        saveIntoRepoCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Data.saveIntoRepositoryOnExit = isChecked;
             }
         });
 
@@ -706,9 +676,26 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_LOAD_FILE:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
 
-        TextView openFile = (TextView) findViewById(R.id.open_file);
-        //Log.d(TAG, "onActivityResult:" + requestCode + "/" + resultCode + "/" + data.hasExtra(FileBrowserActivity.returnDirectoryParameter));
+                }
+                break;
+            case REQUEST_CODE_SAVE_FILE:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+
+                }
+                break;
+            default:
+                break;
+
+        }
+
         if (requestCode == REQUEST_CODE_PICK_FILE) {
             if (resultCode == RESULT_CANCELED) {
                 Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
@@ -726,9 +713,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
                     case ACTION_OPEN:
 
-                        externalGpxFile = fileFullPath;
-                        new openExternalGpxFile().execute();
-
+                        new openExternalGpxFile().execute(fileFullPath);
                         break;
 
                     case ACTION_SAVE_AS:
@@ -764,113 +749,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         }
     }
 
-    private void saveFile() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
 
-        // Filter to only show results that can be "opened", such as a file (as opposed to a list
-        // of contacts or timezones)
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Filter to show only images, using the image MIME data type.
-        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-        // To search for all documents available via installed storage providers, it would be
-        // "*/*".
-        intent.setType("*/*");
-        Log.d(TAG,"Data.applicationFilesDir.toURI(): " + Data.applicationFilesDir.toURI());
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Data.applicationFilesDir.toURI());
-        filePickerAction = ACTION_SAVE_AS_PICKER;
-        startActivityForResult(intent, REQUEST_CODE_PICK_FILE);
-    }
-
-    private void showSaveAsDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-        final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
-
-        mSaveAsDialogFilename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-        mSaveAsDialogPath = saveAsLayout.findViewById(R.id.save_new_path);
-
-        final Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
-        final String path = Data.loadedFileFullPath.length() > 0 ? getParentFromFullPath(Data.loadedFileFullPath) : Data.defaultDirectoryPath;
-        final String fileBaseName = Data.loadedFileFullPath.length() > 0 ? getBaseFileNameFromFullPath(Data.loadedFileFullPath) : "myfile";
-        Data.lastPickedDirectory = path;
-        mSaveAsDialogPath.setText(path);
-        mSaveAsDialogFilename.setText(fileBaseName);
-
-        final AppCompatImageButton pickButton = saveAsLayout.findViewById(R.id.save_pick_button);
-        pickButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filePickerAction = ACTION_SAVE_AS_PICKER;
-
-                fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter,
-                        path
-                );
-                startActivityForResult(
-                        fileExploreIntent,
-                        REQUEST_CODE_PICK_FILE
-                );
-            }
-        });
-
-        String dialogTitle = getResources().getString(R.string.dialog_savegpx_saveasnew);
-        String saveText = getResources().getString(R.string.dialog_save_changes_save);
-        String saveAsText = getResources().getString(R.string.file_pick);
-        String cancelText = getResources().getString(R.string.dialog_cancel);
-
-        builder.setTitle(dialogTitle)
-                .setView(saveAsLayout)
-                .setIcon(R.drawable.map_save)
-                .setCancelable(true)
-                .setNeutralButton(cancelText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                })
-                .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileName = mSaveAsDialogFilename.getText().toString().trim();
-                        saveGpxDestructive(Data.lastPickedDirectory, fileName);
-
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-
-        final Button saveButton = alert.getButton(AlertDialog.BUTTON_POSITIVE);
-
-        final TextWatcher validate_name = new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-
-                saveButton.setEnabled(!arg0.toString().equals(""));
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int a, int b, int c) {
-
-                saveButton.setEnabled(!s.toString().equals(""));
-
-            }
-        };
-        mSaveAsDialogFilename.addTextChangedListener(validate_name);
-    }
 
     private void saveGpxDestructive(String path, String filename) {
 
@@ -1087,15 +966,16 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     }
 
     private class openExternalGpxFile extends
-            AsyncTask<Void, Boolean, Void> {
+            AsyncTask<String, Boolean, Void> {
 
         AlertDialog alert;
 
         int purger_pois, purged_routes;
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(InputStream... params) {
 
+            InputStream externalGpxFile = params[0];
             Gpx gpxIn = new Gpx();
 
             try {
@@ -1107,7 +987,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
             }
             if (gpxIn != null) {
-                Data.loadedFileFullPath = externalGpxFile;
                 Data.sPoiGpx = new Gpx();
                 Data.sPoiGpx.setPoints(gpxIn.getPoints());
 

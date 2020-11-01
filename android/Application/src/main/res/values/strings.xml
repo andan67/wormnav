@@ -392,5 +392,7 @@
     <string name="run_with_simulator">Run with simulator</string>
     <string name="load_last_open_file">Open last loaded/saved file on start</string>
     <string name="default_track_reduce">Default optimization</string>
+    <string name="settings_load_from_repository">Load data from repository on start</string>
+    <string name="settings_save_into_repository">Save data into repository on exit</string>
 
 </resources>

@@ -101,19 +101,13 @@ public class TracksBrowserActivity extends Utils {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private final String TAG = "TracksBrowser";
+    private final String TAG = TracksBrowserActivity.class.getName();
 
     private final double MAX_ZOOM_LEVEL = 19;
     private final double MIN_ZOOM_LEVEL = 4;
 
-    private int filePickerAction;
-    private final int ACTION_IMPORT_TRACKS = 1;
-
-    private final int SAVE_SELECTED_TRACK = 4;
-    private final int SAVE_MULTIPLE_TRACKS = 5;
-
-    private final int REQUEST_CODE_PICK_DIR = 1;
-    private final int REQUEST_CODE_PICK_FILE = 2;
+    private final int REQUEST_CODE_IMPORT_TRACKS = 1;
+    private final int REQUEST_CODE_SAVE_TRACKS = 2;
 
     private Button fitButton;
     private Button nextButton;
@@ -713,23 +707,11 @@ public class TracksBrowserActivity extends Utils {
 
             case R.id.tracks_import_tracks:
 
-                filePickerAction = ACTION_IMPORT_TRACKS;
-                performGpxFileSearch();
-
-
-               /* fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter,
-                        path
-                );
-                startActivityForResult(
-                        fileExploreIntent,
-                        REQUEST_CODE_PICK_FILE
-                );*/
+                performGpxFileSearch(REQUEST_CODE_IMPORT_TRACKS, Data.lastImportedExportedUri);
                 return true;
 
             case R.id.tracks_export:
 
-                filePickerAction = SAVE_MULTIPLE_TRACKS;
                 displayExportMultipleDialog();
                 //performGpxFileSave();
                 return true;
@@ -801,42 +783,23 @@ public class TracksBrowserActivity extends Utils {
                                     int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_FILE) {
-            Log.d(TAG, "resultCode:" + resultCode);
-            if (resultCode == RESULT_OK) {
-                if(data != null) {
+        switch (requestCode) {
+            case REQUEST_CODE_IMPORT_TRACKS:
+                if (resultCode == RESULT_OK && data != null) {
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
-
-                    switch (filePickerAction) {
-
-                        case ACTION_IMPORT_TRACKS:
-
-                            displayImportTracksDialog(uri);
-                            break;
-
-                        case SAVE_SELECTED_TRACK:
-                            // saveSelectedTracks(fileFullPath);
-                            break;
-
-                        case SAVE_MULTIPLE_TRACKS:
-                            //saveSelectedTracks(fileFullPath);
-                                saveSelectedTracks(uri);
-                            break;
-
-                        default:
-                            break;
-                    }
+                    displayImportTracksDialog(uri);
                 }
-
-            } else {
-                /*
-                Toast.makeText(
-                        this,
-                        getResources().getString(R.string.no_file_selected),
-                        Toast.LENGTH_LONG).show();
-                */
-            }
+                break;
+            case REQUEST_CODE_SAVE_TRACKS:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    saveSelectedTracks(uri);
+                }
+                break;
+            default:
+                break;
 
         }
     }
@@ -1514,156 +1477,13 @@ public class TracksBrowserActivity extends Utils {
     }
 
     private void exportTracks() {
-        performGpxFileSave();
-    }
-
-
-    private void showSaveTracksDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-        final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
-
-        final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-
-        final Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
-        filename.setText(fileName);
-
-        String dialogTitle = getResources().getString(R.string.dialog_savegpx_saveasnew);
-        String saveText = getResources().getString(R.string.dialog_save_changes_save);
-        String saveAsText = getResources().getString(R.string.file_pick);
-        String cancelText = getResources().getString(R.string.dialog_cancel);
-
-        builder.setTitle(dialogTitle)
-                .setView(saveAsLayout)
-                .setIcon(R.drawable.map_save)
-                .setCancelable(true)
-                .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                })
-                .setNeutralButton(saveAsText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileExploreIntent.putExtra(
-                                FileBrowserActivity.startDirectoryParameter,
-                                path
-                        );
-                        startActivityForResult(
-                                fileExploreIntent,
-                                REQUEST_CODE_PICK_FILE
-                        );
-                    }
-                })
-                .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileName = filename.getText().toString().trim();
-                        File full_file_path = new File(path +"/" + fileName + ".gpx");
-                        saveSelectedTracks(full_file_path.toString());
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-
-        alert.show();
-
-        final Button saveButton = alert.getButton(AlertDialog.BUTTON_POSITIVE);
-
-        final TextWatcher validate_name = new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-
-                saveButton.setEnabled(!arg0.toString().equals(""));
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int a, int b, int c) {
-
-                saveButton.setEnabled(!s.toString().equals(""));
-            }
-        };
-        filename.addTextChangedListener(validate_name);
-
+        performGpxFileSave(REQUEST_CODE_SAVE_TRACKS, Data.lastImportedExportedUri);
     }
 
     private void saveSelectedTracks(Uri uri) {
         Gpx gpxToSave = new Gpx();
         gpxToSave.addTracks(gpxOut.getTracks());
         GpxStreamIo.parseOut(gpxToSave, getOutputStreamFromUri(uri));
-    }
-
-    private void saveSelectedTracks(String file) {
-
-        File outputFile = new File(file);
-        if (outputFile.exists()) {
-
-            Gpx gpxToSave = GpxFileIo.parseIn(file);
-
-            if (gpxToSave == null) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_gpx), Toast.LENGTH_LONG).show();
-                return;
-
-            } else {
-
-                gpxToSave.addTracks(gpxOut.getTracks());
-
-                GpxFileIo.parseOut(gpxToSave, file);
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_tracks_exported), Toast.LENGTH_SHORT).show();
-            }
-
-        } else {
-
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.saving_to) + " " + outputFile, Toast.LENGTH_LONG).show();
-
-            boolean success = outputFile.exists();
-            if (!outputFile.exists()) {
-                try {
-                    success = outputFile.createNewFile();
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_creating_file), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            if (success) {
-
-                Gpx gpxToSave = new Gpx();
-
-                switch (filePickerAction) {
-                    case SAVE_SELECTED_TRACK:
-                        gpxToSave.addTrack(Data.sAllTracks.get(Data.sSelectedTrackIdx));
-                        break;
-
-                    case SAVE_MULTIPLE_TRACKS:
-                        gpxToSave.addTracks(gpxOut.getTracks());
-                        break;
-
-                    default:
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.neither_single_nor_multiple_tracks), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                GpxFileIo.parseOut(gpxToSave, outputFile.toString());
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_tracks_exported), Toast.LENGTH_SHORT).show();
-
-            } else {
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
-            }
-        }
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_tracks_exported), Toast.LENGTH_SHORT).show();
     }
 }
