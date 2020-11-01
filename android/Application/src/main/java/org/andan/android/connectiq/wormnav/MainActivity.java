@@ -49,6 +49,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,6 +61,7 @@ import java.util.List;
 import pt.karambola.geo.Units;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.io.GpxFileIo;
+import pt.karambola.gpx.io.GpxStreamIo;
 import pt.karambola.gpx.util.GpxUtils;
 
 import static java.nio.file.Paths.get;
@@ -80,9 +83,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     private CharSequence mTitle;
 
     private static final String TAG = MainActivity.class.getName();
-
-    private TextView mSaveAsDialogPath;
-    private EditText mSaveAsDialogFilename;
 
     boolean mLocationAcquired = false;
 
@@ -131,8 +131,12 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                 //  try loading last saved file from application dir
         if(Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
             File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
-            new openExternalGpxFile().execute(outFile.getPath());
-            Log.d(TAG, "onCreate: loaded from into: " + outFile.getPath());
+            try {
+                new openExternalGpxFile().execute(new FileInputStream(outFile));
+                Log.d(TAG, "onCreate: loaded from into: " + outFile.getPath());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         // up-front permission handling
@@ -295,11 +299,11 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                         break;
 
                     case 1:
-                        fileOpen();
+                        //fileOpen();
                         break;
 
                     case 2:
-                        showSaveAsDialog();
+                        //showSaveAsDialog();
                         break;
 
                     default:
@@ -681,64 +685,24 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                 if (resultCode == RESULT_OK && data != null) {
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
-
+                    Log.d(TAG, "Load file: " + uri.toString());
+                    //new openExternalGpxFile().execute(fileFullPath);
                 }
+                refreshLoadedDataInfo();
                 break;
             case REQUEST_CODE_SAVE_FILE:
                 if (resultCode == RESULT_OK && data != null) {
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
+                    Log.d(TAG, "Save file: " + uri.toString());
 
                 }
+                refreshLoadedDataInfo();
                 break;
             default:
                 break;
 
         }
-
-        if (requestCode == REQUEST_CODE_PICK_FILE) {
-            if (resultCode == RESULT_CANCELED) {
-                Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
-                switch (filePickerAction) {
-                    case ACTION_SAVE_AS_PICKER:
-                        mSaveAsDialogPath.setText(Data.lastPickedDirectory);
-                        break;
-                }
-            }
-            if (resultCode == RESULT_OK) {
-                Data.lastPickedDirectory = data.getStringExtra(FileBrowserActivity.returnDirectoryParameter);
-                String fileFullPath = data.getStringExtra(
-                        FileBrowserActivity.returnFileParameter);
-                switch (filePickerAction) {
-
-                    case ACTION_OPEN:
-
-                        new openExternalGpxFile().execute(fileFullPath);
-                        break;
-
-                    case ACTION_SAVE_AS:
-                        Data.lastPickedFileFullPath = fileFullPath;
-                        mSaveAsDialogPath.setText(getParentFromFullPath(Data.lastPickedFileFullPath));
-                        mSaveAsDialogFilename.setText(getBaseFileNameFromFullPath(Data.lastPickedFileFullPath));
-                        break;
-                    case ACTION_SAVE_AS_PICKER:
-                        Uri uri = data.getData();
-                        Log.d(TAG, "ACTION_SAVE_AS_PICKER uri: " + uri.getPath());
-                        break;
-
-                }
-
-
-            } else {
-                /*
-                Toast.makeText(
-                        this,
-                        getString(R.string.no_file_selected),
-                        Toast.LENGTH_LONG).show();
-                        */
-            }
-        }
-        refreshLoadedDataInfo();
     }
 
     private File getApplicationDir() {
@@ -827,7 +791,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             }
 
             TextView openFile = (TextView) findViewById(R.id.open_file);
-            Data.loadedFileFullPath = new_file;
+            //Data.loadedFileFullPath = new_file;
 
             try {
                 String[] splitFullPath = new_file.split("/");
@@ -845,9 +809,9 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
     public void refreshLoadedDataInfo() {
 
-        Log.d(TAG, "refreshLoadedDataInfo():" + Data.loadedFileFullPath);
+        Log.d(TAG, "refreshLoadedDataInfo():" + Data.lastLoadedSavedUri.toString());
         TextView openFile = (TextView) findViewById(R.id.open_file);
-        openFile.setText(getBaseFileNameFromFullPath(Data.loadedFileFullPath));
+        openFile.setText(getBaseFileNameFromFullPath(Data.lastLoadedSavedUri.toString()));
 
         if (Data.sPoiGpx == null || Data.sRoutesGpx == null || Data.sTracksGpx == null) {
             return;
@@ -883,7 +847,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                 .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        showSaveAsDialog();
+                        //showSaveAsDialog();
                     }
                 })
                 .setNegativeButton(dontSaveText, new DialogInterface.OnClickListener() {
@@ -966,7 +930,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     }
 
     private class openExternalGpxFile extends
-            AsyncTask<String, Boolean, Void> {
+            AsyncTask<InputStream, Boolean, Void> {
 
         AlertDialog alert;
 
@@ -975,11 +939,11 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         @Override
         protected Void doInBackground(InputStream... params) {
 
-            InputStream externalGpxFile = params[0];
+            InputStream gpxInputStream = params[0];
             Gpx gpxIn = new Gpx();
 
             try {
-                gpxIn = GpxFileIo.parseIn(externalGpxFile);
+                gpxIn = GpxStreamIo.parseIn(gpxInputStream);
 
             } catch (Exception e) {
 
