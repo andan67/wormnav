@@ -760,7 +760,7 @@ public class RoutesBrowserActivity extends Utils {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
+       // final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
         Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
                 null,
@@ -855,20 +855,20 @@ public class RoutesBrowserActivity extends Utils {
 
                 filePickerAction = ACTION_IMPORT_ROUTES;
 
-                fileExploreIntent.putExtra(
+                /*fileExploreIntent.putExtra(
                         FileBrowserActivity.startDirectoryParameter,
                         path
                 );
                 startActivityForResult(
                         fileExploreIntent,
                         REQUEST_CODE_PICK_FILE
-                );
+                );*/
                 return true;
 
             case R.id.convert_tracks:
 
                 filePickerAction = ACTION_CONVERT_TRACKS;
-
+/*
                 fileExploreIntent.putExtra(
                         FileBrowserActivity.startDirectoryParameter,
                         path
@@ -876,7 +876,7 @@ public class RoutesBrowserActivity extends Utils {
                 startActivityForResult(
                         fileExploreIntent,
                         REQUEST_CODE_PICK_FILE
-                );
+                );*/
                 return true;
 
             case R.id.export:
@@ -964,7 +964,7 @@ public class RoutesBrowserActivity extends Utils {
 
                 String fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastImportedFileFullPath = fileFullPath;
+               // Data.lastImportedFileFullPath = fileFullPath;
                 saveSettings();
                 switch (filePickerAction) {
 
@@ -1971,7 +1971,7 @@ public class RoutesBrowserActivity extends Utils {
 
     private void showSaveRoutesDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
         final View saveAsLayout = inflater.inflate(R.layout.export_gpx_dialog_layout, null);
@@ -2048,13 +2048,13 @@ public class RoutesBrowserActivity extends Utils {
                 saveButton.setEnabled(!s.toString().equals(""));
             }
         };
-        filename.addTextChangedListener(validate_name);
+        filename.addTextChangedListener(validate_name);*/
 
     }
 
     private void saveSelectedRoutes(String file) {
 
-        File outputFile = new File(file);
+        /*File outputFile = new File(file);
         if (outputFile.exists()) {
 
             Gpx gpxToSave = GpxFileIo.parseIn(file);
@@ -2126,7 +2126,7 @@ public class RoutesBrowserActivity extends Utils {
 
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
             }
-        }
+        }*/
     }
 
     @Override

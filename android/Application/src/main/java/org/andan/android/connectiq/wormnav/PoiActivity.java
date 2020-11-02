@@ -1011,7 +1011,7 @@ public class PoiActivity extends Utils {
 
     private void showSaveAsDialog(final boolean save_view) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
         final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
@@ -1095,13 +1095,13 @@ public class PoiActivity extends Utils {
 
             }
         };
-        filename.addTextChangedListener(validate_name);
+        filename.addTextChangedListener(validate_name);*/
 
     }
 
     private void savePoisDestructive(String filename, final boolean save_view) {
 
-        if (Data.sCopiedPoiGpx.getPoints().size() == 0) {
+       /* if (Data.sCopiedPoiGpx.getPoints().size() == 0) {
             Toast.makeText(this, getResources().getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
             return;
         }
@@ -1179,7 +1179,7 @@ public class PoiActivity extends Utils {
 
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
         }
-
+*/
     }
 
     public void clearPois() {
@@ -1326,7 +1326,7 @@ public class PoiActivity extends Utils {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
+       // final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
         Intent fileExploreIntent = new Intent(
                 FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
@@ -1341,14 +1341,12 @@ public class PoiActivity extends Utils {
 
                 fileActionRequested = IMPORT_FROM_GPX;
 
-                fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter,
-                        path
-                );
+               /* fileExploreIntent.putExtra(
+                        FileBrowserActivity.startDirectoryParameter, path);
                 startActivityForResult(
                         fileExploreIntent,
                         REQUEST_CODE_PICK_FILE
-                );
+                );*/
 
                 return true;
 
@@ -1417,7 +1415,7 @@ public class PoiActivity extends Utils {
 
                 fileFullPath = data.getStringExtra(
                         FileBrowserActivity.returnFileParameter);
-                Data.lastImportedFileFullPath = fileFullPath;
+                //Data.lastImportedFileFullPath = fileFullPath;
 
                 fileFolderAndName = fileFullPath.replace(sdRoot, "");
 

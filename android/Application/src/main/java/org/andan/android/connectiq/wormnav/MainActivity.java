@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -130,10 +131,10 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         Log.d(TAG, "applicationFilesDir:" + Data.applicationFilesDir.getPath());
                 //  try loading last saved file from application dir
         if(Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
-            File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
+            File inFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
             try {
-                new openExternalGpxFile().execute(new FileInputStream(outFile));
-                Log.d(TAG, "onCreate: loaded from into: " + outFile.getPath());
+                new openExternalGpxFile().execute(new FileInputStream(inFile));
+                Log.d(TAG, "onCreate: loaded from into: " + inFile.getPath());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -640,9 +641,8 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
         Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
         Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
-        //File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
-        //GpxFileIo.parseOut(Data.mGpx, outFile);
-        GpxFileIo.parseOut(Data.mGpx, Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
+        File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
+        GpxFileIo.parseOut(Data.mGpx, outFile);
         //Log.d(TAG, "onDestroy: saved into: " + outFile.getPath());
         Log.d(TAG, "onDestroy: saved into: " + Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
     }
@@ -695,7 +695,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
                     Log.d(TAG, "Save file: " + uri.toString());
-
+                    saveGpx(getOutputStreamFromUri(uri));
                 }
                 refreshLoadedDataInfo();
                 break;
@@ -811,7 +811,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         Log.d(TAG, "refreshLoadedDataInfo():" + Data.lastLoadedSavedUri.toString());
         TextView openFile = (TextView) findViewById(R.id.open_file);
-        openFile.setText(getBaseFileNameFromFullPath(Data.lastLoadedSavedUri.toString()));
+        openFile.setText(getBaseFileNameFromUri(Data.lastLoadedSavedUri));
 
         if (Data.sPoiGpx == null || Data.sRoutesGpx == null || Data.sTracksGpx == null) {
             return;
@@ -927,6 +927,16 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         }
         Toast.makeText(getApplicationContext(), message + " " + getString(R.string.default_file_corrupted), Toast.LENGTH_LONG).show();
 
+    }
+
+    private void saveGpx(OutputStream os) {
+        Data.mGpx = new Gpx();
+
+        Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
+        Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
+        Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
+        Log.d(TAG, "saveGpx: " + Data.mGpx.getTracks().size());
+        GpxStreamIo.parseOut(Data.mGpx, os);
     }
 
     private class openExternalGpxFile extends

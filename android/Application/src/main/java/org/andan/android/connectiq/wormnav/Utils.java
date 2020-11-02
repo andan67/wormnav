@@ -162,10 +162,6 @@ public class Utils extends AppCompatActivity {
         }
     }
 
-    protected void saveGpx(Gpx gpx, File file) {
-        GpxFileIo.parseOut(gpx, file);
-    }
-
     /**
      * Requests location updates from the FusedLocationApi. Note: we don't call this unless location
      * runtime permission has been granted.
@@ -811,10 +807,9 @@ public class Utils extends AppCompatActivity {
         }
     }
 
-    public  static String getBaseFileNameFromFullPath(String fullPathFileName) {
+    public static String getBaseFileNameFromUri(Uri uri) {
         try {
-            String fileName =  getFileNameFromFullPath(fullPathFileName);
-            return fileName.substring(0, fileName.lastIndexOf("."));
+            return uri.getLastPathSegment();
         } catch (Exception e) {
             return "";
         }
