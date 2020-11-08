@@ -130,7 +130,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         Data.applicationFilesDir = getApplicationDir();
         Log.d(TAG, "applicationFilesDir:" + Data.applicationFilesDir.getPath());
                 //  try loading last saved file from application dir
-        if(Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
+        if(Data.loadFromRepositoryOnStart && Data.applicationFilesDir != null && Data.applicationFilesDir.length()>0) {
             File inFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
             try {
                 new openExternalGpxFile().execute(new FileInputStream(inFile));
@@ -636,15 +636,17 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Data.mGpx = new Gpx();
+        if(Data.saveIntoRepositoryOnExit) {
+            Data.mGpx = new Gpx();
 
-        Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
-        Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
-        Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
-        File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
-        GpxFileIo.parseOut(Data.mGpx, outFile);
-        //Log.d(TAG, "onDestroy: saved into: " + outFile.getPath());
-        Log.d(TAG, "onDestroy: saved into: " + Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
+            Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
+            Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
+            Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
+            File outFile = new File(Data.applicationFilesDir, Data.applicationRepositoryFilename);
+            GpxFileIo.parseOut(Data.mGpx, outFile);
+            //Log.d(TAG, "onDestroy: saved into: " + outFile.getPath());
+            Log.d(TAG, "onDestroy: saved into: " + Data.applicationFilesDir.getAbsolutePath() + File.pathSeparator + Data.applicationRepositoryFilename);
+        }
     }
 
 
@@ -686,7 +688,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
                     Log.d(TAG, "Load file: " + uri.toString());
-                    //new openExternalGpxFile().execute(fileFullPath);
+                    new openExternalGpxFile().execute(getInputStreamFromUri(uri));
                 }
                 refreshLoadedDataInfo();
                 break;

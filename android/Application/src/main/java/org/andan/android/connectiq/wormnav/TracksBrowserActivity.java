@@ -1,6 +1,5 @@
 package org.andan.android.connectiq.wormnav;
 
-import android.Manifest;
 import android.app.ActionBar;
 
 import androidx.appcompat.app.AlertDialog;
@@ -8,25 +7,19 @@ import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -48,9 +41,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.api.IMapController;
@@ -67,7 +57,6 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -79,7 +68,6 @@ import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.Track;
 import pt.karambola.gpx.beans.TrackPoint;
-import pt.karambola.gpx.io.GpxFileIo;
 import pt.karambola.gpx.io.GpxStreamIo;
 import pt.karambola.gpx.parser.GpxParserOptions;
 import pt.karambola.gpx.util.GpxUtils;
@@ -107,7 +95,7 @@ public class TracksBrowserActivity extends Utils {
     private final double MIN_ZOOM_LEVEL = 4;
 
     private final int REQUEST_CODE_IMPORT_TRACKS = 1;
-    private final int REQUEST_CODE_SAVE_TRACKS = 2;
+    private final int REQUEST_CODE_EXPORT_TRACKS = 2;
 
     private Button fitButton;
     private Button nextButton;
@@ -791,7 +779,7 @@ public class TracksBrowserActivity extends Utils {
                     displayImportTracksDialog(uri);
                 }
                 break;
-            case REQUEST_CODE_SAVE_TRACKS:
+            case REQUEST_CODE_EXPORT_TRACKS:
                 if (resultCode == RESULT_OK && data != null) {
                     Uri uri = data.getData();
                     Data.lastImportedExportedUri = uri;
@@ -1477,7 +1465,7 @@ public class TracksBrowserActivity extends Utils {
     }
 
     private void exportTracks() {
-        performGpxFileSave(REQUEST_CODE_SAVE_TRACKS, Data.lastImportedExportedUri);
+        performGpxFileSave(REQUEST_CODE_EXPORT_TRACKS, Data.lastImportedExportedUri);
     }
 
     private void saveSelectedTracks(Uri uri) {
