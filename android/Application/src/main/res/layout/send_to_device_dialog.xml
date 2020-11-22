@@ -65,7 +65,7 @@
                             android:ems="10"
                             android:enabled="false"
                             android:inputType="number|numberSigned"
-                            android:maxLength="3"
+                            android:maxLength="5"
                             android:paddingLeft="10dp"
                             android:text="123" />
 

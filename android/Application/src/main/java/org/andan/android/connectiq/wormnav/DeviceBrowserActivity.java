@@ -425,6 +425,4 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         }
         alert.show();
     }
-
-
 }

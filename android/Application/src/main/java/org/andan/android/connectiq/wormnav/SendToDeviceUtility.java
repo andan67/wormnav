@@ -6,6 +6,7 @@ import android.content.Intent;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,4 +137,128 @@ class xyPoint {
         this.x = x;
         this.y = y;
     }
+}
+
+class TransmissionProtocolEntry {
+    String trackName;
+
+    int noTrackPoints;
+    double trackLength;
+
+    boolean isOptimized;
+    int noTrackPointsOptimized;
+    double trackLengthOptimized;
+
+    long sendTime;
+    String deviceName;
+    String messageStatus;
+
+    int statusCode;
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public void setTrackName(String trackName) {
+        this.trackName = trackName;
+    }
+
+    public int getNoTrackPoints() {
+        return noTrackPoints;
+    }
+
+    public void setNoTrackPoints(int noTrackPoints) {
+        this.noTrackPoints = noTrackPoints;
+    }
+
+    public double getTrackLength() {
+        return trackLength;
+    }
+
+    public void setTrackLength(double trackLength) {
+        this.trackLength = trackLength;
+    }
+
+    public boolean isOptimized() {
+        return isOptimized;
+    }
+
+    public void setOptimized(boolean optimized) {
+        isOptimized = optimized;
+    }
+
+    public int getNoTrackPointsOptimized() {
+        return noTrackPointsOptimized;
+    }
+
+    public void setNoTrackPointsOptimized(int noTrackPointsOptimized) {
+        this.noTrackPointsOptimized = noTrackPointsOptimized;
+    }
+
+    public double getTrackLengthOptimized() {
+        return trackLengthOptimized;
+    }
+
+    public void setTrackLengthOptimized(double trackLengthOptimized) {
+        this.trackLengthOptimized = trackLengthOptimized;
+    }
+
+    public long getSendTime() {
+        return sendTime;
+    }
+
+    public void setSendTime(long sendTime) {
+        this.sendTime = sendTime;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getMessageStatus() {
+        return messageStatus;
+    }
+
+    public void setMessageStatus(String messageStatus) {
+        this.messageStatus = messageStatus;
+    }
+
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat sf = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return "TransmissionProtocolEntry{" +
+                "trackName='" + trackName + '\'' +
+                ", noTrackPoints=" + noTrackPoints +
+                ", trackLength=" + trackLength +
+                ", isOptimized=" + isOptimized +
+                ", noTrackPointsOptimized=" + noTrackPointsOptimized +
+                ", trackLengthOptimized=" + trackLengthOptimized +
+                ", deviceName='" + deviceName + '\'' +
+                ", sendTime=" + sf.format(sendTime) +
+                ", statusCode='" + statusCode + '\'' +
+                ", messageStatus='" + messageStatus + '\'' +
+                '}';
+    }
+}
+
+class TransmissionProtocolLogBuffer {
+    int size;
+
+    TransmissionProtocolLogBuffer(String protocolString, int size) {
+        this.size = size;
+    }
+
 }

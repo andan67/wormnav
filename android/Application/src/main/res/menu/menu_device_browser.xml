@@ -13,4 +13,10 @@
         android:title="@string/load_devices"
         app:showAsAction="never" />
 
+
+    <item
+        android:id="@+id/show_protocol"
+        android:orderInCategory="100"
+        android:title="@string/transmission_protocol"
+        app:showAsAction="never" />
 </menu>

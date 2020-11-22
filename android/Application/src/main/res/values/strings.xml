@@ -366,7 +366,9 @@
     <string name="x_of_y_routes">%1$d of %2$d routes</string>
     <string name="x_tracks">%1$d tracks</string>
 
-    <string name="load_devices">Reload Devices</string>
+    <string name="load_devices">Reload devices</string>
+    <string name="transmission_protocol">Show protocol</string>
+
     <string name="initialization_error">Failed to initialize the SDK.\n</string>
     <string name="service_unavailable">The ConnectIQ service is unavailable.</string>
     <string name="tap_to_send">Tap message below to send to device.</string>
