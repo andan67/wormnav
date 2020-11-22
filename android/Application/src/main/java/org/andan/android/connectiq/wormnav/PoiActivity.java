@@ -1,27 +1,20 @@
 package org.andan.android.connectiq.wormnav;
 
-import android.Manifest;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import androidx.core.app.ActivityCompat;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,11 +33,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.api.IMapController;
@@ -65,7 +53,6 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,7 +62,7 @@ import java.util.Map;
 import pt.karambola.commons.collections.ListUtils;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.beans.Point;
-import pt.karambola.gpx.io.GpxFileIo;
+import pt.karambola.gpx.io.GpxStreamIo;
 import pt.karambola.gpx.parser.GpxParserOptions;
 import pt.karambola.gpx.predicate.PointFilter;
 import pt.karambola.gpx.util.GpxUtils;
@@ -93,6 +80,10 @@ public class PoiActivity extends Utils {
 
     private final double MAX_ZOOM_LEVEL = 19.0;
     private final double MIN_ZOOM_LEVEL = 4.0;
+
+    private final int REQUEST_CODE_IMPORT_POIS = 1;
+    private final int REQUEST_CODE_EXPORT_VISIBLE_POIS = 2;
+    private final int REQUEST_CODE_EXPORT_ALL_POIS = 3;
 
     private Button fitButton;
     private Button zoomInButton;
@@ -869,10 +860,10 @@ public class PoiActivity extends Utils {
         });
     }
 
-    private void showImportPoisDialog(final String path_to_file) {
+    private void showImportPoisDialog(final Uri uri) {
 
         // Check if the file contains any POI
-        gpxIn = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_POINTS);
+        Gpx gpxIn = GpxStreamIo.parseIn(getInputStreamFromUri(uri), GpxParserOptions.ONLY_POINTS);
 
         if (gpxIn == null) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_poi_not_gpx), Toast.LENGTH_LONG).show();
@@ -1009,177 +1000,24 @@ public class PoiActivity extends Utils {
         }
     }
 
-    private void showSaveAsDialog(final boolean save_view) {
-
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-        final View saveAsLayout = inflater.inflate(R.layout.save_gpx_dialog_layout, null);
-
-        final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-
-        final Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
-        filename.setText(fileName);
-
-        String dialogTitle = getResources().getString(R.string.dialog_savegpx_saveasnew);
-        String saveText = getResources().getString(R.string.dialog_save_changes_save);
-        String saveAsText = getResources().getString(R.string.file_pick);
-        String cancelText = getResources().getString(R.string.dialog_cancel);
-
-        builder.setTitle(dialogTitle)
-                .setView(saveAsLayout)
-                .setIcon(R.drawable.map_save)
-                .setCancelable(true)
-                .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                })
-                .setNeutralButton(saveAsText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        if (save_view) {
-                            fileActionRequested = SAVE_VISIBLE_POIS;
-                        } else {
-                            fileActionRequested = SAVE_ALL_POIS;
-                        }
-
-                        fileExploreIntent.putExtra(
-                                FileBrowserActivity.startDirectoryParameter,
-                                path
-                        );
-                        startActivityForResult(
-                                fileExploreIntent,
-                                REQUEST_CODE_PICK_FILE
-                        );
-                    }
-                })
-                .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileName = filename.getText().toString().trim();
-                        savePoisDestructive(fileName, save_view);
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-
-        alert.show();
-
-        final Button saveButton = alert.getButton(AlertDialog.BUTTON_POSITIVE);
-
-        final TextWatcher validate_name = new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-
-                saveButton.setEnabled(!arg0.toString().equals(""));
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int a, int b, int c) {
-
-                saveButton.setEnabled(!s.toString().equals(""));
-
-            }
-        };
-        filename.addTextChangedListener(validate_name);*/
-
+    private void exportPois(final boolean save_view) {
+        if(save_view) {
+            performGpxFileSave(REQUEST_CODE_EXPORT_VISIBLE_POIS, Data.lastImportedExportedUri);
+        }
+        else {
+            performGpxFileSave(REQUEST_CODE_EXPORT_ALL_POIS, Data.lastImportedExportedUri);
+        }
     }
 
-    private void savePoisDestructive(String filename, final boolean save_view) {
-
-       /* if (Data.sCopiedPoiGpx.getPoints().size() == 0) {
-            Toast.makeText(this, getResources().getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        boolean path_ok;
-
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-
-        File folder = new File(path);
-
-        path_ok = folder.exists() || folder.mkdirs();
-
-        if (path_ok) {
-
-            final String new_file = folder.toString() + "/" + filename + ".gpx";
-
-            if (new File(new_file).exists()) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                String dialogTitle = getResources().getString(R.string.dialog_overwrite_title);
-                String dialogMessage = getResources().getString(R.string.dialog_overwrite_message);
-                String saveText = getResources().getString(R.string.dialog_save_changes_save);
-                String cancelText = getResources().getString(R.string.dialog_cancel);
-
-                builder.setTitle(dialogTitle)
-                        .setIcon(R.drawable.map_warning)
-                        .setMessage(dialogMessage)
-                        .setCancelable(true)
-                        .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        })
-                        .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                Toast.makeText(getApplicationContext(), getResources()
-                                                .getString(R.string.poi_saved_as) + " " + new_file,
-                                        Toast.LENGTH_LONG).show();
-
-                                Gpx gpx = new Gpx();
-
-                                if (save_view) {
-                                    gpx.addPoints(Data.sFilteredPoi);
-                                } else {
-                                    gpx.addPoints(Data.sCopiedPoiGpx.getPoints());
-                                }
-                                GpxFileIo.parseOut(gpx, new_file, GpxParserOptions.ONLY_POINTS);
-                            }
-                        });
-
-                AlertDialog alert = builder.create();
-
-                alert.show();
-
-            } else {
-
-                // Just save
-                Toast.makeText(getApplicationContext(), getResources()
-                                .getString(R.string.poi_saved_as) + " " + new_file,
-                        Toast.LENGTH_LONG).show();
-
-                Gpx gpx = new Gpx();
-
-                if (save_view) {
-                    gpx.addPoints(Data.sFilteredPoi);
-                } else {
-                    gpx.addPoints(Data.sCopiedPoiGpx.getPoints());
-                }
-                GpxFileIo.parseOut(gpx, new_file, GpxParserOptions.ONLY_POINTS);
-            }
-
+    private void savePoisDestructive(Uri uri, final boolean save_view) {
+        Gpx gpxToSave = new Gpx();
+        if (save_view) {
+            gpxToSave.addPoints(Data.sFilteredPoi);
         } else {
-
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
+            gpxToSave.addPoints(Data.sCopiedPoiGpx.getPoints());
         }
-*/
+        GpxStreamIo.parseOut(gpxToSave, getOutputStreamFromUri(uri));
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_routes_exported), Toast.LENGTH_SHORT).show();
     }
 
     public void clearPois() {
@@ -1328,26 +1166,10 @@ public class PoiActivity extends Utils {
     public boolean onOptionsItemSelected(MenuItem item) {
        // final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
 
-        Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
         switch (item.getItemId()) {
 
             case R.id.pois_import_pois:
-
-                fileActionRequested = IMPORT_FROM_GPX;
-
-               /* fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter, path);
-                startActivityForResult(
-                        fileExploreIntent,
-                        REQUEST_CODE_PICK_FILE
-                );*/
-
+                performGpxFileSearch(REQUEST_CODE_IMPORT_POIS, Data.lastImportedExportedUri);
                 return true;
 
             case R.id.pois_save_all:
@@ -1356,7 +1178,7 @@ public class PoiActivity extends Utils {
                     Toast.makeText(this, getResources().getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
                     return true;
                 } else {
-                    showSaveAsDialog(false);
+                    exportPois(false);
                 }
                 return true;
 
@@ -1366,7 +1188,7 @@ public class PoiActivity extends Utils {
                     Toast.makeText(this, getResources().getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
                     return true;
                 } else {
-                    showSaveAsDialog(true);
+                    exportPois(true);
                 }
                 return true;
 
@@ -1390,67 +1212,32 @@ public class PoiActivity extends Utils {
     @Override
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
-
-        if (requestCode == REQUEST_CODE_PICK_DIR) {
-            if (resultCode == RESULT_OK) {
-                String newDir = data.getStringExtra(
-                        FileBrowserActivity.returnDirectoryParameter);
-                Toast.makeText(
-                        this,
-                        "Received DIRECTORY path from file browser:\n" + newDir,
-                        Toast.LENGTH_LONG).show();
-
-            } else {
-                Toast.makeText(
-                        this,
-                        "Nothing selected",
-                        Toast.LENGTH_LONG).show();
-            }
-
-        } else if (requestCode == REQUEST_CODE_PICK_FILE) {
-            if (resultCode == RESULT_OK) {
-
-                File sd_root = new File(Environment.getExternalStorageDirectory() + "");
-                sdRoot = sd_root.toString();
-
-                fileFullPath = data.getStringExtra(
-                        FileBrowserActivity.returnFileParameter);
-                //Data.lastImportedFileFullPath = fileFullPath;
-
-                fileFolderAndName = fileFullPath.replace(sdRoot, "");
-
-                String[] split_name = fileFolderAndName.split("/");
-                fileName = split_name[split_name.length - 1].replace(".gpx", "");
-
-                switch (fileActionRequested) {
-
-                    case SAVE_ALL_POIS:
-                        savePoisDestructive(fileName, false);
-                        break;
-
-                    case SAVE_VISIBLE_POIS:
-                        savePoisDestructive(fileName, true);
-                        break;
-
-                    case IMPORT_FROM_GPX:
-                        showImportPoisDialog(fileFullPath);
-                        break;
-
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_IMPORT_POIS:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    showImportPoisDialog(uri);
                 }
-
-            } else {//if(resultCode == this.RESULT_OK) {
-                /*
-                Toast.makeText(
-                        this,
-                        "No file selected",
-                        Toast.LENGTH_LONG).show();
-                        */
-            }
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+                break;
+            case REQUEST_CODE_EXPORT_ALL_POIS:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    savePoisDestructive(uri, false);
+                }
+                break;
+            case REQUEST_CODE_EXPORT_VISIBLE_POIS:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    savePoisDestructive(uri, true);
+                }
+                break;
+            default:
+                break;
         }
-
     }
 
     @Override

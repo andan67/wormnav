@@ -13,7 +13,6 @@ import pt.karambola.gpx.beans.GenericPoint;
 import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.RoutePoint;
 import pt.karambola.gpx.beans.Track;
-import pt.karambola.gpx.beans.TrackPoint;
 import pt.karambola.gpx.util.GpxUtils;
 
 public class SendToDeviceUtility {
@@ -22,47 +21,33 @@ public class SendToDeviceUtility {
     }
 
     public static void startDeviceBrowserActivity(Context ctx, Track track) {
-        List<GenericPoint> genericPoints = new ArrayList<>();
-        for (TrackPoint trackPoint : track.getTrackPoints()) {
-            genericPoints.add(trackPoint);
-        }
-        createIntentAndStartActivity(ctx, genericPoints,track.getName(), (float) GpxUtils.lengthOfTrack(track) );
+        createIntentAndStartActivity(ctx, track.getTrackPoints() ,track.getName(), (float) GpxUtils.lengthOfTrack(track) );
     }
 
     public static void startDeviceBrowserActivity(Context ctx, Route route) {
-        List<GenericPoint> genericPoints = new ArrayList<>();
-        for (RoutePoint routePoint : route.getRoutePoints()) {
-            genericPoints.add(routePoint);
-        }
-        createIntentAndStartActivity(ctx, genericPoints,route.getName(), (float) GpxUtils.lengthOfRoute(route) );
+        createIntentAndStartActivity(ctx, route.getRoutePoints(),route.getName(), (float) GpxUtils.lengthOfRoute(route) );
     }
 
-    private static void createIntentAndStartActivity(Context ctx, List<GenericPoint> genericPoints, String name, float length) {
-        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-        // Copy into GeoPoint array which is parcable
-        for (int j = 0; j < genericPoints.size(); j++) {
-
-            GenericPoint genericPoint = genericPoints.get(j);
-            GeoPoint geoPoint = new GeoPoint(genericPoint.getLatitude(), genericPoint.getLongitude());
-            geoPoints.add(geoPoint);
-
+    private static void createIntentAndStartActivity(Context ctx, List<? extends GenericPoint> genericPoints, String name, float length) {
+        Data.geoPointsForDevice.clear();
+        for(GenericPoint genericPoint : genericPoints) {
+            //Data.geoPointsForDevice.add(new GeoPoint(genericPoint.getLatitude(), genericPoint.getLongitude(), genericPoint.getElevation()));
+            Data.geoPointsForDevice.add(new GeoPoint(genericPoint.getLatitude(), genericPoint.getLongitude(), genericPoint.getElevation()==null ? 0. : genericPoint.getElevation()));
         }
-
         Intent intent = new Intent(ctx, DeviceBrowserActivity.class);
         intent.putExtra(DeviceBrowserActivity.TRACK_NAME, name);
         intent.putExtra(DeviceBrowserActivity.TRACK_LENGTH, length);
-        intent.putParcelableArrayListExtra(DeviceBrowserActivity.GEO_POINTS, geoPoints);
-
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         ctx.startActivity(intent);
     }
 
 
-    public static float[][] generateTrackPointsAndBoundingBox(ArrayList<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
+    public static float[][] generateTrackPointsAndBoundingBox(List<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
+
+        if(geoPoints == null) return null;
         if(maxPathWpt>0 && maxPathWpt <= geoPoints.size()) {
-            // optimize, i.e. reduce points
             Route route = new Route();
-            for(GeoPoint geoPoint: geoPoints) {
+            for (GeoPoint geoPoint : geoPoints) {
                 RoutePoint routePoint = new RoutePoint();
                 routePoint.setLatitude(geoPoint.getLatitude());
                 routePoint.setLongitude(geoPoint.getLongitude());
@@ -70,7 +55,7 @@ public class SendToDeviceUtility {
             }
             GpxUtils.simplifyRoute(route, maxPathWpt, maxPathError);
             geoPoints = new ArrayList<>();
-            for(RoutePoint routePoint : route.getRoutePoints()) {
+            for (RoutePoint routePoint : route.getRoutePoints()) {
                 geoPoints.add(new GeoPoint(routePoint.getLatitude(), routePoint.getLongitude()));
             }
         }
@@ -106,6 +91,7 @@ public class SendToDeviceUtility {
         track_boundingBox[6] = (float) boundingBox.getDiagonalLengthInMeters();
 
         return new float[][] {track_boundingBox, trackPointsToSend};
+
     }
 
     /**
@@ -140,8 +126,6 @@ public class SendToDeviceUtility {
                 Math.cos(lat)*Math.sin(lon-lonCenter),
                 Math.cos(latCenter)*Math.sin(lat) - Math.sin(latCenter)*Math.cos(lat)*Math.cos(lon-lonCenter));
     }
-
-
 }
 
 class xyPoint {

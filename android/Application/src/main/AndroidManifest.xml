@@ -49,15 +49,6 @@
         </activity>
 
         <activity
-            android:name="org.andan.android.connectiq.wormnav.FileBrowserActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:label="@string/filebrowser_name">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name="org.andan.android.connectiq.wormnav.RouteCreatorActivity"
             android:theme="@style/MapTheme"
             android:label="@string/route_creator_name">

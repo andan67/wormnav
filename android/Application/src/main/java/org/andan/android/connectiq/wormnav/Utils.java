@@ -17,16 +17,15 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.util.Base64;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -37,8 +36,6 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,7 +44,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +58,6 @@ import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.RoutePoint;
 import pt.karambola.gpx.beans.Track;
 import pt.karambola.gpx.beans.TrackPoint;
-import pt.karambola.gpx.io.GpxFileIo;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -75,23 +70,6 @@ public class Utils extends AppCompatActivity {
     protected LocationCallback mLocationCallback;
 
     protected Button locationButton;
-    protected String responseString;
-
-    protected String sdRootTxt = "";
-
-    protected final int REQUEST_CODE_PICK_DIR = 1;
-    protected final int REQUEST_CODE_PICK_FILE = 2;
-
-    protected int fileActionRequested;
-    protected final int OPEN_GPX_FILE = 0;
-    protected final int SAVE_ALL_POIS = 1;
-    protected final int SAVE_VISIBLE_POIS = 2;
-    protected final int IMPORT_FROM_GPX = 3;
-
-    protected String fileFullPath = "";
-    protected String sdRoot = "";
-    protected String fileName = "myfile";
-    protected String fileFolderAndName = "";
 
     protected SharedPreferences preferences;
     protected boolean showPoi;
@@ -142,6 +120,7 @@ public class Utils extends AppCompatActivity {
         intent.setType("*/*");
 
         intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI,  initialUri);
+        intent.putExtra(Intent.EXTRA_TITLE,  "export.gpx");
         startActivityForResult(intent, requestCode);
         // END_INCLUDE (use_open_document_intent)
     }

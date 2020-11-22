@@ -4,18 +4,12 @@
  */
 package org.andan.android.connectiq.wormnav;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.garmin.android.connectiq.ConnectIQ;
 import com.garmin.android.connectiq.ConnectIQ.ConnectIQListener;
 import com.garmin.android.connectiq.ConnectIQ.IQConnectType;
@@ -42,6 +38,11 @@ import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
 
 import org.osmdroid.util.GeoPoint;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeviceBrowserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -75,7 +76,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     private int maxPathWpt;
     private double maxPathError;
 
-    private ArrayList<GeoPoint> mGeoPoints;
+    private List<GeoPoint> mGeoPoints;
     private float[] mTrackPoints;
 
     private final String TAG = "DeviceBrowser";
@@ -160,10 +161,12 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         mTrackName = getIntent().getStringExtra(TRACK_NAME);
         mTrackLength = getIntent().getFloatExtra(TRACK_LENGTH,0);
-        mGeoPoints = getIntent().getParcelableArrayListExtra(GEO_POINTS);
-
-        Log.d(TAG, "onCreate:" + mTrackLength);
-
+        //mGeoPoints = getIntent().getParcelableArrayListExtra(GEO_POINTS);
+        mGeoPoints = Data.geoPointsForDevice;
+        if(mGeoPoints == null || mGeoPoints.size() == 0) {
+            Toast.makeText(getApplicationContext(), "No points to sent", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     @Override

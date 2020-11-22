@@ -35,7 +35,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
-    implementation 'org.osmdroid:osmdroid-android:6.1.8'
+    implementation 'org.osmdroid:osmdroid-android:6.1.6'
     implementation 'com.github.MKergall:osmbonuspack:6.3'
 
     implementation project(':Karambola')
@@ -62,8 +62,8 @@ android {
         applicationId "org.andan.android.connectiq.wormnav"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 105
-        versionName '1.0.5'
+        versionCode 110
+        versionName '1.1.0'
         setProperty("archivesBaseName", "Worm navigation")
     }
     signingConfigs {

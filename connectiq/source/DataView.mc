@@ -47,13 +47,13 @@ class DataView extends  WatchUi.View {
             default:
                 if($.device=="vivoactive") {
                     font = Graphics.FONT_SMALL;
-                       fontNumber = Graphics.FONT_NUMBER_HOT;
-                   } else
-                   {
-                       font = Graphics.FONT_MEDIUM;
-                       fontNumber = Graphics.FONT_NUMBER_MEDIUM;
-                   }
-                   break;
+                    fontNumber = Graphics.FONT_NUMBER_HOT;
+                } else
+                {
+                    font = Graphics.FONT_MEDIUM;
+                    fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+                }
+                break;
         }
 
         // Set up a 1Hz update timer because we aren't registering

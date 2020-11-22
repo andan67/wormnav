@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="about_app" translatable="false">©2019 andan67</string>
+    <string name="about_app" translatable="false">©2020 andan67</string>
     <string name="about_to_delete_route">You\'re about to delete the route</string>
     <string name="about_to_delete_track">You\'re about to delete the track</string>
 
@@ -274,7 +274,7 @@
     <string name="routes_new_auto">Draw automatically</string>
     <string name="routes_new_manually">Draw manually</string>
     <string name="routes_simplify_selected">Optimize selected</string>
-    <string name="routes_simplify_merge_routes">Optimize/merge routes routes</string>
+    <string name="routes_simplify_merge_routes">Optimize/merge routes</string>
 
     <string name="sample_loaded">Sample data loaded. Take a look at them.</string>
 
@@ -392,7 +392,8 @@
     <string name="run_with_simulator">Run with simulator</string>
     <string name="load_last_open_file">Open last loaded/saved file on start</string>
     <string name="default_track_reduce">Default optimization</string>
-    <string name="settings_load_from_repository">Load data from repository on start</string>
-    <string name="settings_save_into_repository">Save data into repository on exit</string>
+
+    <string name="settings_load_from_repository">Load data on start</string>
+    <string name="settings_save_into_repository">Save data on exit</string>
 
 </resources>

@@ -12,8 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.andan.android.connectiq.wormnav.R;
-
 public class CustomList extends ArrayAdapter<String> {
 
     private final Activity context;

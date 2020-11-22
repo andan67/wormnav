@@ -148,4 +148,8 @@ final class Data {
      */
     static Integer sSelectedTrackIdx = null;
 
+    /**
+     * List of GeoPoints in sent to Device
+     */
+    static List<GeoPoint> geoPointsForDevice = new ArrayList<>();
 }

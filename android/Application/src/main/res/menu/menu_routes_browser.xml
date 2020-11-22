@@ -64,7 +64,7 @@
 
     <item
         android:id="@+id/routes_send_selected_to_device"
-        android:orderInCategory="142"
+        android:orderInCategory="1000"
         android:title="@string/tracks_send_selected_to_device" />
 
 </menu>

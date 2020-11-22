@@ -227,6 +227,7 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
+    System.println("onAccept");
         //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         var screen = mContext;
@@ -241,9 +242,10 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
             var defaults = new [nDataFields];
             for(var i=0; i<nDataFields; i+=1) {
                 factories[i] = new GenericListItemFactory(
-                    Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => Graphics.FONT_SMALL});
+                    //Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => Graphics.FONT_SMALL});
+                    Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
                 defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
-            }
+            }            
             var picker = new GenericListItemPicker("Data fields", factories, defaults, mContext);
             WatchUi.pushView(picker, new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
         }

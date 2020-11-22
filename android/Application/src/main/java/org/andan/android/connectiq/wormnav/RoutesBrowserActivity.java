@@ -1,28 +1,17 @@
 package org.andan.android.connectiq.wormnav;
 
-import android.Manifest;
 import android.app.ActionBar;
-//import android.app.AlertDialog;
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -33,7 +22,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,9 +33,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.google.android.gms.location.LocationServices;
 
 import org.osmdroid.api.IMapController;
@@ -68,7 +58,6 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -82,13 +71,15 @@ import pt.karambola.gpx.beans.Point;
 import pt.karambola.gpx.beans.Route;
 import pt.karambola.gpx.beans.RoutePoint;
 import pt.karambola.gpx.beans.Track;
-import pt.karambola.gpx.io.GpxFileIo;
+import pt.karambola.gpx.io.GpxStreamIo;
 import pt.karambola.gpx.parser.GpxParserOptions;
 import pt.karambola.gpx.predicate.RouteFilter;
 import pt.karambola.gpx.util.GpxUtils;
 
 import static android.view.View.GONE;
 import static org.andan.android.connectiq.wormnav.R.id.osmmap;
+
+//import android.app.AlertDialog;
 
 /**
  * Route Picker activity created by piotr on 02.05.17.
@@ -110,15 +101,9 @@ public class RoutesBrowserActivity extends Utils {
     private final double MAX_ZOOM_LEVEL = 19;
     private final double MIN_ZOOM_LEVEL = 4;
 
-    private int filePickerAction;
-    private final int ACTION_IMPORT_ROUTES = 1;
-    private final int ACTION_CONVERT_TRACKS = 2;
-
-    private final int SAVE_SELECTED_ROUTE = 4;
-    private final int SAVE_MULTIPLE_ROUTES = 5;
-
-    private final int REQUEST_CODE_PICK_DIR = 1;
-    private final int REQUEST_CODE_PICK_FILE = 2;
+    private final int REQUEST_CODE_IMPORT_ROUTES = 1;
+    private final int REQUEST_CODE_EXPORT_ROUTES = 2;
+    private final int REQUEST_CODE_IMPORT_TRACKS  = 3;
 
     private Button fitButton;
     private Button nextButton;
@@ -144,7 +129,7 @@ public class RoutesBrowserActivity extends Utils {
     private int mFilteredRoutesNumber = 0;
 
     private Gpx gpxOut = new Gpx();
-    String fileName = "myfile";
+
 
     /**
      * route label marker -> index of selected route
@@ -760,14 +745,6 @@ public class RoutesBrowserActivity extends Utils {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-       // final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-        Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
         Intent i;
 
         switch (item.getItemId()) {
@@ -852,36 +829,15 @@ public class RoutesBrowserActivity extends Utils {
                 return true;
 
             case R.id.routes_import_routes:
-
-                filePickerAction = ACTION_IMPORT_ROUTES;
-
-                /*fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter,
-                        path
-                );
-                startActivityForResult(
-                        fileExploreIntent,
-                        REQUEST_CODE_PICK_FILE
-                );*/
+                performGpxFileSearch(REQUEST_CODE_IMPORT_ROUTES, Data.lastImportedExportedUri);
                 return true;
 
             case R.id.convert_tracks:
-
-                filePickerAction = ACTION_CONVERT_TRACKS;
-/*
-                fileExploreIntent.putExtra(
-                        FileBrowserActivity.startDirectoryParameter,
-                        path
-                );
-                startActivityForResult(
-                        fileExploreIntent,
-                        REQUEST_CODE_PICK_FILE
-                );*/
+                // import and convert into roures
+                performGpxFileSearch(REQUEST_CODE_IMPORT_TRACKS, Data.lastImportedExportedUri);
                 return true;
 
             case R.id.export:
-
-                filePickerAction = SAVE_MULTIPLE_ROUTES;
                 displayExportMultipleDialog();
                 return true;
 
@@ -958,53 +914,37 @@ public class RoutesBrowserActivity extends Utils {
     protected void onActivityResult(int requestCode,
                                     int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_FILE) {
-            Log.d(TAG, "RoutesBrowser resultCode:" + resultCode);
-            if (resultCode == RESULT_OK) {
-
-                String fileFullPath = data.getStringExtra(
-                        FileBrowserActivity.returnFileParameter);
-               // Data.lastImportedFileFullPath = fileFullPath;
-                saveSettings();
-                switch (filePickerAction) {
-
-                    case ACTION_IMPORT_ROUTES:
-                        displayImportRoutesDialog(fileFullPath);
-                        break;
-
-                    case ACTION_CONVERT_TRACKS:
-                        displayConvertDialog(fileFullPath);
-                        break;
-
-                    case SAVE_SELECTED_ROUTE:
-                        // saveSelectedRoutes(fileFullPath);
-                        break;
-
-                    case SAVE_MULTIPLE_ROUTES:
-                        saveSelectedRoutes(fileFullPath);
-                        break;
-
-                    default:
-                        break;
+        switch (requestCode) {
+            case REQUEST_CODE_IMPORT_ROUTES:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    displayImportRoutesDialog(uri);
                 }
+                break;
+            case REQUEST_CODE_EXPORT_ROUTES:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    saveSelectedRoutes(uri);
+                }
+                break;
+            case REQUEST_CODE_IMPORT_TRACKS:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    Data.lastImportedExportedUri = uri;
+                    displayConvertDialog(uri);
+                }
+                break;
+            default:
+                break;
 
-            } else {
-                /*
-                Toast.makeText(
-                        this,
-                        getResources().getString(R.string.no_file_selected),
-                        Toast.LENGTH_LONG).show();
-                        */
-            }
+        }
+        if (resultCode == Data.NEW_ROUTE_ADDED) {
 
-        } else {
+            refreshMap();
+            displayEditDialog();
 
-            if (resultCode == Data.NEW_ROUTE_ADDED) {
-
-                refreshMap();
-                displayEditDialog();
-
-            }
         }
     }
 
@@ -1424,15 +1364,15 @@ public class RoutesBrowserActivity extends Utils {
         });
     }
 
-    private void displayImportRoutesDialog(final String path_to_file) {
+    private void displayImportRoutesDialog(final Uri uri) {
 
         Data.sSelectedRouteIdx = null;
 
         /*
          * Check if the file contains routes
          */
-        Gpx gpxIn = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_ROUTES);
-
+        Log.d("import_uri", "uri: " + uri.getPath());
+        Gpx gpxIn = GpxStreamIo.parseIn(getInputStreamFromUri(uri), GpxParserOptions.ONLY_ROUTES);
         if (gpxIn == null) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_routes_not_gpx), Toast.LENGTH_LONG).show();
             return;
@@ -1559,13 +1499,13 @@ public class RoutesBrowserActivity extends Utils {
         }
     }
 
-    private void displayConvertDialog(final String path_to_file) {
+    private void displayConvertDialog(final Uri uri) {
 
         final List<Route> importedRoutes = new ArrayList<>();
 
         // import tracks from file and convert into routes
-        if(path_to_file != null) {
-            Gpx gpxOnlyTrks = GpxFileIo.parseIn(path_to_file, GpxParserOptions.ONLY_TRACKS);
+        if(uri != null) {
+            Gpx gpxOnlyTrks = GpxStreamIo.parseIn(getInputStreamFromUri(uri), GpxParserOptions.ONLY_TRACKS);
 
             List<Track> tracksIn;
             try {
@@ -1620,7 +1560,7 @@ public class RoutesBrowserActivity extends Utils {
             final EditText maxError = (EditText) layout.findViewById(R.id.reduceMaxError);
 
             final CheckBox reduceCheckBox = (CheckBox) layout.findViewById(R.id.reduceCheckbox);
-            if(path_to_file != null) {
+            if(uri != null) {
                 reduceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1636,7 +1576,7 @@ public class RoutesBrowserActivity extends Utils {
 
             final EditText mergeNameEditText = (EditText) layout.findViewById(R.id.mergeName);
             final CheckBox mergeCheckbox = (CheckBox) layout.findViewById(R.id.mergeCheckbox);
-            if(path_to_file != null) {
+            if(uri != null) {
                 mergeCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1652,7 +1592,7 @@ public class RoutesBrowserActivity extends Utils {
             final CheckBox deleteSourceCheckBox = (CheckBox) layout.findViewById(R.id.deleteSourceCheckbox);
             deleteSourceCheckBox.setVisibility(GONE);
 
-            String dialogTitle = path_to_file!=null?
+            String dialogTitle = uri!=null?
                     getResources().getString(R.string.dialog_select_tracks_import):getResources().getString(R.string.dialog_select_routes_optimize);
             String buttonAll = getResources().getString(R.string.dialog_all);
             String buttonSelected = getResources().getString(R.string.dialog_selected);
@@ -1926,8 +1866,7 @@ public class RoutesBrowserActivity extends Utils {
                                 gpxRoutesPickedByUser.add(sortedRoutes.get(idxOfRoute));
                             }
                             gpxOut.addRoutes(gpxRoutesPickedByUser);
-
-                            showSaveRoutesDialog();
+                            exportRoutes();
                         }
                     }
                 })
@@ -1952,7 +1891,7 @@ public class RoutesBrowserActivity extends Utils {
                         */
                         gpxOut.addRoutes(Data.sRoutesGpx.getRoutes());
 
-                        showSaveRoutesDialog();
+                        exportRoutes();
                     }
                 });
 
@@ -1969,164 +1908,15 @@ public class RoutesBrowserActivity extends Utils {
         alert.show();
     }
 
-    private void showSaveRoutesDialog() {
-
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-        final View saveAsLayout = inflater.inflate(R.layout.export_gpx_dialog_layout, null);
-
-        final EditText filename = (EditText) saveAsLayout.findViewById(R.id.save_new_filename);
-
-        final String path = Data.lastImportedFileFullPath.length()>0? getParentFromFullPath( Data.lastImportedFileFullPath):Data.defaultDirectoryPath;
-
-        final Intent fileExploreIntent = new Intent(
-                FileBrowserActivity.INTENT_ACTION_SELECT_FILE,
-                null,
-                this,
-                FileBrowserActivity.class
-        );
-
-        filename.setText(fileName);
-
-        String dialogTitle = getResources().getString(R.string.dialog_savegpx_saveasnew);
-        String saveText = getResources().getString(R.string.dialog_save_changes_save);
-        String saveAsText = getResources().getString(R.string.file_pick);
-        String cancelText = getResources().getString(R.string.dialog_cancel);
-
-        builder.setTitle(dialogTitle)
-                .setView(saveAsLayout)
-                .setIcon(R.drawable.map_save)
-                .setCancelable(true)
-                .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                })
-                .setNeutralButton(saveAsText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileExploreIntent.putExtra(
-                                FileBrowserActivity.startDirectoryParameter,
-                                path
-                        );
-                        startActivityForResult(
-                                fileExploreIntent,
-                                REQUEST_CODE_PICK_FILE
-                        );
-                    }
-                })
-                .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        fileName = filename.getText().toString().trim();
-                        File full_file_path = new File(path +"/" + fileName + ".gpx");
-                        saveSelectedRoutes(full_file_path.toString());
-                    }
-                });
-
-        AlertDialog alert = builder.create();
-
-        alert.show();
-
-        final Button saveButton = alert.getButton(AlertDialog.BUTTON_POSITIVE);
-
-        final TextWatcher validate_name = new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-
-                saveButton.setEnabled(!arg0.toString().equals(""));
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int a, int b, int c) {
-
-                saveButton.setEnabled(!s.toString().equals(""));
-            }
-        };
-        filename.addTextChangedListener(validate_name);*/
-
+    private void exportRoutes() {
+        performGpxFileSave(REQUEST_CODE_EXPORT_ROUTES, Data.lastImportedExportedUri);
     }
 
-    private void saveSelectedRoutes(String file) {
-
-        /*File outputFile = new File(file);
-        if (outputFile.exists()) {
-
-            Gpx gpxToSave = GpxFileIo.parseIn(file);
-
-            if (gpxToSave == null) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.not_gpx), Toast.LENGTH_LONG).show();
-                return;
-
-            } else {
-
-                gpxToSave.addRoutes(gpxOut.getRoutes());
-
-                int purged_routes = GpxUtils.purgeRoutesOverlapping(gpxToSave);
-
-                if (purged_routes != 0) {
-
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.removed) + " " + purged_routes + " "
-                            + getResources().getString(R.string.duplicates), Toast.LENGTH_SHORT).show();
-                }
-                GpxFileIo.parseOut(gpxToSave, file);
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_routes_exported), Toast.LENGTH_SHORT).show();
-            }
-
-        } else {
-
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.saving_to) + " " + outputFile, Toast.LENGTH_LONG).show();
-
-            boolean success = outputFile.exists();
-            if (!outputFile.exists()) {
-                try {
-                    success = outputFile.createNewFile();
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_creating_file), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            if (success) {
-
-                Gpx gpxToSave = new Gpx();
-
-                switch (filePickerAction) {
-                    case SAVE_SELECTED_ROUTE:
-                        gpxToSave.addRoute(Data.sFilteredRoutes.get(Data.sSelectedRouteIdx));
-                        break;
-
-                    case SAVE_MULTIPLE_ROUTES:
-                        gpxToSave.addRoutes(gpxOut.getRoutes());
-                        break;
-
-                    default:
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.neither_single_nor_multiple_routes), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-
-                int purged_routes = GpxUtils.purgeRoutesOverlapping(gpxToSave);
-
-                if (purged_routes != 0) {
-
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.removed) + " " + purged_routes
-                            + " " + getResources().getString(R.string.duplicates), Toast.LENGTH_SHORT).show();
-                }
-
-                GpxFileIo.parseOut(gpxToSave, outputFile.toString());
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_routes_exported), Toast.LENGTH_SHORT).show();
-
-            } else {
-
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
-            }
-        }*/
+    private void saveSelectedRoutes(Uri uri) {
+        Gpx gpxToSave = new Gpx();
+        gpxToSave.addRoutes(gpxOut.getRoutes());
+        GpxStreamIo.parseOut(gpxToSave, getOutputStreamFromUri(uri));
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.selected_routes_exported), Toast.LENGTH_SHORT).show();
     }
 
     @Override
