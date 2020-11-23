@@ -37,8 +37,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'org.osmdroid:osmdroid-android:6.1.6'
     implementation 'com.github.MKergall:osmbonuspack:6.3'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    testImplementation 'junit:junit:4.13'
 
     implementation project(':Karambola')
+    testImplementation 'junit:junit:4.12'
 }
 
 // The sample build uses multiple directories to

@@ -38,6 +38,7 @@ public class SendToDeviceUtility {
         Intent intent = new Intent(ctx, DeviceBrowserActivity.class);
         intent.putExtra(DeviceBrowserActivity.TRACK_NAME, name);
         intent.putExtra(DeviceBrowserActivity.TRACK_LENGTH, length);
+
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         ctx.startActivity(intent);
     }
@@ -142,17 +143,17 @@ class xyPoint {
 class TransmissionProtocolEntry {
     String trackName;
 
-    int noTrackPoints;
-    double trackLength;
+    int noTrackPointsOriginal;
+    double trackLengthOriginal;
 
     boolean isOptimized;
-    int noTrackPointsOptimized;
-    double trackLengthOptimized;
+    int noTrackPointsSent;
+    double trackLengthSent;
 
     long sendTime;
-    String deviceName;
-    String messageStatus;
 
+    String deviceName;
+    String statusMessage;
     int statusCode;
 
     public String getTrackName() {
@@ -163,20 +164,20 @@ class TransmissionProtocolEntry {
         this.trackName = trackName;
     }
 
-    public int getNoTrackPoints() {
-        return noTrackPoints;
+    public int getNoTrackPointsOriginal() {
+        return noTrackPointsOriginal;
     }
 
-    public void setNoTrackPoints(int noTrackPoints) {
-        this.noTrackPoints = noTrackPoints;
+    public void setNoTrackPointsOriginal(int noTrackPointsOriginal) {
+        this.noTrackPointsOriginal = noTrackPointsOriginal;
     }
 
-    public double getTrackLength() {
-        return trackLength;
+    public double getTrackLengthOriginal() {
+        return trackLengthOriginal;
     }
 
-    public void setTrackLength(double trackLength) {
-        this.trackLength = trackLength;
+    public void setTrackLengthOriginal(double trackLengthOriginal) {
+        this.trackLengthOriginal = trackLengthOriginal;
     }
 
     public boolean isOptimized() {
@@ -187,20 +188,20 @@ class TransmissionProtocolEntry {
         isOptimized = optimized;
     }
 
-    public int getNoTrackPointsOptimized() {
-        return noTrackPointsOptimized;
+    public int getNoTrackPointsSent() {
+        return noTrackPointsSent;
     }
 
-    public void setNoTrackPointsOptimized(int noTrackPointsOptimized) {
-        this.noTrackPointsOptimized = noTrackPointsOptimized;
+    public void setNoTrackPointsSent(int noTrackPointsSent) {
+        this.noTrackPointsSent = noTrackPointsSent;
     }
 
-    public double getTrackLengthOptimized() {
-        return trackLengthOptimized;
+    public double getTrackLengthSent() {
+        return trackLengthSent;
     }
 
-    public void setTrackLengthOptimized(double trackLengthOptimized) {
-        this.trackLengthOptimized = trackLengthOptimized;
+    public void setTrackLengthSent(double trackLengthSent) {
+        this.trackLengthSent = trackLengthSent;
     }
 
     public long getSendTime() {
@@ -219,14 +220,13 @@ class TransmissionProtocolEntry {
         this.deviceName = deviceName;
     }
 
-    public String getMessageStatus() {
-        return messageStatus;
+    public String getStatusMessage() {
+        return statusMessage;
     }
 
-    public void setMessageStatus(String messageStatus) {
-        this.messageStatus = messageStatus;
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
-
 
     public int getStatusCode() {
         return statusCode;
@@ -241,24 +241,16 @@ class TransmissionProtocolEntry {
         SimpleDateFormat sf = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return "TransmissionProtocolEntry{" +
                 "trackName='" + trackName + '\'' +
-                ", noTrackPoints=" + noTrackPoints +
-                ", trackLength=" + trackLength +
+                ", noTrackPointsOriginal=" + noTrackPointsOriginal +
+                ", trackLengthOriginal=" + trackLengthOriginal +
                 ", isOptimized=" + isOptimized +
-                ", noTrackPointsOptimized=" + noTrackPointsOptimized +
-                ", trackLengthOptimized=" + trackLengthOptimized +
-                ", deviceName='" + deviceName + '\'' +
+                ", noTrackPointsSent=" + noTrackPointsSent +
+                ", trackLengthSent=" + trackLengthSent +
                 ", sendTime=" + sf.format(sendTime) +
-                ", statusCode='" + statusCode + '\'' +
-                ", messageStatus='" + messageStatus + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", statusMessage='" + statusMessage + '\'' +
+                ", statusCode=" + statusCode +
                 '}';
     }
 }
 
-class TransmissionProtocolLogBuffer {
-    int size;
-
-    TransmissionProtocolLogBuffer(String protocolString, int size) {
-        this.size = size;
-    }
-
-}

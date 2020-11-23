@@ -7,6 +7,7 @@ package org.andan.android.connectiq.wormnav;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -36,6 +37,8 @@ import com.garmin.android.connectiq.IQDevice;
 import com.garmin.android.connectiq.IQDevice.IQDeviceStatus;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 import com.garmin.android.connectiq.exception.ServiceUnavailableException;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -53,6 +56,10 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     public static final String TRACK_NAME="TRACK_NAME";
     public static final String TRACK_LENGTH="TRACK_LENGTH";
     public static final String GEO_POINTS="GEO_POINTS";
+
+    public static final String TRANSMISSION_PROTOCOL_ENTRIES = "TRANSMISSION_PROTOCOL_ENTRIES";
+
+    private SharedPreferences mPreferences;
 
     private ConnectIQ mConnectIQ;
     private TextView mEmptyView;
@@ -75,6 +82,9 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     private int mTrackNumberOfPoints;
     private int maxPathWpt;
     private double maxPathError;
+
+    private List<TransmissionProtocolEntry> transmissionProtocolEntries = null;
+    Gson gson;
 
     private List<GeoPoint> mGeoPoints;
     private float[] mTrackPoints;
@@ -134,6 +144,15 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate:");
+
+        mPreferences = getPreferences(MODE_PRIVATE);
+
+        String ts = mPreferences.getString(TRANSMISSION_PROTOCOL_ENTRIES,"");
+        gson = new Gson();
+        if(!ts.isEmpty()) {
+            transmissionProtocolEntries = gson.fromJson(ts, new TypeToken<ArrayList<TransmissionProtocolEntry>>() {}.getType());
+        }
+
         setContentView(R.layout.activity_device_browser);
         mListView = (ListView) findViewById(android.R.id.list);
 
@@ -173,6 +192,11 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     protected void onPause() {
         super.onPause();
 
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        if(transmissionProtocolEntries != null) {
+            preferencesEditor.putString(TRANSMISSION_PROTOCOL_ENTRIES, gson.toJson(transmissionProtocolEntries));
+        }
+        preferencesEditor.apply();
         try {
             if (mDeviceList != null) {
                 // Let's register for device status updates.  By doing so we will
