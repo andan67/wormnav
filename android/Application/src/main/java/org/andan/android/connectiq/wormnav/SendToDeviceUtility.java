@@ -1,11 +1,14 @@
 package org.andan.android.connectiq.wormnav;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,7 @@ public class SendToDeviceUtility {
     public static float[][] generateTrackPointsAndBoundingBox(List<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
 
         if(geoPoints == null) return null;
+        double routeLength = -1.;
         if(maxPathWpt>0 && maxPathWpt <= geoPoints.size()) {
             Route route = new Route();
             for (GeoPoint geoPoint : geoPoints) {
@@ -56,6 +60,7 @@ public class SendToDeviceUtility {
                 route.addRoutePoint(routePoint);
             }
             GpxUtils.simplifyRoute(route, maxPathWpt, maxPathError);
+            routeLength = GpxUtils.lengthOfRoute(route);
             geoPoints = new ArrayList<>();
             for (RoutePoint routePoint : route.getRoutePoints()) {
                 geoPoints.add(new GeoPoint(routePoint.getLatitude(), routePoint.getLongitude()));
@@ -76,7 +81,7 @@ public class SendToDeviceUtility {
             trackPointsToSend[2 * j + 1] = (float) xy.y;
         }
 
-        float[] track_boundingBox = new float[7];
+        float[] track_boundingBox = new float[8];
         xyPoint xy = transform(Math.toRadians(boundingBox.getLatNorth()),
                 Math.toRadians(boundingBox.getLonWest()),
                 latCenter, lonCenter);
@@ -91,6 +96,7 @@ public class SendToDeviceUtility {
         track_boundingBox[4] = (float) latCenter;
         track_boundingBox[5] = (float) lonCenter;
         track_boundingBox[6] = (float) boundingBox.getDiagonalLengthInMeters();
+        track_boundingBox[7] = (float) routeLength;
 
         return new float[][] {track_boundingBox, trackPointsToSend};
 
@@ -140,7 +146,7 @@ class xyPoint {
     }
 }
 
-class TransmissionProtocolEntry {
+class TransmissionLogEntry {
     String trackName;
 
     int noTrackPointsOriginal;
@@ -239,7 +245,7 @@ class TransmissionProtocolEntry {
     @Override
     public String toString() {
         SimpleDateFormat sf = new  SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return "TransmissionProtocolEntry{" +
+        return "TransmissionLogEntry{" +
                 "trackName='" + trackName + '\'' +
                 ", noTrackPointsOriginal=" + noTrackPointsOriginal +
                 ", trackLengthOriginal=" + trackLengthOriginal +
@@ -251,6 +257,55 @@ class TransmissionProtocolEntry {
                 ", statusMessage='" + statusMessage + '\'' +
                 ", statusCode=" + statusCode +
                 '}';
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String toLogString() {
+        if(!isOptimized)
+            if(statusCode==IQSendMessageIntentService.MESSAGE_SEND_OK)
+                return String.format("%tF %tT: Track '%s' (%.2fkm, #%d) successfully sent to device '%s'",
+                    new Date(sendTime), new Time(sendTime), trackName,
+                            0.001 * trackLengthOriginal, noTrackPointsOriginal,
+                            deviceName);
+            else
+                return String.format("%tF %tT: Track '%s' (%.2fkm, #%d) unsuccessfully sent to device '%s' for reason '%s'",
+                        new Date(sendTime), new Time(sendTime), trackName,
+                        0.001 * trackLengthOriginal, noTrackPointsOriginal,
+                        deviceName, statusMessage);
+        else {
+            if(statusCode==IQSendMessageIntentService.MESSAGE_SEND_OK)
+                return String.format("%tF %tT: Optimized track '%s' (%.2fkm->%.2fkm, #%d->#%d) successfully sent to device '%s'",
+                        new Date(sendTime), new Time(sendTime), trackName,
+                        0.001 * trackLengthOriginal, 0.001 * trackLengthSent,
+                        noTrackPointsOriginal, noTrackPointsSent,
+                        deviceName);
+            else
+                return String.format("%tF %tT: Optimized track '%s' (%.2fkm->%.2fkm, #%d->#%d) unsuccessfully sent to device '%s' for reason '%s'",
+                        new Date(sendTime), new Time(sendTime), trackName,
+                        0.001 * trackLengthOriginal, 0.001 * trackLengthSent,
+                        noTrackPointsOriginal, noTrackPointsSent,
+                        deviceName, statusMessage);
+        }
+    }
+
+    static public ArrayList<String> toStringArray(List<TransmissionLogEntry> entries) {
+        ArrayList<String> stringArray = new ArrayList();
+        if(entries!= null && !entries.isEmpty()) {
+            // add log string in reverse order
+            for (int i=entries.size()-1; i>=0; i-=1) {
+                stringArray.add(entries.get(i).toLogString());
+            }
+        }
+        return stringArray;
+    }
+
+    public void addToConstraintList(List<TransmissionLogEntry> entries, int maxSize) {
+        if (entries != null) {
+            if(entries.size() == maxSize) {
+                entries.remove(0);
+            }
+            entries.add(this);
+        }
     }
 }
 

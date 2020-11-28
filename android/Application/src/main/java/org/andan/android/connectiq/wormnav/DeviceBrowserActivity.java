@@ -8,6 +8,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -50,14 +53,13 @@ import java.util.List;
 public class DeviceBrowserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 
-
     public static final String MY_APP = "91da4791-78e5-4e58-b1e6-e6f423bb1984";
 
-    public static final String TRACK_NAME="TRACK_NAME";
-    public static final String TRACK_LENGTH="TRACK_LENGTH";
-    public static final String GEO_POINTS="GEO_POINTS";
+    public static final String TRACK_NAME = "TRACK_NAME";
+    public static final String TRACK_LENGTH = "TRACK_LENGTH";
+    public static final String GEO_POINTS = "GEO_POINTS";
 
-    public static final String TRANSMISSION_PROTOCOL_ENTRIES = "TRANSMISSION_PROTOCOL_ENTRIES";
+    public static final String TRANSMISSION_LOG_ENTRIES = "TRANSMISSION_PROTOCOL_ENTRIES";
 
     private SharedPreferences mPreferences;
 
@@ -83,7 +85,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     private int maxPathWpt;
     private double maxPathError;
 
-    private List<TransmissionProtocolEntry> transmissionProtocolEntries = null;
+    private List<TransmissionLogEntry> mTransmissionLogEntries;
     Gson gson;
 
     private List<GeoPoint> mGeoPoints;
@@ -95,7 +97,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         @Override
         public void onDeviceStatusChanged(IQDevice device, IQDeviceStatus status) {
-            Log.d(TAG,"onDeviceStatusChanged():"  + status.name() );
+            Log.d(TAG, "onDeviceStatusChanged():" + status.name());
             mAdapter.updateDeviceStatus(device, status);
         }
 
@@ -105,21 +107,21 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         @Override
         public void onInitializeError(IQSdkErrorStatus errStatus) {
-            if( null != mEmptyView )
+            if (null != mEmptyView)
                 mEmptyView.setText(R.string.initialization_error + errStatus.name());
             mSdkReady = false;
         }
 
         @Override
         public void onSdkReady() {
-            Log.d(TAG,"onSdkReady()");
+            Log.d(TAG, "onSdkReady()");
             loadDevices();
             mSdkReady = true;
         }
 
         @Override
         public void onSdkShutDown() {
-            Log.d(TAG,"onSdkShutDown()");
+            Log.d(TAG, "onSdkShutDown()");
             mSdkReady = false;
         }
 
@@ -147,10 +149,13 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         mPreferences = getPreferences(MODE_PRIVATE);
 
-        String ts = mPreferences.getString(TRANSMISSION_PROTOCOL_ENTRIES,"");
+        String ts = mPreferences.getString(TRANSMISSION_LOG_ENTRIES, "");
         gson = new Gson();
-        if(!ts.isEmpty()) {
-            transmissionProtocolEntries = gson.fromJson(ts, new TypeToken<ArrayList<TransmissionProtocolEntry>>() {}.getType());
+        if (!ts.isEmpty()) {
+            mTransmissionLogEntries = gson.fromJson(ts, new TypeToken<ArrayList<TransmissionLogEntry>>() {
+            }.getType());
+        } else {
+            mTransmissionLogEntries = new ArrayList<>();
         }
 
         setContentView(R.layout.activity_device_browser);
@@ -158,7 +163,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         mAdapter = new IQDeviceAdapter(this);
         mListView.setAdapter(mAdapter);
-        View header = getLayoutInflater().inflate(R.layout.activity_device_browser_header2, null);
+        View header = getLayoutInflater().inflate(R.layout.activity_device_browser_header, null);
         mListView.addHeaderView(header);
         mListView.setOnItemClickListener(this);
 
@@ -168,21 +173,22 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         // as the connection type.
         //mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.WIRELESS);
 
-        Log.i(TAG,"onCreate: initialize ConnectIQ");
-        if(!Utils.isDeviceEmulator()) mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.WIRELESS);
+        Log.i(TAG, "onCreate: initialize ConnectIQ");
+        if (!Utils.isDeviceEmulator())
+            mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.WIRELESS);
         else mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.TETHERED);
         // Initialize the SDK
         mConnectIQ.initialize(this, true, mListener);
 
-        mEmptyView = (TextView)findViewById(android.R.id.empty);
+        mEmptyView = (TextView) findViewById(android.R.id.empty);
 
-        mMessageStatus = (TextView)findViewById(R.id.message_status_value_textView);
+        mMessageStatus = (TextView) findViewById(R.id.message_status_value_textView);
 
         mTrackName = getIntent().getStringExtra(TRACK_NAME);
-        mTrackLength = getIntent().getFloatExtra(TRACK_LENGTH,0);
+        mTrackLength = getIntent().getFloatExtra(TRACK_LENGTH, 0);
         //mGeoPoints = getIntent().getParcelableArrayListExtra(GEO_POINTS);
         mGeoPoints = Data.geoPointsForDevice;
-        if(mGeoPoints == null || mGeoPoints.size() == 0) {
+        if (mGeoPoints == null || mGeoPoints.size() == 0) {
             Toast.makeText(getApplicationContext(), "No points to sent", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -193,8 +199,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         super.onPause();
 
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        if(transmissionProtocolEntries != null) {
-            preferencesEditor.putString(TRANSMISSION_PROTOCOL_ENTRIES, gson.toJson(transmissionProtocolEntries));
+        if (mTransmissionLogEntries != null) {
+            preferencesEditor.putString(TRANSMISSION_LOG_ENTRIES, gson.toJson(mTransmissionLogEntries));
         }
         preferencesEditor.apply();
         try {
@@ -219,8 +225,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         super.onResume();
 
         if (mSdkReady) {
-            Log.d(TAG,"onResume()");
-            if(mDeviceList == null) loadDevices();
+            Log.d(TAG, "onResume()");
+            if (mDeviceList == null) loadDevices();
         }
     }
 
@@ -230,7 +236,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         // It is a good idea to unregister everything and shut things down to
         // release resources and prevent unwanted callbacks.
-        Log.i(TAG,"onDestroy: shutdown ConnectIQ");
+        Log.i(TAG, "onDestroy: shutdown ConnectIQ");
         try {
             mConnectIQ.unregisterAllForEvents();
             mConnectIQ.shutdown(this);
@@ -249,31 +255,58 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.load_devices) {
-            Log.d(TAG,"onOptionsItemSelected");
-            loadDevices();
-            /*
-            try {
-                mConnectIQ.unregisterAllForEvents();
-                mConnectIQ.shutdown(this);
-                mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.TETHERED);
-                // Initialize the SDK
-                mConnectIQ.initialize(this, true, mListener);
+        switch (id) {
+            case R.id.load_devices:
+                Log.d(TAG, "onOptionsItemSelected");
+                loadDevices();
+                /*
+                try {
+                    mConnectIQ.unregisterAllForEvents();
+                    mConnectIQ.shutdown(this);
+                    mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.TETHERED);
+                    // Initialize the SDK
+                    mConnectIQ.initialize(this, true, mListener);
 
-            } catch (InvalidStateException e) {
-                // This is usually because the SDK was already shut down
-                // so no worries.
-            }
-            */
-            return true;
+                } catch (InvalidStateException e) {
+                    // This is usually because the SDK was already shut down
+                    // so no worries.
+                }
+                */
+                break;
+            case R.id.show_log_entries:
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getString(R.string.transmission_log)).setCancelable(true);
+                ArrayList<String> logStrings = TransmissionLogEntry.toStringArray(mTransmissionLogEntries);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_list_item_1, logStrings);
+                builder.setAdapter(dataAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Toast.makeText(getApplicationContext(),"You have selected " + logStrings.get(which),Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                // Set the divider color of alert dialog list view
+                ListView listView = dialog.getListView();
+                listView.setDivider(new ColorDrawable(Color.GRAY));
+                listView.setDividerHeight(2);
+                dialog.show();
+
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
     public void onItemClick(AdapterView l, View v, int position, long id) {
         // -1 because of header
-        if(position>0 && mSdkReady) {
+        if (position > 0 && mSdkReady) {
             mDevice = mAdapter.getItem(position - 1);
 
             displaySendToDeviceDialog();
@@ -282,16 +315,16 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
     public void loadDevices() {
         // Retrieve the list of known devices
-        Log.d(TAG,"loadDevices");
+        Log.d(TAG, "loadDevices");
         try {
-            if(mDeviceList != null && mDeviceList.size()>0) {
+            if (mDeviceList != null && mDeviceList.size() > 0) {
                 for (IQDevice device : mDeviceList) {
                     mConnectIQ.unregisterForDeviceEvents(device);
                 }
             }
             // get new list
             mDeviceList = mConnectIQ.getKnownDevices();
-            Log.d(TAG,mDeviceList.toString());
+            Log.d(TAG, mDeviceList.toString());
             if (mDeviceList != null) {
                 mAdapter.setDevices(mDeviceList);
                 // Let's register for device status updates.  By doing so we will
@@ -300,8 +333,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                 for (IQDevice device : mDeviceList) {
                     mConnectIQ.registerForDeviceEvents(device, mDeviceEventListener);
                     //mAdapter.updateDeviceStatus(device, device.getStatus());
-                    Log.d(TAG,device.getFriendlyName());
-                    Log.d(TAG,device.getStatus().name());
+                    Log.d(TAG, device.getFriendlyName());
+                    Log.d(TAG, device.getStatus().name());
                     //mAdapter.notifyDataSetInvalidated();
                 }
             }
@@ -314,7 +347,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
             // to the ConnectIQ service running within Garmin Connect Mobile.  This
             // could be because Garmin Connect Mobile is not installed or needs to
             // be upgraded.
-            if( null != mEmptyView )
+            if (null != mEmptyView)
                 mEmptyView.setText(R.string.service_unavailable);
         }
     }
@@ -334,7 +367,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         textView.setText(mTrackName);
 
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_length_value);
-        textView.setText(String.format("%.3f", mTrackLength/1000));
+        textView.setText(String.format("%.3f", mTrackLength / 1000));
 
 
         final EditText maxWptEditText = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxPoints);
@@ -342,7 +375,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         final CheckBox reduceCheckBox = trackSendToDeviceLayout.findViewById(R.id.reduceTrackCheckbox);
 
-        if(Data.useDefaultOptimization) {
+        if (Data.useDefaultOptimization) {
             maxPathWpt = Data.defaultMaxPathWpt;
             maxPathError = Data.defaultMaxPathError;
         } else {
@@ -355,7 +388,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         maxWptEditText.setText(String.valueOf(maxPathWpt));
         maxError.setText(String.valueOf(maxPathError));
-
 
 
         reduceCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -392,30 +424,49 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         float[][] trackData = SendToDeviceUtility.generateTrackPointsAndBoundingBox(mGeoPoints, maxPathWpt, maxPathError);
                         mTrackBoundingBox = trackData[0];
                         mTrackPoints = trackData[1];
-                        mTrackNumberOfPoints = mTrackPoints.length/2;
+
+                        final TransmissionLogEntry logEntry = new TransmissionLogEntry();
+                        logEntry.setTrackName(mTrackName);
+                        logEntry.setTrackLengthOriginal(mTrackLength);
+                        logEntry.setNoTrackPointsOriginal(mGeoPoints.size());
+
+                        // Dirty hack: last element of mTrackBoundingBox contains possibly reduced track lenght!
+                        //Log.d(TAG, "mTrackLength:" + mTrackLength);
+                        mTrackLength = mTrackBoundingBox[mTrackBoundingBox.length - 1] >= 0. ? mTrackBoundingBox[mTrackBoundingBox.length - 1] : mTrackLength;
+                        logEntry.setOptimized(maxPathWpt > 0);
+                        logEntry.setTrackLengthSent(mTrackLength);
+                        //Log.d(TAG, "mTrackLength:" + mTrackLength);
+
+
+                        mTrackNumberOfPoints = mTrackPoints.length / 2;
+                        logEntry.setNoTrackPointsSent(mTrackNumberOfPoints);
 
                         List<Object> message = new ArrayList<>();
                         // Create lists from arrays
                         List<Object> dataAsList = new ArrayList<>();
-                        for(int i=0; i< mTrackBoundingBox.length; i++) dataAsList.add(mTrackBoundingBox[i]);
+                        // Dirty hack: last element of mTrackBoundingBox contains possibly reduced track lenght!
+
+                        for (int i = 0; i < mTrackBoundingBox.length - 1; i++)
+                            dataAsList.add(mTrackBoundingBox[i]);
                         message.add(dataAsList);
                         message.add(mTrackName);
                         message.add(mTrackLength);
                         message.add(mTrackNumberOfPoints);
                         dataAsList = new ArrayList();
-                        for(int i=0; i< mTrackPoints.length; i++) dataAsList.add(mTrackPoints[i]);
+                        for (int i = 0; i < mTrackPoints.length; i++)
+                            dataAsList.add(mTrackPoints[i]);
                         message.add(dataAsList);
 
                         Bundle messageBundle = new Bundle();
                         messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);
-                        messageBundle.putString(IQSendMessageIntentService.IQ_APP_ID,MY_APP );
+                        messageBundle.putString(IQSendMessageIntentService.IQ_APP_ID, MY_APP);
                         messageBundle.putSerializable(IQSendMessageIntentService.MESSAGE_DATA, (Serializable) message);
                         messageBundle.putParcelable(IQSendMessageIntentService.RESULT_RECEIVER, new ResultReceiver(new Handler()) {
                             @Override
                             protected void onReceiveResult(int resultCode, Bundle resultData) {
                                 super.onReceiveResult(resultCode, resultData);
                                 // workaround to handle bug(?) that onMessageStatus is called twise with first status 'SUCCESS' and second status n'FAILUER_UNKNOWN'
-                                long sendTime =  resultData.getLong(IQSendMessageIntentService.MESSAGE_SEND_TIME);
+                                long sendTime = resultData.getLong(IQSendMessageIntentService.MESSAGE_SEND_TIME);
                                 String deviceName = resultData.getString(IQSendMessageIntentService.IQ_DEVICE_NAME);
                                 String status = resultData.getString(IQSendMessageIntentService.MESSAGE_STATUS);
                                 //long sendTime = resultData.getLong(IQSendMessageIntentService.MESSAGE_SEND_TIME);
@@ -428,6 +479,13 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                                     mMessageStatus.setText("Last message sent to '" + deviceName +
                                             "' at '" + sendTimeAsString + "' failed for reason '" + status + "'.");
                                 }
+                                logEntry.setDeviceName(deviceName);
+                                logEntry.setSendTime(sendTime);
+                                logEntry.setStatusCode(resultCode);
+                                logEntry.setStatusMessage(status);
+                                logEntry.addToConstraintList(mTransmissionLogEntries, 20);
+                                mMessageStatus.setText(logEntry.toLogString());
+
                             }
                         });
 

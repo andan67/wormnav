@@ -367,7 +367,7 @@
     <string name="x_tracks">%1$d tracks</string>
 
     <string name="load_devices">Reload devices</string>
-    <string name="transmission_protocol">Show protocol</string>
+    <string name="menu_transmission_log">Show transmission log</string>
 
     <string name="initialization_error">Failed to initialize the SDK.\n</string>
     <string name="service_unavailable">The ConnectIQ service is unavailable.</string>
@@ -389,6 +389,7 @@
     <string name="dialog_send_to_device_track_name">Name:</string>
     <string name="dialog_send_to_device_track_length">Length (km):</string>
     <string name="dialog_send_to_device_track_number_of_points">#Points:</string>
+    <string name="transmission_log">Transmission log</string>
     <string name="massage_status_name">Status of last IQ message sent:</string>
     <string name="use_last_path">Use last file path</string>
     <string name="run_with_simulator">Run with simulator</string>
