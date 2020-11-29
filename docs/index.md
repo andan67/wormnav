@@ -9,19 +9,19 @@ It consists of two apps:
 - The ConnectIQ app for the Garmin device to navigate along the track and run activities.
 
 ### Installation and basic set-up
+- Pre-requisiste: Installation of [Garmin Connect™ app](https://play.google.com/store/apps/details?id=com.garmin.android.apps.connectmobile) from Google Play Store
 - Install [WormNav Companion app](https://play.google.com/store/apps/details?id=org.andan.android.connectiq.wormnav) from Google Play Store on your Android smartphone or tablet
-- If not already done, install [Garmin Connect™ app](https://play.google.com/store/apps/details?id=com.garmin.android.apps.connectmobile) from Google Play Store
 - Install [WormNav app](https://apps.garmin.com/de-DE/apps/07c0363a-a921-4c77-bb4f-93a6d6c4a2ed) from Connect IQ Store
-- Connect your Gamin device with your Android smartphone/tablet via bluetooth
+- Connect your Gamin device with your Android device via bluetooth
 
-### Usage scenario
-1. Choose or create a GPX track or route you would like to use for navigation with your Garmin device
+### Typical usage scenario
+1. Choose or create a GPX track or route for navigation on your Garmin device
 2. Import this track/route into WormNav Companion app
-3. Optimize the track/route to reduce number of waypoints
+3. Optionally optimize the track/route to reduce number of waypoints
 4. Connect your Garmin device with your smartphone/tablet via bluetooth
 4. Send optimized track/route to connected Garmin device
-5. Start activity on Garmin device
-6. Follow shown track on Garmin device
+5. Start WormNav app on Garmin device
+6. Start activity and follow track shown on display of the Garmin device
 7. Stop/resume/save activity
 
 ### Companion app
@@ -30,6 +30,7 @@ It consists of two apps:
 - Load GPX tracks and routes
 - Show GPX tracks or routes in Open Street map
 - Optimize routes (reduce number of waypoints given maximum error contraint)
+- Merge tracks/routes
 - Store tracks and routes
 - Send track/route to connected Garmin device
 
@@ -42,13 +43,13 @@ It consists of two apps:
 </div>
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-- On first run the app will ask to grant two permissions (STORAGE and LOCATION).
-- Also the app will try to create a 'WormNav' subfolder in the external storage location that can be used to store all GPX files in one location. 
-Of course, other accessible locations can also be used.
+- On first run the app will ask for granting two permissions (STORAGE and LOCATION)
 - Main functions available from the main screen:
     - Manage settings
-    - Load or save GPX file with possibly multiple tracks or routes. If 'Open last loaded/saved file" is enabled in the settings (default), 
-    the last loaded or saved GPX file will be opened on app start.
+      - Save loaded GPX data into internal backup file on exit
+      - Load data from internal backup into app on start
+      - Default metrics and optimization configuration
+    - Open or save GPX file with possibly multiple tracks or routes
     - Manage loaded GPX tracks, routes, or points of interest (see below)
 </div>
 {::options parse_block_html="true" /}
@@ -83,6 +84,21 @@ Of course, other accessible locations can also be used.
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
+
+##### Track Manager - Convert
+<div style="float: left; width: 50%">
+<img src="images/android_track_convert.png" width="300"/>
+</div>
+
+{::options parse_block_html="true" /}
+<div style="float: right; width: 50%">
+- Converts tracks into routes
+- Optionally merge selected tracks into a single route
+- Optionally optimize route
+</div>
+{::options parse_block_html="true" /}
+<div style="clear: both"/>
+
 ##### Route Manager - Optimize
 <div style="float: left; width: 50%">
 <img src="images/android_route_manager_optimize.png" width="300"/>
@@ -109,6 +125,7 @@ Of course, other accessible locations can also be used.
 - Menu item 'Send selected to device' opens device browser with list of Garmin devices
 - Shows status of last sent
 - Click on device entry opens dialog to send selected track/route to connected device
+- Shows log of last transmissions via menu entry
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
