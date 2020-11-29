@@ -40,7 +40,6 @@
             android:linksClickable="true"
             android:text="@string/gnugpl"
             android:textColor="#333"
-
             android:textSize="14sp" />
 
         <TextView
@@ -51,7 +50,6 @@
             android:linksClickable="true"
             android:text="@string/github"
             android:textColor="#333"
-
             android:textSize="14sp" />
 
     </LinearLayout>

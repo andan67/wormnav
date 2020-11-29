@@ -12,11 +12,6 @@ buildscript {
 
 apply plugin: 'com.android.application'
 
-// Load keystore
-//def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
-//def keystoreProperties = new Properties()
-//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 dependencies {
     implementation files('libs/httpclient-4.5.jar')
     implementation files('libs/httpcore-4.4.1.jar')
@@ -69,12 +64,25 @@ android {
         versionName '1.1.0'
         setProperty("archivesBaseName", "Worm navigation")
     }
+
+    // Load keystore
+    def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
+    def keystoreProperties = new Properties()
+    try {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+    catch (FileNotFoundException e) {
+        keystoreProperties = null
+    }
+
     signingConfigs {
         config {
-            //storeFile file(keystoreProperties['storeFile'])
-            //storePassword keystoreProperties['storePassword']
-            //keyAlias keystoreProperties['keyAlias']
-            //keyPassword keystoreProperties['keyPassword']
+            if(keystoreProperties != null) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
         }
     }
     buildTypes {

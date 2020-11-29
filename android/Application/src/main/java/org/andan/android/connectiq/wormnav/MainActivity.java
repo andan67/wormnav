@@ -286,11 +286,11 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
                         break;
 
                     case 1:
-                        //fileOpen();
+                        performGpxFileSearch(REQUEST_CODE_LOAD_FILE, Data.lastLoadedSavedUri);
                         break;
 
                     case 2:
-                        //showSaveAsDialog();
+                        performGpxFileSave(REQUEST_CODE_SAVE_FILE,  Data.lastLoadedSavedUri);
                         break;
 
                     default:
@@ -701,100 +701,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         }
     }
 
-
-
-    private void saveGpxDestructive(String path, String filename) {
-
-        if (Data.sPoiGpx.getPoints().size() == 0 && Data.sRoutesGpx.getRoutes().size() == 0 && Data.sTracksGpx.getTracks().size() == 0) {
-            Toast.makeText(this, getString(R.string.nothing_to_save), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        boolean path_ok;
-
-        File folder = new File(path);
-
-        path_ok = folder.exists() || folder.mkdirs();
-
-        if (path_ok) {
-
-            final String new_file = folder.toString() + "/" + filename + ".gpx";
-
-            if (new File(new_file).exists()) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                String dialogTitle = getResources().getString(R.string.dialog_overwrite_title);
-                String dialogMessage = getResources().getString(R.string.dialog_overwrite_message);
-                String saveText = getResources().getString(R.string.dialog_save_changes_save);
-                String cancelText = getResources().getString(R.string.dialog_cancel);
-
-                builder.setTitle(dialogTitle)
-                        .setIcon(R.drawable.map_warning)
-                        .setMessage(dialogMessage)
-                        .setCancelable(true)
-                        .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                            }
-                        })
-                        .setPositiveButton(saveText, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                String savingPoi = String.format(getString(R.string.poi_loaded), Data.sPoiGpx.getPoints().size());
-                                String savingRoutes = String.format(getString(R.string.routes_loaded), Data.sRoutesGpx.getRoutes().size());
-                                String savingTracks = String.format(getString(R.string.tracks_loaded), Data.sTracksGpx.getTracks().size());
-                                Toast.makeText(getApplicationContext(), getString(R.string.saving) + " " + savingPoi + ", " + savingRoutes + ", " + savingTracks, Toast.LENGTH_LONG).show();
-
-                                Data.mGpx = new Gpx();
-
-                                Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
-                                Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
-                                Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
-
-                                GpxFileIo.parseOut(Data.mGpx, new_file);
-                            }
-                        });
-
-                AlertDialog alert = builder.create();
-
-                alert.show();
-
-            } else {
-
-                // Just save
-                String savingPoi = String.format(getString(R.string.poi_loaded), Data.sPoiGpx.getPoints().size());
-                String savingRoutes = String.format(getString(R.string.routes_loaded), Data.sRoutesGpx.getRoutes().size());
-                String savingTracks = String.format(getString(R.string.tracks_loaded), Data.sTracksGpx.getTracks().size());
-                Toast.makeText(getApplicationContext(), getString(R.string.saving) + " " + savingPoi + ", " + savingRoutes + ", " + savingTracks, Toast.LENGTH_LONG).show();
-
-                Data.mGpx = new Gpx();
-
-                Data.mGpx.addPoints(Data.sPoiGpx.getPoints());
-                Data.mGpx.addRoutes(Data.sRoutesGpx.getRoutes());
-                Data.mGpx.addTracks(Data.sTracksGpx.getTracks());
-
-                GpxFileIo.parseOut(Data.mGpx, new_file);
-
-            }
-
-            TextView openFile = (TextView) findViewById(R.id.open_file);
-            //Data.loadedFileFullPath = new_file;
-
-            try {
-                String[] splitFullPath = new_file.split("/");
-                String filaname = splitFullPath[splitFullPath.length - 1];
-                openFile.setText(filaname);
-            } catch (Exception e) {
-                openFile.setText(String.valueOf(e));
-            }
-
-        } else {
-
-            Toast.makeText(getApplicationContext(), getString(R.string.failed_writing_gpx), Toast.LENGTH_LONG).show();
-        }
-    }
-
     public void refreshLoadedDataInfo() {
 
         Log.d(TAG, "refreshLoadedDataInfo():" + Data.lastLoadedSavedUri.toString());
@@ -887,34 +793,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    private void handleCorruptedFileError(String message, File file, Gpx gpx) {
-
-        try {
-            file.createNewFile();
-            if (gpx == Data.sPoiGpx) {
-
-                Data.sPoiGpx = new Gpx();
-                GpxFileIo.parseOut(Data.sPoiGpx, file);
-
-            } else if (gpx == Data.sRoutesGpx) {
-
-                Data.sRoutesGpx = new Gpx();
-                GpxFileIo.parseOut(Data.sRoutesGpx, file);
-
-            } else if (gpx == Data.sTracksGpx) {
-
-                Data.sTracksGpx = new Gpx();
-                GpxFileIo.parseOut(Data.sTracksGpx, file);
-            }
-
-
-        } catch (Exception e) {
-            Log.d(TAG, "Failed creating " + file.toString());
-        }
-        Toast.makeText(getApplicationContext(), message + " " + getString(R.string.default_file_corrupted), Toast.LENGTH_LONG).show();
-
     }
 
     private void saveGpx(OutputStream os) {

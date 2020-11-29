@@ -57,6 +57,10 @@
         <a href="https://github.com/andan67/WormNav">Project on GitHub</a>
     </string>
 
+    <string name="github_guide">
+        <a href="https://andan67.github.io/wormnav">User guide on GitHub</a>
+    </string>
+
     <string name="current_folder">Current folder: %1$s</string>
 
     <string name="default_file_corrupted">default file not found or corrupted - creating a new one</string>
