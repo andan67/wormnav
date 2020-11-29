@@ -60,5 +60,4 @@ public class TransmissionLogEntryTest {
         ArrayList<TransmissionLogEntry> transmissionLogEntries2 = gson.fromJson(transmissionLogEntriesJson, new TypeToken<ArrayList<TransmissionLogEntry>>() {}.getType());
         System.out.println(gson.toJson(transmissionLogEntries2));
     }
-
 }
