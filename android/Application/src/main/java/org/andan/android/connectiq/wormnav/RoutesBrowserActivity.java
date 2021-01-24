@@ -79,6 +79,8 @@ import pt.karambola.gpx.util.GpxUtils;
 import static android.view.View.GONE;
 import static org.andan.android.connectiq.wormnav.R.id.osmmap;
 
+import org.andan.android.connectiq.wormnav.BuildConfig;
+
 //import android.app.AlertDialog;
 
 /**

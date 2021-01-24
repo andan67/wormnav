@@ -428,7 +428,7 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
         String dialogTitle = getResources().getString(R.string.dialog_about);
         String okText = getResources().getString(R.string.dialog_ok);
         builder.setTitle(dialogTitle)
-                .setIcon(R.mipmap.ic_launcher_round)
+                .setIcon(R.mipmap.ic_launcher)
                 .setCancelable(false)
                 .setView(layout)
                 .setPositiveButton(okText, new DialogInterface.OnClickListener() {

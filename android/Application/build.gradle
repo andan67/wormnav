@@ -51,22 +51,26 @@ android {
 
     compileSdkVersion 30
     buildToolsVersion '30.0.2'
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
     }
+
     defaultConfig {
         applicationId "org.andan.android.connectiq.wormnav"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 110
-        versionName '1.1.0'
+        targetSdkVersion 29
+        versionCode 112
+        versionName '1.1.2-alpha'
         setProperty("archivesBaseName", "Worm navigation")
     }
 
     // Load keystore
-    def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
+    //def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
+    // if(keystorePropertiesFile == null
+    def keystorePropertiesFile = file("C:/Users/Andreas/develop/keystore/keystore.properties");
     def keystoreProperties = new Properties()
     try {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -85,6 +89,7 @@ android {
             }
         }
     }
+
     buildTypes {
         release {
             //debuggable true
@@ -94,6 +99,17 @@ android {
             signingConfig signingConfigs.config
         }
     }
+
+    flavorDimensions "emulator"
+    productFlavors {
+        emu {
+            dimension "emulator"
+        }
+        real {
+            dimension "emulator"
+        }
+    }
+
     sourceSets {
         main {
             dirs.each { dir ->
@@ -105,6 +121,7 @@ android {
         androidTest.java.srcDirs = ['tests/src']
 
     }
+
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             outputFileName = "${variant.name}-${variant.versionName}.apk"

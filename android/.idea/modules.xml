@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/android.iml" filepath="$PROJECT_DIR$/.idea/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Application/android.Application.iml" filepath="$PROJECT_DIR$/.idea/modules/Application/android.Application.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Karambola/android.Karambola.iml" filepath="$PROJECT_DIR$/.idea/modules/Karambola/android.Karambola.iml" />
     </modules>

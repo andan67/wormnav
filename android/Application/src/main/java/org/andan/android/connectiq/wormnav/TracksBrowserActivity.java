@@ -71,6 +71,8 @@ import pt.karambola.gpx.util.GpxUtils;
 
 import static org.andan.android.connectiq.wormnav.R.id.osmmap;
 
+import org.andan.android.connectiq.wormnav.BuildConfig;
+
 /**
  * Route Picker activity created by piotr on 02.05.17.
  */

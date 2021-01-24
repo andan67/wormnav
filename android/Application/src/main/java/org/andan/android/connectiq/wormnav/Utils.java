@@ -61,6 +61,10 @@ import pt.karambola.gpx.beans.TrackPoint;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
+import org.andan.android.connectiq.wormnav.BuildConfig;
+
+import org.andan.android.connectiq.wormnav.BuildConfig;
+
 public class Utils extends AppCompatActivity {
 
     private static final String TAG = "Utils";
@@ -758,26 +762,9 @@ public class Utils extends AppCompatActivity {
     }
 
     public static boolean isDeviceEmulator() {
-        return Build.FINGERPRINT.startsWith("google/sdk_gphone_x86");
-    }
-
-
-    public static String getFileNameFromFullPath(String fullPathFileName) {
-        try {
-            String[] splitFullPath = fullPathFileName.split("/");
-            return  splitFullPath[splitFullPath.length - 1];
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public static String getParentFromFullPath(String fullPathFileName) {
-        try {
-            int fileNameLength =  getFileNameFromFullPath(fullPathFileName).length();
-            return fullPathFileName.substring(0, fullPathFileName.length()-fileNameLength-1);
-        } catch (Exception e) {
-            return "";
-        }
+        //return Build.FINGERPRINT.startsWith("google/sdk_gphone_x86");
+        //return false;
+        return BuildConfig.FLAVOR.equals("emu");
     }
 
     public static String getBaseFileNameFromUri(Uri uri) {
