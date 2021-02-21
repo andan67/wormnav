@@ -29,30 +29,21 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
-    function onKey(keyEvent) {
-        return true;
-    }
-
-    function onKeyPressed(keyEvent) {
-        //System.println("onKeyPressed:" + keyEvent.getKey());
-        return false;
-    }
-
-    function onKeyReleased(keyEvent) {
-        //System.println("onKeyReleased:");
-        //mainView.setTextToDisplay(eventText);
-        //WatchUi.requestUpdate();
-        return false;
-    }
-
-
     function initialize() {
         BehaviorDelegate.initialize();
     }
 
+    function onKey(keyEvent) {
+        // System.println("onKey:" + keyEvent.getKey());
+        if(keyEvent.getKey() == WatchUi.KEY_ENTER || keyEvent.getKey == WatchUi.KEY_START) {
+            startStopActivity();
+            return true;
+        }
+        return false;
+    }
+
     // When a next page behavior occurs, onNextPage() is called.
     // @return [Boolean] true if handled, false otherwise
-
     function onNextPage() {
         //System.println("onNextPage()");
         switch(mode) {
@@ -71,8 +62,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // When a previous page behavior occurs, onPreviousPage() is called.
     // @return [Boolean] true if handled, false otherwise
     function onPreviousPage() {
-        // System.println("onPreviousPage()");
-         switch(mode) {
+        //System.println("onPreviousPage()");
+        switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-1);
                 $.doForcedUpdate = true;
@@ -85,26 +76,10 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-
-    private function dataPageChange(n) {
-        if(Data.activeDataScreens.size() == 0) {
-            // this might happen when data screen settings have been changed
-            onBack();
-        } else {
-            dataPage = (dataPage + n) % Data.activeDataScreens.size();
-            if(dataPage<0) {
-                dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
-            }
-            dataView.setDataFields(Data.activeDataScreens[dataPage]);
-            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
-        }
-        return;
-    }
-
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
-		
+		//System.println("onBack");
 		// If active session is stopped asked for discard/save/resume		
 		if( $.session != null  &&  $.session.isRecording() == false ) {
         	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
@@ -133,31 +108,27 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // When a next mode behavior occurs, onNextMode() is called.
     // @return [Boolean] true if handled, false otherwise
     function onNextMode() {
-        // System.println("onNextMode()");
+        //System.println("onNextMode()");
         return true;
     }
 
     // When a previous mode behavior occurs, onPreviousMode() is called.
     // @return [Boolean] true if handled, false otherwise
     function onPreviousMode() {
-        // System.println("onPreviousMode()");
+        //System.println("onPreviousMode()");
         return true;
     }
 
-
     function onMenu() {
         // System.println("onMenu()");
-           var menu = new Rez.Menus.MainMenu();
-           menu.setTitle("Main Menu");
+        var menu = new Rez.Menus.MainMenu();
+        menu.setTitle("Main Menu");
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
 
-    // When a previous mode behavior occurs, onPreviousMode() is called.
-    // @return [Boolean] true if handled, false otherwise
-    function onSelect() {
-        // System.println("onSelect()");
-        if( Toybox has :ActivityRecording ) {
+    private function startStopActivity() {
+       if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
                 // System.println("start/resume session");
                 if($.session==null) {
@@ -173,10 +144,22 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 $.doForcedUpdate = true;
                 //WatchUi.requestUpdate();
             }
-        }
+        }  
+    }
 
-        //System.exit();
-        return true;
+    private function dataPageChange(n) {
+        if(Data.activeDataScreens.size() == 0) {
+            // this might happen when data screen settings have been changed
+            onBack();
+        } else {
+            dataPage = (dataPage + n) % Data.activeDataScreens.size();
+            if(dataPage<0) {
+                dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
+            }
+            dataView.setDataFields(Data.activeDataScreens[dataPage]);
+            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+        }
+        return;
     }
 
 }
