@@ -697,8 +697,7 @@ public class RoutesBrowserActivity extends Utils {
     protected void onPause() {
 
         super.onPause();
-        if(mFusedLocationClient != null)
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 
         Data.sLastZoom = mMapView.getZoomLevelDouble();
         Data.sLastCenter = new GeoPoint(mMapView.getMapCenter().getLatitude(), mMapView.getMapCenter().getLongitude());
