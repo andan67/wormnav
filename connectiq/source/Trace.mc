@@ -23,16 +23,15 @@ module Trace {
     var lapTimeP = 0.0;
     var lapDistanceP = 0.0;
     var lapCounter = 0;
-    //var autolapDistance = 1000;
-    var autolapDistance = 200.0;
+    var autolapDistance = 1000.0;
     var lapPace = "";
     var isAutoLapActive = false;
     
     var positionTime = 0;
     var lastPositionTime = 0;
-	var positionDistance = 0.0;
+    var positionDistance = 0.0;
 
-	
+    
     function reset() {
         pos_nelements = 0;
         pos_start_index = 0;
@@ -44,7 +43,7 @@ module Trace {
         positionDistance = 0.0;
     }
 
-    function put_pos(lat,lon) {
+    function putPosition(lat,lon) {
         var xy = Transform.ll_2_xy(lat,lon);
 
         if(pos_nelements<BUFFER_SIZE) {
@@ -64,7 +63,7 @@ module Trace {
         Transform.isTrackCentered = false;
         Transform.setPosition(lat_pos,lon_pos);
         if(lat_last_pos!=null) {
-        	positionDistance = Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
+            positionDistance = Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
             cumDistance += positionDistance;            
         }
 
@@ -72,13 +71,13 @@ module Trace {
         lon_last_pos=lon_pos;
 
         if((cumDistance >= breadCrumbDist) && (breadCrumbDist > 0)) {
-            put_pos(lat_last_pos,lon_last_pos);
+            putPosition(lat_last_pos,lon_last_pos);
             cumDistance -=breadCrumbDist;
         }
     }
 
     function setAutolapDistance(distance) {
-        autolapDistance    = distance;
+        autolapDistance = distance;
         if(autolapDistance == 0) {
             // reset autolap
             lapTime = 0.0;

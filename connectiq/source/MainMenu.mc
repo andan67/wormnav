@@ -16,8 +16,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
         var factory;
         var defaultValue;
         
-    	var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
-    	var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
+        var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
+        var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
         
         switch(item) {
             
@@ -34,21 +34,21 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 return true;
             case :north:
                 defaultValue = Transform.northHeading;
-                 factory =  new GenericListItemFactory(
-                     [true,false],["North\nup","Move-\nment"],{:font => Graphics.FONT_MEDIUM});
-				picker = new GenericListItemPicker("Map orientation", [factory], [defaultValue], null);
+                factory =  new GenericListItemFactory(
+                    [true,false],["North\nup","Move-\nment"],{:font => Graphics.FONT_MEDIUM});
+                picker = new GenericListItemPicker("Map orientation", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new MapOrientationPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
                 return true;
              case :center:
-                 defaultValue = Transform.centerMap;
-                 factory =  new GenericListItemFactory(
-                     [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
+                defaultValue = Transform.centerMap;
+                factory =  new GenericListItemFactory(
+                    [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
                 picker = new GenericListItemPicker("Center map", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new CenterMapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :autolap:
-                 defaultValue = Trace.autolapDistance;
-                 factory = new GenericListItemFactory(
+                defaultValue = Trace.autolapDistance;
+                factory = new GenericListItemFactory(
                     distanceValues,
                     distanceLabels,
                     null);
@@ -100,9 +100,9 @@ class AutoLapPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-         var distance = values[0];
-         Trace.setAutolapDistance(distance);
-         Application.getApp().setProperty("autolapDistance",distance);
+        var distance = values[0];
+        Trace.setAutolapDistance(distance);
+        Application.getApp().setProperty("autolapDistance",distance);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -136,7 +136,7 @@ class MapOrientationPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-		Transform.northHeading = values[0];
+        Transform.northHeading = values[0];
         Application.getApp().setProperty("northHeading", Transform.northHeading);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
@@ -145,7 +145,7 @@ class MapOrientationPickerDelegate extends WatchUi.PickerDelegate {
 class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
 
     function initialize() {
-           PickerDelegate.initialize();
+        PickerDelegate.initialize();
     }
 
     function onCancel() {
@@ -154,7 +154,7 @@ class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
 
     function onAccept(values) {
         Transform.centerMap = values[0];
-        Application.getApp().setProperty("centerMap", Transform.northHeading);
+        Application.getApp().setProperty("centerMap", Transform.centerMap);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -162,7 +162,7 @@ class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
 class ActivityTypeDelegate extends WatchUi.PickerDelegate {
 
     function initialize() {
-           PickerDelegate.initialize();
+        PickerDelegate.initialize();
     }
 
     function onCancel() {
@@ -227,8 +227,6 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-    System.println("onAccept");
-        //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         var screen = mContext;
         var nDataFields = values[0];
@@ -291,22 +289,22 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
         
         switch ( item ) {
             case :upt:
-            	defaultValue = $.trackViewPeriod;
-            	key = "trackViewPeriod";
-            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
+                defaultValue = $.trackViewPeriod;
+                key = "trackViewPeriod";
+                factory =  new GenericListItemFactory(periodValues, periodLabels,null);
                 picker = new GenericListItemPicker("Track viev", [factory], [defaultValue], key);
                 break;
             case :upd:
-            	defaultValue = $.dataViewPeriod;
-            	key = "dataViewPeriod";
-            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
-            	picker = new GenericListItemPicker("Data view", [factory], [defaultValue], key);
+                defaultValue = $.dataViewPeriod;
+                key = "dataViewPeriod";
+                factory =  new GenericListItemFactory(periodValues, periodLabels,null);
+                picker = new GenericListItemPicker("Data view", [factory], [defaultValue], key);
                 break;
             case :upl:
-            	defaultValue = $.lapViewPeriod;
-            	key = "lapViewPeriod";
-            	factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);
-            	picker = new GenericListItemPicker("Lap view", [factory], [defaultValue], key);
+                defaultValue = $.lapViewPeriod;
+                key = "lapViewPeriod";
+                factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);
+                picker = new GenericListItemPicker("Lap view", [factory], [defaultValue], key);
                 break;
             default:
                 return false;
@@ -329,20 +327,20 @@ class PeriodPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-    	switch ( mKey ) {
-    		case "trackViewPeriod":
-    			$.trackViewPeriod = values[0];
-    			Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
-    			break;
-    		case "dataViewPeriod":
-    			$.dataViewPeriod = values[0];
-    			Application.getApp().setProperty("dataViewPeriod", $.dataViewPeriod);
-    			break;
-    		case "lapViewPeriod":
-    			$.lapViewPeriod = values[0];
-    			Application.getApp().setProperty("lapViewPeriod", $.lapViewPeriod);
-    			break;
-  		}
+        switch ( mKey ) {
+            case "trackViewPeriod":
+                $.trackViewPeriod = values[0];
+                Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
+                break;
+            case "dataViewPeriod":
+                $.dataViewPeriod = values[0];
+                Application.getApp().setProperty("dataViewPeriod", $.dataViewPeriod);
+                break;
+            case "lapViewPeriod":
+                $.lapViewPeriod = values[0];
+                Application.getApp().setProperty("lapViewPeriod", $.lapViewPeriod);
+                break;
+          }
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -354,8 +352,8 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
     }
 
     function onMenuItem(item) {
-		switch(item) {
-		    case :tdel:
+        switch(item) {
+            case :tdel:
                 if(track!=null) {
                     var message = "Delete track?";
                     var dialog = new WatchUi.Confirmation(message);
@@ -366,12 +364,12 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
                     );
                 }
                 return true;	
-    		case :tinfo:
-    			if(track!=null) {
-    				WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);	
-    			}
-    			return true;
-		}	
+            case :tinfo:
+                if(track!=null) {
+                    WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);	
+                }
+                return true;
+        }	
     }
 }        
 
@@ -401,9 +399,9 @@ class TrackInfoDelegate extends WatchUi.BehaviorDelegate {
         BehaviorDelegate.initialize();
     }   
 
-	function onBack() {
-		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);	
-	}
+    function onBack() {
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);	
+    }
 }
 
 

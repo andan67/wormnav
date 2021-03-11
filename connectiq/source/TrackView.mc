@@ -13,7 +13,7 @@ class TrackView extends WatchUi.View {
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
-    function draw_bread_crumbs(dc) {
+    function drawBreadCrumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         var xy_pos;
 
@@ -25,7 +25,7 @@ class TrackView extends WatchUi.View {
     }
 
 
-    function draw_scale(dc) {
+    function drawScale(dc) {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
@@ -41,7 +41,7 @@ class TrackView extends WatchUi.View {
     }
 
 
-    function draw_activity_info(dc) {
+    function drawActivityInfo(dc) {
         var data;
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
@@ -54,7 +54,7 @@ class TrackView extends WatchUi.View {
     }
 
 
-    function draw_track(dc) {
+    function drawTrack(dc) {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
@@ -71,7 +71,7 @@ class TrackView extends WatchUi.View {
         }
     }
 
-    function draw_trace(dc) {
+    function drawTrace(dc) {
 
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
@@ -153,7 +153,7 @@ class TrackView extends WatchUi.View {
         dc.fillPolygon(points);
 
         if(Trace.breadCrumbDist > 0) {
-            draw_bread_crumbs(dc);
+            drawBreadCrumbs(dc);
         }
     }
 
@@ -206,18 +206,18 @@ class TrackView extends WatchUi.View {
         }
 
         if($.track!=null) {
-            draw_track(dc);
+            drawTrack(dc);
         }
 
         if(Transform.x_pos != null) {
-            draw_trace(dc);
+            drawTrace(dc);
         }
 
         if(session!=null) {
-            draw_activity_info(dc);
+            drawActivityInfo(dc);
         }
 
-        draw_scale(dc);
+        drawScale(dc);
     }
 
     // Called when this View is removed from the screen. Save the

@@ -170,13 +170,6 @@ module Transform {
         return xy_2_screen(x, y);
     }
 
-//    function xy_2_rot_screen(x, y) {
-//        var xr = scaleFactor*(x-x_d);
-//        var yr = scaleFactor*(y-y_d);
-//        return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
-//                ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
-//    }
-
     function ll_2_xy(lat, lon) {
         var ll = lon-lon_view_center;
         var cos_lat = Math.cos(lat);

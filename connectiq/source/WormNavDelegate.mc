@@ -130,19 +130,16 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     private function startStopActivity() {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
-                // System.println("start/resume session");
                 if($.session==null) {
                     $.session = ActivityRecording.createSession({:name=>"WormNavActivity", :sport=>$.activityType});
                 }
                 $.session.start();
                 $.doForcedUpdate = true;
-                //WatchUi.requestUpdate();
             }
             else if( ( $.session != null ) && $.session.isRecording() ) {
                 // System.println("stop session");
                 $.session.stop();
                 $.doForcedUpdate = true;
-                //WatchUi.requestUpdate();
             }
         }  
     }

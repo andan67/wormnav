@@ -157,7 +157,6 @@ module Data {
 
     function currentHeartRate() {
         var data= Activity.getActivityInfo().currentHeartRate;
-        //var data = Sensor.Info.heartRate;
         return data!=null?  data : null;
     }
 
@@ -233,9 +232,6 @@ module Data {
         var data = Sys.getSystemStats().battery;
         return data!=null? data.format("%.0f") : null;
     }
-
-
-
 
     function getDataFieldLabelValue(i) {
         var dataValue = null;

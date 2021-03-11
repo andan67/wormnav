@@ -37,5 +37,4 @@ class GenericListItemPicker extends WatchUi.Picker {
         mContext=context;
     }
     
-    
 }

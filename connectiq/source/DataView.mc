@@ -18,29 +18,26 @@ class DataView extends  WatchUi.View {
 
     // Set the label of the field here
     function initialize(dataFields) {
-        //System.println("WormNavDataView:initialize");
         View.initialize();
         setDataFields(dataFields);
     }
 
     function setDataFields(dataFields) {
-        //System.println("WormNavDataView:setmDataFields");
         mDataFields = new [dataFields.size()];
         // deep copy of data fields items (integers)
         for(var i=0; i< mDataFields.size(); i+=1) {
             mDataFields[i] = dataFields[i];
         }
-        //System.println("setDataFields: " + mDataFields);
         numberDataFields = Data.min(4,mDataFields.size());
 
         switch(numberDataFields) {
             case 1:
                 font = Graphics.FONT_LARGE;
-                   fontNumber = Graphics.FONT_NUMBER_HOT;
+                fontNumber = Graphics.FONT_NUMBER_HOT;
                 break;
             case 2:
                 font = Graphics.FONT_LARGE;
-                   fontNumber = Graphics.FONT_NUMBER_HOT;
+                fontNumber = Graphics.FONT_NUMBER_HOT;
                 break;
             case 3:
             case 4:
@@ -55,9 +52,6 @@ class DataView extends  WatchUi.View {
                 }
                 break;
         }
-
-        // Set up a 1Hz update timer because we aren't registering
-        // for any data callbacks that can kick our display update.
     }
 
     function onShow() {
@@ -69,8 +63,6 @@ class DataView extends  WatchUi.View {
     function onLayout(dc) {
         width=dc.getWidth();
         height=dc.getHeight();
-
-        //System.println("onLayout: " + numberDataFields);
 
         if(numberDataFields==0) {
             return;
