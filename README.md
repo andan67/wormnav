@@ -28,10 +28,10 @@ It consists of two apps:
 - The ConnectIQ app is optimized for Garmin FR 23x, but also runnable on FR 245, FR 6xx, FR 735xt, vivoactive 3&4, Venu
 - Potential issue with Garmin's Android BLE library on Android 11 devices
 
-alsama/wormnav CHANGES:
-Added function: "get_va_device" to determine vivoactive devices so can use the "resources-LANG" strings XML files to transalate texts.
-Added the posibility to translate app texts to any language. Using: WatchUi.loadResource(Rez.Strings.XXXX)
-Added the translate Language: Spanish. FILE: "resources-spa/strings/strings.xml"
-Added a dialog to confirm exit app.
-Added a dialog to confirm discard an activity.
-Added one decimal to battery value and "%" symbol.
+**alsama/wormnav CHANGES:**
+- Added function: "get_va_device" to determine vivoactive devices so can use the "resources-LANG" strings XML files to transalate texts.
+- Added the posibility to translate app texts to any language. Using: WatchUi.loadResource(Rez.Strings.XXXX)
+- Added the translate Language: Spanish. FILE: "resources-spa/strings/strings.xml"
+- Added a dialog to confirm exit app.
+- Added a dialog to confirm discard an activity.
+- Added one decimal to battery value and "%" symbol.
