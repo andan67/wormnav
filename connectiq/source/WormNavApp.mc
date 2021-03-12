@@ -47,7 +47,10 @@ class WormNavApp extends Application.AppBase {
 
         // start page is map
         mode=TRACK_MODE;
-        device = WatchUi.loadResource(Rez.Strings.device);
+        
+        //device = WatchUi.loadResource(Rez.Strings.device);
+        device = get_va_device(device);
+        
         System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
 
@@ -103,6 +106,27 @@ class WormNavApp extends Application.AppBase {
         // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
+    }
+
+    function get_va_device(m_device) {
+    
+        var mySettings = System.getDeviceSettings(); 
+        var partNumber = mySettings.partNumber;   
+        //System.println(partNumber);       
+        if ( partNumber.equals("006-B2700-00") || //<device family="round-240x240" id="vivoactive3" name="vívoactive® 3" part_number="006-B2700-00">
+             partNumber.equals("006-B3473-00") || //<device family="round-240x240" id="vivoactive3d" name="vívoactive® 3 Mercedes-Benz® Collection" part_number="006-B3473-00">
+             partNumber.equals("006-B2988-00") || //<device family="round-240x240" id="vivoactive3m" name="vívoactive® 3 Music" part_number="006-B2988-00">
+             partNumber.equals("006-B3066-00") || //<device family="round-240x240" id="vivoactive3mlte" name="vívoactive® 3 Music LTE" part_number="006-B3066-00">
+             partNumber.equals("006-B3224-00") || //<device family="round-218x218" id="vivoactive4s" name="vívoactive® 4S" part_number="006-B3224-00">             
+             partNumber.equals("006-B3225-00") || //<device family="round-260x260" id="vivoactive4" name="vívoactive® 4" part_number="006-B3225-00">
+        	 partNumber.equals("006-B2337-00") ) //vivoactive HR
+        {
+          //device = WatchUi.loadResource(Rez.Strings.device);
+          return "vivoactive";
+        }    
+        else {
+          return m_device;
+        }
     }
 
     // onStop() is called when your application is exiting

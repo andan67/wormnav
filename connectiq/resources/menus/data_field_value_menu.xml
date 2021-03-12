@@ -1,9 +1,9 @@
 <menu id="DataFieldsValues">
-	<menu-item id="dfv0" label="None" />
-	<menu-item id="dfv1" label="Timer" />
-	<menu-item id="dfv2" label="Distance" />
-	<menu-item id="dfv3" label="Avg Pace" />
-	<menu-item id="dfv4" label="Hear Rate" />
-	<menu-item id="dfv5" label="Pace" />
-	<menu-item id="dfv6" label="Speed" />
+	<menu-item id="dfv0" label="@Strings.None" />
+	<menu-item id="dfv1" label="@Strings.Timer" />
+	<menu-item id="dfv2" label="@Strings.Distance" />
+	<menu-item id="dfv3" label="@Strings.Avg_Pace" />
+	<menu-item id="dfv4" label="@Strings.Hear_Rate" />
+	<menu-item id="dfv5" label="@Strings.Pace" />
+	<menu-item id="dfv6" label="@Strings.Speed" />
 </menu>

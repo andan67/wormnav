@@ -12,21 +12,6 @@ var mode;
 
 var dataPage = 0;
 
-class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
-    function initialize() {
-        ConfirmationDelegate.initialize();
-    }
-
-    function onResponse(response) {
-        if (response == WatchUi.CONFIRM_NO) {
-            //System.println("Confirm No");
-        } else {
-            //System.println("Confirm Yes");
-        }
-        return true;
-    }
-}
-
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize() {
@@ -88,8 +73,21 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         
         // If there is no session exit;
         if ($.session == null || $.session.isRecording() == false) {
-        	System.exit();
-        	return true;
+        	//System.exit();
+        	
+        	//ASK_USER:
+            //var message = "Exit App?";
+            var message = WatchUi.loadResource(Rez.Strings.msg_exit_app);
+                    
+            var dialog = new WatchUi.Confirmation(message);
+            WatchUi.pushView(
+                        dialog,
+                        new ExitConfirmationDelegate(),
+                        WatchUi.SLIDE_IMMEDIATE
+                    ); 
+            
+            return true;       	
+        	
         }
         if(mode==TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
             if(dataView==null) {
@@ -122,7 +120,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onMenu() {
         // System.println("onMenu()");
         var menu = new Rez.Menus.MainMenu();
-        menu.setTitle("Main Menu");
+        //menu.setTitle("Main Menu");
+        menu.setTitle(WatchUi.loadResource(Rez.Strings.main_menu_label));
+        
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }

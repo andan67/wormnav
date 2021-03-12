@@ -16,8 +16,22 @@ class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
             System.exit();
             return true;
         } else {
-            session.discard();
-            System.exit();
+            //session.discard();
+            //System.exit();
+            
+        	//ASK_USER:
+            //var message = "Exit App?";
+            var message = WatchUi.loadResource(Rez.Strings.msg_exit_app);
+                    
+            var dialog = new WatchUi.Confirmation(message);
+            WatchUi.pushView(
+                        dialog,
+                        new ExitConfirmationDelegate(),
+                        WatchUi.SLIDE_IMMEDIATE
+                    ); 
+            
+            return true;              
+            
             return true;
         }
         return false;

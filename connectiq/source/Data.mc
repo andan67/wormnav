@@ -4,6 +4,7 @@ using Toybox.System as Sys;
 using Toybox.Lang as Lang;
 using Toybox.StringUtil;
 using Toybox.Sensor;
+using Toybox.WatchUi;
 
 module Data {
 
@@ -57,44 +58,48 @@ module Data {
         BATTERY];
 
     const dataFieldMenuLabels = [
-        "Timer",
-        "Dist.",
-        "Pace",
-        "Speed",
-        "Avg\nPace",
-        "Avg\nSpeed",
-        "Heart\nRate",
-        "Avg\nHeart\nRate",
-        "Lap\nTimer",
-        "Lap\nDist.",
-        "Lap\nPace",
-        "Lap\nSpeed",
-        "Last\nLap\nPace",
-        "Last\nLap\nSpeed",
-        "Laps",
-        "Alt",
-        "Clock\nTime",
-        "Bat."];
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Timer), //"Timer",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Distance), //"Dist.",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Pace), //"Pace",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Speed), //"Speed",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Avg_Pace), //"Avg\nPace",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Avg_Speed), //"Avg\nSpeed",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Heart_Rate), //"Heart\nRate",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Avg_Heart_Rate), //"Avg\nHeart\nRate",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Lap_Timer), //"Lap\nTimer",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Lap_Dist), //"Lap\nDist.",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Lap_Pace), //"Lap\nPace",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Lap_Speed), //"Lap\nSpeed",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Last_Lap_Pace), //"Last\nLap\nPace",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Last_Lap_Speed), //"Last\nLap\nSpeed",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Laps), //"Laps",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Altitude), //"Alt",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Clock_Time), //"Clock\nTime",
+        WatchUi.loadResource(Rez.Strings.DFMenuLabel_Battery), //"Bat."
+        ];
+
 
     const dataFieldLabels = [
-        "Timer",
-        "Distance",
-        "Pace",
-        "Speed",
-        AVG_CHAR + " Pace",
-        AVG_CHAR + " Speed",
-        "Heart Rate",
-        AVG_CHAR + "Heart Rate",
-        "Lap Timer",
-        "Lap Dist.",
-        "Lap Pace",
-        "Lap Speed",
-        "LL Pace",
-        "LL Speed",
-        "Laps",
-        "Altitude",
-        "Clock Time",
-        "Battery"];
+        WatchUi.loadResource(Rez.Strings.DFLabel_Timer), //"Timer",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Distance), //"Distance",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Pace), //"Pace",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Speed), //"Speed",
+        AVG_CHAR + WatchUi.loadResource(Rez.Strings.DFLabel_Avg_Pace), //" Pace",
+        AVG_CHAR + WatchUi.loadResource(Rez.Strings.DFLabel_Avg_Speed), //" Speed",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Heart_Rate), //"Heart Rate",
+        AVG_CHAR + WatchUi.loadResource(Rez.Strings.DFLabel_Avg_Heart_Rate), //"Heart Rate",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Lap_Timer), //"Lap Timer",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Lap_Dist), //"Lap Dist.",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Lap_Pace), //"Lap Pace",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Lap_Speed), //"Lap Speed",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Last_Lap_Pace), //"LL Pace",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Last_Lap_Speed), //"LL Speed",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Laps), //"Laps",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Altitude), //"Altitude",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Clock_Time), //"Clock Time",
+        WatchUi.loadResource(Rez.Strings.DFLabel_Battery), //"Battery"
+        ];
+
 
     var dataScreens = dataScreensDefault;
     var activeDataScreens = [];
@@ -231,7 +236,8 @@ module Data {
 
     function battery() {
         var data = Sys.getSystemStats().battery;
-        return data!=null? data.format("%.0f") : null;
+        //return data!=null? data.format("%.0f") : null;
+        return data!=null? data.format("%.1f") : null;
     }
 
 
@@ -292,7 +298,8 @@ module Data {
                 dataValue = clockTime();
                 break;
             case BATTERY:
-                dataValue = battery();
+                //dataValue = battery();
+                dataValue = battery() + "%";
                 break;
             default:
                 break;
