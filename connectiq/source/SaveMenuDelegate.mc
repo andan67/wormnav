@@ -1,6 +1,26 @@
 using Toybox.WatchUi;
 using Toybox.System;
 
+class DiscardConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+    
+    function initialize() {
+        ConfirmationDelegate.initialize();
+    }
+    
+    
+    function onResponse(response) {
+        if (response == WatchUi.CONFIRM_NO) {
+            //System.println("Cancel");
+            //return true;
+        } else {
+            //System.println("Confirm");
+            session.discard();
+            System.exit();            
+        }
+        //return false;
+    }
+}
+
 class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
 
     function initialize() {
@@ -21,12 +41,12 @@ class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
             
         	//ASK_USER:
             //var message = "Exit App?";
-            var message = WatchUi.loadResource(Rez.Strings.msg_exit_app);
+            var message = WatchUi.loadResource(Rez.Strings.msg_discard);
                     
             var dialog = new WatchUi.Confirmation(message);
             WatchUi.pushView(
                         dialog,
-                        new ExitConfirmationDelegate(),
+                        new DiscardConfirmationDelegate(),
                         WatchUi.SLIDE_IMMEDIATE
                     ); 
             

@@ -452,23 +452,3 @@ class TrackInfoDelegate extends WatchUi.BehaviorDelegate {
 		WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);	
 	}
 }
-
-class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
-    
-    function initialize() {
-        ConfirmationDelegate.initialize();
-    }
-    
-    
-    function onResponse(response) {
-        if (response == WatchUi.CONFIRM_NO) {
-            //System.println("Cancel");
-        } else {
-            //System.println("Confirm");
-            if( $.session != null  &&  $.session.isRecording() == false ) {
-              session.discard();
-            }
-            System.exit();
-        }
-    }
-}

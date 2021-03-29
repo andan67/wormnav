@@ -12,6 +12,26 @@ var mode;
 
 var dataPage = 0;
 
+class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+    
+    function initialize() {
+        ConfirmationDelegate.initialize();
+    }
+    
+    
+    function onResponse(response) {
+        if (response == WatchUi.CONFIRM_NO) {
+            //System.println("Cancel");
+            //return true;
+        } else {
+            //System.println("Confirm");
+              System.exit();
+              return true;             
+        }
+        //return false;
+    }
+}
+
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function initialize() {

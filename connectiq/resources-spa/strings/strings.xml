@@ -99,6 +99,7 @@
     <string id="msg_delete_track">Borrar Track?</string>  
     <string id="msg_continue">Continuar?</string>  
     <string id="msg_exit_app">Salir?</string> 
+    <string id="msg_discard">Descartar?</string>
 
     <string id="info_lenght">Dist./km:</string>
     <string id="info_name">Nombre:</string>        
