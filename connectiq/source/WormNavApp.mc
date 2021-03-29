@@ -19,22 +19,23 @@ var viewDelegate;
 var device = "generic";
 var track = null;
 var session = null;
+var sessionEvent = 0;
 var activityType = ActivityRecording.SPORT_RUNNING;
-
-var doForcedUpdate = false;
 
 var trackViewPeriod = 1;
 var dataViewPeriod = 1;
 var lapViewPeriod = 10;
+var trackViewCounter = 0;
+var dataViewCounter = 0;
+var appTimerTicks = 0;
+
+var isDarkMode = false;
 
 class WormNavApp extends Application.AppBase {
-    
-    var trackViewCounter = 0;
-    var dataViewCounter = 0;
-    var lapViewCounter = 0;
+    var lapViewTicker = 0;
+    var sessionEventTicker = 0;
     
     var appTimer;
-    var appTimerTicks = 0;
     var vibrateData = [new Att.VibeProfile(  50, 250 )];
     
     function initialize() {
@@ -43,21 +44,21 @@ class WormNavApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state) {
-        System.println("onStart");
+        //System.println("onStart");
 
         // start page is map
         mode=TRACK_MODE;
         device = WatchUi.loadResource(Rez.Strings.device);
-        System.println("Device: " + device);
+        //System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
 
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
         if(data!=null) {
-            System.println("load data from property store");
+            //System.println("load data from property store");
             track = new TrackModel(data);
-            System.println("Created track from property store!");
+            //System.println("Created track from property store!");
         }
 
         if(Application.getApp().getProperty("northHeading")!=null) {
@@ -96,6 +97,10 @@ class WormNavApp extends Application.AppBase {
         
         if(Application.getApp().getProperty("lapViewPeriod")!=null) {
             lapViewPeriod = Application.getApp().getProperty("lapViewPeriod");
+        }
+
+        if(Application.getApp().getProperty("isDarkMode")!=null) {
+            isDarkMode = Application.getApp().getProperty("isDarkMode");
         }
 
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
@@ -151,20 +156,31 @@ class WormNavApp extends Application.AppBase {
     function onTimer() {
         appTimerTicks += 1;
 
-        if(lapViewCounter == 0 && Trace.isAutolap(false)) {
+        // used to handle session start/stop events in UI that live for 2 seconds
+        if(sessionEvent > 0) {
+            if(sessionEventTicker == 2) {
+                // disable event
+                sessionEvent = 0;
+                sessionEventTicker = 0;
+            } else {
+                sessionEventTicker += 1;
+            }
+        }
+
+        if(lapViewTicker == 0 && Trace.isAutolap(false)) {
             // auto lap detected
-            lapViewCounter = 1;
+            lapViewTicker = 1;
         }
 
         // in lapViewMode
-        if(lapViewCounter>0) {
+        if(lapViewTicker > 0) {
             if(lapView == null) {
                 lapView = new LapView();
             }
-            if(lapViewCounter==1) {
+            if(lapViewTicker == 1) {
                 WatchUi.pushView(lapView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
             }
-            if(lapViewCounter==2) {
+            if(lapViewTicker == 2) {
                 if (Attention has :vibrate) {
                     Att.vibrate( vibrateData );
                 }
@@ -172,37 +188,24 @@ class WormNavApp extends Application.AppBase {
                     Attention.playTone(Attention.TONE_LAP );
                 }
             }
-            lapViewCounter++;
+            lapViewTicker++;
 
-            if(lapViewCounter==lapViewPeriod) {
-                lapViewCounter = 0;
+            if(lapViewTicker == lapViewPeriod) {
+                lapViewTicker = 0;
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if($.mode==TRACK_MODE)  {
-            if(trackViewCounter %  trackViewPeriod == 0 || doForcedUpdate) {
-                WatchUi.requestUpdate();
-                
-            }
-            if(doForcedUpdate) {
-                doForcedUpdate	= false;
-                trackViewCounter = 0;
-            }
-            else {
-                trackViewCounter += 1;	
-            }
-           }
-        else if($.mode==DATA_MODE) {
-            if(dataViewCounter %  dataViewPeriod == 0 || doForcedUpdate) {
+        else if($.mode == TRACK_MODE)  {
+            if(trackViewCounter %  trackViewPeriod == 0) {
                 WatchUi.requestUpdate();
             }
-            if(doForcedUpdate) {
-                doForcedUpdate	= false;
-                dataViewCounter = 0;
+            trackViewCounter += 1;
+        }
+        else if($.mode == DATA_MODE) {
+            if(dataViewCounter %  dataViewPeriod == 0) {
+                WatchUi.requestUpdate();
             }
-            else {
-                dataViewCounter += 1;	
-            }
+            dataViewCounter += 1;	
         }
           
     }

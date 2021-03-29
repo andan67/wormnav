@@ -4,7 +4,6 @@ using Trace;
 
 class TrackView extends WatchUi.View {
 
-    var screenShape;
     var cursorSizePixel;
     var posCursor;
     var isNewTrack=false;
@@ -12,6 +11,8 @@ class TrackView extends WatchUi.View {
     var fontsize = Graphics.FONT_MEDIUM;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
+    var foregroundColor = Graphics.COLOR_BLACK;
+    var backgroundColor = Graphics.COLOR_WHITE;
 
     function drawBreadCrumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -26,7 +27,7 @@ class TrackView extends WatchUi.View {
 
 
     function drawScale(dc) {
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
         dc.drawLine(Transform.scale_x1,Transform.scale_y1 - bottomPadding,
@@ -43,7 +44,7 @@ class TrackView extends WatchUi.View {
 
     function drawActivityInfo(dc) {
         var data;
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
             activity_values[0] = "D: " + Data.distance();
             activity_values[1] = "T: " + Data.timer();
@@ -121,7 +122,7 @@ class TrackView extends WatchUi.View {
         dc.drawLine(x3,y3,x4,y4);
         dc.drawLine(x4,y4,x1,y1);
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.setColor(backgroundColor, backgroundColor);
         dc.fillCircle(Transform.compass_x,Transform.compass_y,Transform.compass_size);
 
         if(Transform.northHeading || Transform.centerMap) {
@@ -158,20 +159,19 @@ class TrackView extends WatchUi.View {
     }
 
     function initialize() {
-        System.println("initialize()");
         if($.device.equals("vivoactive")) {
             fontsize=Graphics.FONT_XTINY;
         }
         View.initialize();
         Trace.reset();
         activity_values = new[2];
+        setDarkMode($.isDarkMode);
     }
 
 
     // Load your resources here
     function onLayout(dc) {
         //System.println("onLayout(dc)");
-        screenShape = System.getDeviceSettings().screenShape;
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
         if($.device.equals("vivoactive")) {
@@ -191,12 +191,22 @@ class TrackView extends WatchUi.View {
         }
     }
 
+    function setDarkMode(isDarkMode) {
+        if(isDarkMode) {
+            foregroundColor = Graphics.COLOR_WHITE;
+            backgroundColor = Graphics.COLOR_BLACK; 
+        }
+        else {
+            foregroundColor = Graphics.COLOR_BLACK;
+            backgroundColor = Graphics.COLOR_WHITE; 
+        }
+    }
 
     // Update the view
     function onUpdate(dc) {
         // Call the parent onUpdate function to redraw the layout
         //View.onUpdate(dc);
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
 
         if(isNewTrack && $.track!=null) {
@@ -217,7 +227,18 @@ class TrackView extends WatchUi.View {
             drawActivityInfo(dc);
         }
 
+
         drawScale(dc);
+
+        if($.sessionEvent == 1) {
+            dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(Transform.pixelWidth2, Transform.pixelHeight2, 0.15*Transform.pixelMin);
+        } else if($.sessionEvent == 2){
+            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(Transform.pixelWidth2 - 0.15*Transform.pixelMin, 
+                Transform.pixelHeight2 - 0.15*Transform.pixelMin, 0.3*Transform.pixelMin, 0.3*Transform.pixelMin);
+        }
+
     }
 
     // Called when this View is removed from the screen. Save the

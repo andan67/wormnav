@@ -45,6 +45,7 @@ module Transform {
     var pixelWidth2;
     var pixelHeight2;
     var pixelHeight3;
+    var pixelMin;
 
     var scale_x1;
     var scale_y1;
@@ -60,6 +61,7 @@ module Transform {
         pixelHeight = height;
         pixelHeight2 = 0.5 * pixelHeight;
         pixelHeight3 = 0.6666667*pixelHeight;
+        pixelMin =pixelWidth < pixelHeight ? pixelWidth : pixelHeight;
         scale_x1 = pixelWidth*(0.5-SCALE_PIXEL);
         scale_y1 = (1.0-0.45*SCALE_PIXEL)*pixelHeight;
         scale_y2 = (1.0-0.2*SCALE_PIXEL)*pixelHeight;
@@ -198,16 +200,10 @@ module Transform {
     }
 
     function calcZoomToFitLevel() {
-
-        // trackDiameter must fit into minimum of spans in x and y direction
-        var minPixels = pixelHeight;
-        if (pixelWidth <  pixelHeight) {
-            minPixels = pixelWidth;
-        }
         zoomLevel = 0;
         for(zoomLevel= 0; zoomLevel < 25; zoomLevel+=1 ) {
             refScale = refScaleFromLevel(zoomLevel);
-            if(minPixels/(0.2*pixelWidth)*refScaleFromLevel(zoomLevel)*0.95>$.track.diagonal) {
+            if(pixelMin/(0.2*pixelWidth)*refScaleFromLevel(zoomLevel)*0.95>$.track.diagonal) {
                 break;
             }
         }

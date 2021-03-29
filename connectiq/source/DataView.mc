@@ -4,7 +4,7 @@ using Data;
 using Trace;
 
 
-class DataView extends  WatchUi.View {
+class DataView extends WatchUi.View {
 
     hidden var width;
     hidden var height;
@@ -15,11 +15,14 @@ class DataView extends  WatchUi.View {
     hidden var dfCenters;
     hidden var font;
     hidden var fontNumber;
-
+    var foregroundColor = Graphics.COLOR_BLACK;
+    var backgroundColor = Graphics.COLOR_WHITE;
+    
     // Set the label of the field here
     function initialize(dataFields) {
         View.initialize();
         setDataFields(dataFields);
+        setDarkMode($.isDarkMode);
     }
 
     function setDataFields(dataFields) {
@@ -105,7 +108,7 @@ class DataView extends  WatchUi.View {
 
     // Handle the update event
     function onUpdate(dc) {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
 
         // draw lines for 4 data fields
@@ -131,10 +134,21 @@ class DataView extends  WatchUi.View {
             label = "";
 
         }
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         return;
+    }
+    
+    function setDarkMode(isDarkMode) {
+        if(isDarkMode) {
+            foregroundColor = Graphics.COLOR_WHITE;
+            backgroundColor = Graphics.COLOR_BLACK; 
+        }
+        else {
+            foregroundColor = Graphics.COLOR_BLACK;
+            backgroundColor = Graphics.COLOR_WHITE; 
+        }
     }
 }
 

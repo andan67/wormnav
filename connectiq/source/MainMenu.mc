@@ -37,15 +37,22 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 factory =  new GenericListItemFactory(
                     [true,false],["North\nup","Move-\nment"],{:font => Graphics.FONT_MEDIUM});
                 picker = new GenericListItemPicker("Map orientation", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new MapOrientationPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:north), WatchUi.SLIDE_IMMEDIATE);
                 return true;
              case :center:
                 defaultValue = Transform.centerMap;
                 factory =  new GenericListItemFactory(
                     [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
                 picker = new GenericListItemPicker("Center map", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new CenterMapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
+                WatchUi.pushView(picker,  new GenericPickerDelegate(:center), WatchUi.SLIDE_IMMEDIATE);
                 return true;
+            case :darkMode:
+                defaultValue = $.isDarkMode;
+                factory =  new GenericListItemFactory(
+                    [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
+                picker = new GenericListItemPicker("Dark mode", [factory], [defaultValue], null);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:darkMode), WatchUi.SLIDE_IMMEDIATE);
+                return true;    
             case :autolap:
                 defaultValue = Trace.autolapDistance;
                 factory = new GenericListItemFactory(
@@ -53,7 +60,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceLabels,
                     null);
                 picker = new GenericListItemPicker("Auto lap", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new AutoLapPickerDelegate(), WatchUi.SLIDE_IMMEDIATE);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:autolap), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :breadCrumbs:
                 defaultValue = Trace.breadCrumbDist;
@@ -62,7 +69,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceLabels,
                     null);
                 picker = new GenericListItemPicker("Bread crumbs", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new WormNavBreadCrumbsPickerDelegate(), WatchUi.SLIDE_UP);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:breadCrumbs), WatchUi.SLIDE_UP);
                 return true;
             case :activityType:
                 defaultValue = $.activityType;
@@ -71,7 +78,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     ["Generic","Running","Walking","Cycling"],
                     {:font => Graphics.FONT_SMALL});
                 picker = new GenericListItemPicker("Activity type", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new ActivityTypeDelegate(), WatchUi.SLIDE_UP);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:activityType), WatchUi.SLIDE_UP);
                 return true;
             case :screens:
                 WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
@@ -81,18 +88,19 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 return true;
             case :track:
                 WatchUi.pushView(new Rez.Menus.TrackMenu(), new TrackMenuDelegate(), WatchUi.SLIDE_UP);
-                return true;     
+                return true;       
             default:
                 return false;
         }
     }
 }
 
+class GenericPickerDelegate extends WatchUi.PickerDelegate {
+    hidden var mItem;
 
-class AutoLapPickerDelegate extends WatchUi.PickerDelegate {
-
-    function initialize() {
+    function initialize(item) {
         PickerDelegate.initialize();
+        mItem = item;
     }
 
     function onCancel() {
@@ -100,78 +108,41 @@ class AutoLapPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-        var distance = values[0];
-        Trace.setAutolapDistance(distance);
-        Application.getApp().setProperty("autolapDistance",distance);
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-}
-
-class WormNavBreadCrumbsPickerDelegate extends WatchUi.PickerDelegate {
-
-    function initialize() {
-        PickerDelegate.initialize();
-    }
-
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
-        var distance = values[0];
-        Trace.breadCrumbDist = distance;
-        Application.getApp().setProperty("breadCrumbDist", distance);
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-}
-
-class MapOrientationPickerDelegate extends WatchUi.PickerDelegate {
-
-    function initialize() {
-        PickerDelegate.initialize();
-    }
-
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
-        Transform.northHeading = values[0];
-        Application.getApp().setProperty("northHeading", Transform.northHeading);
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-}
-
-class CenterMapPickerDelegate extends WatchUi.PickerDelegate {
-
-    function initialize() {
-        PickerDelegate.initialize();
-    }
-
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
-        Transform.centerMap = values[0];
-        Application.getApp().setProperty("centerMap", Transform.centerMap);
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-}
-
-class ActivityTypeDelegate extends WatchUi.PickerDelegate {
-
-    function initialize() {
-        PickerDelegate.initialize();
-    }
-
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
-        $.activityType = values[0];
-        Application.getApp().setProperty("activityType", $.activityType);
+        switch(mItem) {
+            case :north:
+                Transform.northHeading = values[0];
+                Application.getApp().setProperty("northHeading", Transform.northHeading);
+                break;
+            case :center:
+                Transform.centerMap = values[0];
+                Application.getApp().setProperty("centerMap", Transform.centerMap);
+                break;
+            case :darkMode:
+                $.isDarkMode = values[0];
+                Application.getApp().setProperty("darkMode", $.isDarkMode);
+                if($.trackView != null) {
+                    trackView.setDarkMode($.isDarkMode);        
+                }
+                if($.dataView != null) {
+                    dataView.setDarkMode($.isDarkMode);
+                }
+                break;            
+            case :autoLap:
+                Trace.setAutolapDistance(values[0]);
+                Application.getApp().setProperty("autolapDistance",values[0]);
+            case :breadCrumbs:
+                Trace.breadCrumbDist = values[0];
+                Application.getApp().setProperty("breadCrumbDist", Trace.breadCrumbDist);
+                break;
+            case :activityType:
+                $.activityType = values[0];
+                Application.getApp().setProperty("activityType", $.activityType);
+                Data.updateMaxHeartRate();
+                break;
+            case :track:
+            default:
+                break;
+        }
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -208,7 +179,6 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
         var picker = new GenericListItemPicker("# Data fields", [factory], [defaultValue], dataMenuContext);
         WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(dataMenuContext), WatchUi.SLIDE_IMMEDIATE);
         return true;
-
     }
 
 }
@@ -240,10 +210,9 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
             var defaults = new [nDataFields];
             for(var i=0; i<nDataFields; i+=1) {
                 factories[i] = new GenericListItemFactory(
-                    //Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => Graphics.FONT_SMALL});
-                    Data.dataFieldValues, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
+                    null, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
                 defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
-            }            
+            }
             var picker = new GenericListItemPicker("Data fields", factories, defaults, mContext);
             WatchUi.pushView(picker, new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
         }
@@ -327,20 +296,20 @@ class PeriodPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-        switch ( mKey ) {
-            case "trackViewPeriod":
-                $.trackViewPeriod = values[0];
-                Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
-                break;
-            case "dataViewPeriod":
-                $.dataViewPeriod = values[0];
-                Application.getApp().setProperty("dataViewPeriod", $.dataViewPeriod);
-                break;
-            case "lapViewPeriod":
-                $.lapViewPeriod = values[0];
-                Application.getApp().setProperty("lapViewPeriod", $.lapViewPeriod);
-                break;
-          }
+    	switch ( mKey ) {
+    		case "trackViewPeriod":
+    			$.trackViewPeriod = values[0];
+    			Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
+    			break;
+    		case "dataViewPeriod":
+    			$.dataViewPeriod = values[0];
+    			Application.getApp().setProperty("dataViewPeriod", $.dataViewPeriod);
+    			break;
+    		case "lapViewPeriod":
+    			$.lapViewPeriod = values[0];
+    			Application.getApp().setProperty("lapViewPeriod", $.lapViewPeriod);
+    			break;
+  		}
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -379,7 +348,6 @@ class DeleteConfirmationDelegate extends WatchUi.ConfirmationDelegate {
         ConfirmationDelegate.initialize();
     }
     
-    
     function onResponse(response) {
         if (response == WatchUi.CONFIRM_NO) {
             //System.println("Cancel");
@@ -400,8 +368,6 @@ class TrackInfoDelegate extends WatchUi.BehaviorDelegate {
     }   
 
     function onBack() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);	
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
-
-

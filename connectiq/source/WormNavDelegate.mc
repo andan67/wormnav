@@ -2,14 +2,10 @@ using Toybox.WatchUi;
 using Transform;
 
 var eventText;
-
-enum {
-    TRACK_MODE,
-    DATA_MODE
-}
+const TRACK_MODE = 0;
+const DATA_MODE = 1;
 
 var mode;
-
 var dataPage = 0;
 
 class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
@@ -49,8 +45,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
-                $.doForcedUpdate = true;
-                //WatchUi.requestUpdate();
+                updateView();
+                WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
                 dataPageChange(1);
@@ -66,7 +62,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-1);
-                $.doForcedUpdate = true;
+                updateView();
+                $.trackViewCounter = 0;
                 //WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
@@ -134,12 +131,20 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                     $.session = ActivityRecording.createSession({:name=>"WormNavActivity", :sport=>$.activityType});
                 }
                 $.session.start();
-                $.doForcedUpdate = true;
+                $.sessionEvent = 1;
+                updateView();
+                if (Attention has :playTone) {
+                    Attention.playTone(Attention.TONE_START);
+                }
             }
             else if( ( $.session != null ) && $.session.isRecording() ) {
                 // System.println("stop session");
                 $.session.stop();
-                $.doForcedUpdate = true;
+                $.sessionEvent = 2;
+                updateView();
+                if (Attention has :playTone) {
+                    Attention.playTone(Attention.TONE_STOP);
+                }
             }
         }  
     }
@@ -157,6 +162,15 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return;
+    }
+
+    private function updateView() {
+        if(mode == TRACK_MODE) {
+            $.trackViewCounter = 0;
+        } else if (mode == DATA_MODE) {
+            $.dataViewCounter = 0;
+        }
+        WatchUi.requestUpdate();
     }
 
 }

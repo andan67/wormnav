@@ -4,100 +4,64 @@ using Toybox.System as Sys;
 using Toybox.Lang as Lang;
 using Toybox.StringUtil;
 using Toybox.Sensor;
+using Toybox.UserProfile;
 
 module Data {
 
-    enum {
-        TIMER,
-        DISTANCE,
-        PACE,
-        SPEED,
-        AVERAGE_PACE,
-        AVERAGE_SPEED,
-        CURRENT_HEART_RATE,
-        AVERAGE_HEART_RATE,
-        LAP_TIMER,
-        LAP_DISTANCE,
-        LAP_PACE,
-        LAP_SPEED,
-        LAST_LAP_PACE,
-        LAST_LAP_SPEED,
-        LAP,
-        ALTITUDE,
-        CLOCK_TIME,
-        BATTERY
-    }
-
     const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
 
-    var dataScreensDefault = [
-                        [TIMER,DISTANCE,AVERAGE_PACE,CURRENT_HEART_RATE],
-                        [LAP_TIMER,LAP_DISTANCE,LAP_PACE,LAP],
-                        [SPEED,AVERAGE_SPEED,LAST_LAP_SPEED,LAP_DISTANCE]
-                      ];
-
-    const dataFieldValues = [
-        TIMER,
-        DISTANCE,
-        PACE,
-        SPEED,
-        AVERAGE_PACE,
-        AVERAGE_SPEED,
-        CURRENT_HEART_RATE,
-        AVERAGE_HEART_RATE,
-        LAP_TIMER,
-        LAP_DISTANCE,
-        LAP_PACE,
-        LAP_SPEED,
-        LAST_LAP_PACE,
-        LAST_LAP_SPEED,
-        LAP,
-        ALTITUDE,
-        CLOCK_TIME,
-        BATTERY];
-
     const dataFieldMenuLabels = [
-        "Timer",
-        "Dist.",
-        "Pace",
-        "Speed",
-        "Avg\nPace",
-        "Avg\nSpeed",
-        "Heart\nRate",
-        "Avg\nHeart\nRate",
-        "Lap\nTimer",
-        "Lap\nDist.",
-        "Lap\nPace",
-        "Lap\nSpeed",
-        "Last\nLap\nPace",
-        "Last\nLap\nSpeed",
-        "Laps",
-        "Alt",
-        "Clock\nTime",
-        "Bat."];
+        "Timer",                //  0
+        "Dist.",                //  1
+        "Pace",                 //  2
+        "Speed",                //  3
+        "Avg\nPace",            //  4
+        "Avg\nSpeed",           //  5
+        "Heart\nRate",          //  6
+        "% max\nHeart\nRate",   //  7
+        "Avg\nHeart\nRate",     //  8
+        "Lap\nTimer",           //  9
+        "Lap\nDist.",           // 10
+        "Lap\nPace",            // 11
+        "Lap\nSpeed",           // 12
+        "Last\nLap\nPace",      // 13
+        "Last\nLap\nSpeed",     // 14
+        "Laps",                 // 15
+        "Alt",                  // 16
+        "Clock\nTime",          // 17
+        "Bat."];                // 18
 
     const dataFieldLabels = [
-        "Timer",
-        "Distance",
-        "Pace",
-        "Speed",
-        AVG_CHAR + " Pace",
-        AVG_CHAR + " Speed",
-        "Heart Rate",
-        AVG_CHAR + "Heart Rate",
-        "Lap Timer",
-        "Lap Dist.",
-        "Lap Pace",
-        "Lap Speed",
-        "LL Pace",
-        "LL Speed",
-        "Laps",
-        "Altitude",
-        "Clock Time",
-        "Battery"];
+        "Timer",                    //  0   TIMER
+        "Distance",                 //  1   DisTANCE
+        "Pace",                     //  2   PACE
+        "Speed",                    //  3   SPEED
+        AVG_CHAR + " Pace",         //  4   AVERAGE_PACE
+        AVG_CHAR + " Speed",        //  5   AVERAGE_SPEED  
+        "Heart Rate",               //  6   CURRENT_HEART_RATE
+         "% max HR",                //  7   PERCENT_HEART_RATE
+        AVG_CHAR + "Heart Rate",    //  8   AVERAGE_HEART_RATE
+        "Lap Timer",                //  9   LAP_TIMER
+        "Lap Dist.",                // 10   LAP_DISTANCE
+        "Lap Pace",                 // 11   LAP_PACE
+        "Lap Speed",                // 12   LAP_SPEED
+        "LL Pace",                  // 13   LAST_LAP_PACE
+        "LL Speed",                 // 14   LAST_LAP_SPEED
+        "Laps",                     // 15   LAP
+        "Altitude",                 // 16   ALTITUDE
+        "Clock Time",               // 17   CLOCK_TIME
+        "Battery"];                 // 18   BATTERY
+
+
+    const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
 
     var dataScreens = dataScreensDefault;
     var activeDataScreens = [];
+    var maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
+
+    function updateMaxHeartRate() {
+        maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
+    }
 
     function setDataScreens(pDataScreens) {
         dataScreens = pDataScreens;
@@ -135,160 +99,80 @@ module Data {
         return data!=null? (0.001*data+0.0001).format("%.2f") : "--";
     }
 
-    function pace() {
-        var data=Activity.getActivityInfo().currentSpeed;
-        return data!=null? Data.convertSpeedToPace(data) : null;
-    }
-
-    function speed() {
-        var data=Activity.getActivityInfo().currentSpeed;
-        return data!=null? (3.6*data).format("%.2f") : null;
-    }
-
-    function averagePace() {
-        var data=Activity.getActivityInfo().averageSpeed;
-        return data!=null?  Data.convertSpeedToPace(data) : null;
-    }
-
-    function averageSpeed() {
-        var data=Activity.getActivityInfo().averageSpeed;
-        return data!=null?  (3.6*data).format("%.2f") : null;
-    }
-
-    function currentHeartRate() {
-        var data= Activity.getActivityInfo().currentHeartRate;
-        return data!=null?  data : null;
-    }
-
-    function averageHeartRate() {
-        var data= Activity.getActivityInfo().averageHeartRate;
-        return data!=null?  data : null;
-    }
-
-    function lapTimer() {
-        if(Trace.autolapDistance > 0) {
-            return Data.msToTime(Trace.lapTime.toLong());
-        }
-        return null;
-    }
-
-    function lapDistance() {
-        if(Trace.autolapDistance > 0) {
-            return (0.001*Data.Trace.lapDistance).format("%.2f") ;
-        }
-        return null;
-    }
-
-    function lapPace() {
-        if(Trace.autolapDistance > 0 && Trace.lapTime > 0) {
-            return Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime);
-        }
-        return null;
-    }
-
-    function lapSpeed() {
-        if(Trace.autolapDistance > 0  && Trace.lapTime > 0) {
-            return (3600*Trace.lapDistance/Trace.lapTime).format("%.2f");
-        }
-        return null;
-    }
-
-    function lastLapPace() {
-        if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-            return Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP);
-        }
-        return null;
-    }
-
-    function lastLapSpeed() {
-        if(Trace.autolapDistance > 0 && Trace.lapTimeP > 0) {
-            return (3600*Trace.lapDistanceP/Trace.lapTimeP).format("%.2f");
-        }
-        return null;
-    }
-
-    function lap() {
-        if(Trace.autolapDistance > 0) {
-            return Trace.lapCounter;
-        }
-        return null;
-    }
-
-    function altitude() {
-       var data=Activity.getActivityInfo().altitude;
-       return data!=null? data.format("%.0f") : null;
-    }
-
-    function clockTime() {
-        var data = Sys.getClockTime();
-
-        return data!=null?
-            data.hour.format("%02d") + ":" +
-            data.min.format("%02d") + ":" +
-            data.sec.format("%02d"): null;
-    }
-
-    function battery() {
-        var data = Sys.getSystemStats().battery;
-        return data!=null? data.format("%.0f") : null;
-    }
-
     function getDataFieldLabelValue(i) {
         var dataValue = null;
+        var data = null;
         switch(i) {
-            case TIMER:
+            case 0: // TIMER
                 dataValue = timer();
                 break;
-            case DISTANCE:
+            case 1: // DISTANCE
                 dataValue = distance();
                 break;
-            case PACE:
-                dataValue = pace();
+            case 2: // PACE
+                data = Activity.getActivityInfo().currentSpeed;
+                dataValue = data!=null? Data.convertSpeedToPace(data) : null;
                 break;
-            case SPEED:
-                dataValue = speed();
+            case 3: // SPEED
+                data = Activity.getActivityInfo().currentSpeed;
+                dataValue = data!=null ? (3.6*data).format("%.2f") : null;
                 break;
-            case AVERAGE_PACE:
-                dataValue = averagePace();
+            case 4: // AVERAGE_PACE
+                data = Activity.getActivityInfo().averageSpeed;
+                dataValue = data!=null?  Data.convertSpeedToPace(data) : null;
                 break;
-            case AVERAGE_SPEED:
-                dataValue = averageSpeed();
+            case 5: // AVERAGE_SPEED
+                data = Activity.getActivityInfo().averageSpeed;
+                dataValue = data!=null?  (3.6*data).format("%.2f") : null;
                 break;
-            case CURRENT_HEART_RATE:
-                dataValue = currentHeartRate();
+            case 6: // CURRENT_HEART_RATE
+                dataValue = Activity.getActivityInfo().currentHeartRate;
                 break;
-            case AVERAGE_HEART_RATE:
-                dataValue = averageHeartRate();
+            case 7: // PERCENT_HEART_RATE
+                data = Activity.getActivityInfo().currentHeartRate;
+                dataValue = data!=null ? (100.0*data/maxHeartRate).format("%.0f") + "%" : null;
                 break;
-            case LAP_TIMER:
-                dataValue = lapTimer();
+            case 8: // AVERAGE_HEART_RATE
+                dataValue = Activity.getActivityInfo().averageHeartRate;
                 break;
-            case LAP_DISTANCE:
-                dataValue = lapDistance();
+            case 9: // LAP_TIMER
+                dataValue = Trace.autolapDistance > 0 ? Data.msToTime(Trace.lapTime.toLong()) : null;
                 break;
-            case LAP_PACE:
-                dataValue = lapPace();
+            case 10: // LAP_DISTANCE
+                dataValue = Trace.autolapDistance > 0 ? (0.001*Data.Trace.lapDistance).format("%.2f") : null;
                 break;
-            case LAP_SPEED:
-                dataValue = lapSpeed();
+            case 11: // LAP_PACE
+                 dataValue = Trace.autolapDistance > 0 ? Trace.lapCounter : null;
                 break;
-            case LAST_LAP_PACE:
-                dataValue = lastLapPace();
+            case 12: // LAP_SPEED
+                dataValue = (Trace.autolapDistance > 0  && Trace.lapTime > 0) ?
+                    (3600*Trace.lapDistance/Trace.lapTime).format("%.2f") : null;
                 break;
-            case LAST_LAP_SPEED:
-                dataValue = lastLapSpeed();
+            case 13: // LAST_LAP_PACE
+                dataValue = (Trace.autolapDistance > 0 && Trace.lapTimeP > 0) ?
+                    Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP) : null;
                 break;
-            case LAP:
-                dataValue = lap();
+            case 14: // LAST_LAP_SPEED
+                dataValue = (Trace.autolapDistance > 0  && Trace.lapTime > 0) ?
+                    (3600*Trace.lapDistance/Trace.lapTime).format("%.2f") : null;
                 break;
-            case ALTITUDE:
-                dataValue = altitude();
+            case 15: // LAP
+                dataValue = Trace.autolapDistance > 0 ? Trace.lapCounter : null;
                 break;
-            case CLOCK_TIME:
-                dataValue = clockTime();
+            case 16: // ALTITUDE
+                data = Activity.getActivityInfo().altitude;
+                dataValue = data!=null ? data.format("%.0f") : null;
                 break;
-            case BATTERY:
-                dataValue = battery();
+            case 17: // CLOCK_TIME
+                data = Sys.getClockTime();
+                dataValue =  data!=null ?
+                    data.hour.format("%02d") + ":" +
+                    data.min.format("%02d") + ":" +
+                    data.sec.format("%02d"): null;
+                break;
+            case 18: // BATTERY
+                data = Sys.getSystemStats().battery;
+                dataValue = data!=null ? data.format("%.1f") + "%" : null;
                 break;
             default:
                 break;
@@ -431,16 +315,8 @@ module Data {
         return speed.toNumber()+seconds;
     }
 
-    function max(x,y) {
-        if(x>=y) {
-            return x;
-        } else {
-            return y;
-        }
-    }
-
      function min(x,y) {
-        if(x<y) {
+        if(x < y) {
             return x;
         } else {
             return y;

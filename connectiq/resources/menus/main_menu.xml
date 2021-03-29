@@ -5,6 +5,7 @@
 	<menu-item id="autolap" label="@Strings.main_menu_label_lap" />
 	<menu-item id="breadCrumbs" label="@Strings.main_menu_label_bc" />
 	<menu-item id="center" label="@Strings.main_menu_label_center" />
-	<menu-item id="screens" label="@Strings.main_menu_label_screens" />	
+	<menu-item id="screens" label="@Strings.main_menu_label_screens" />
+	<menu-item id="darkMode" label="@Strings.main_menu_label_dark_mode" />
 	<menu-item id="refreshPeriods" label="@Strings.main_menu_label_refresh_periods" />
 </menu>
