@@ -8,10 +8,10 @@ class GenericListItemPicker extends WatchUi.Picker {
     function initialize(title, pattern, defaultValues, context) {
         var defaults = null;
         mContext = context;
-        if(defaultValues!=null && pattern.size()==defaultValues.size()) {
+        if(defaultValues != null && pattern.size()==defaultValues.size()) {
             defaults = new [pattern.size()];
             for(var i=0; i<defaults.size(); i+=1) {
-                if(defaultValues[i]!=null && pattern[i] has :getIndex) {
+                if(defaultValues[i] != null && pattern[i] has :getIndex) {
                     defaults[i] = pattern[i].getIndex(defaultValues[i]);
                 } else {
                     defaults[i] = null;

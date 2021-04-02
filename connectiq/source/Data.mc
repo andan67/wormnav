@@ -7,59 +7,25 @@ using Toybox.Sensor;
 using Toybox.UserProfile;
 
 module Data {
+    const dataFieldMenuLabels = 
+        "Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|" +
+        "Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|" +
+        "Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|" +
+        "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
+        "Alt|Clock\nTime|Bat.";
 
-    const AVG_CHAR = StringUtil.utf8ArrayToString([0xC3,0x98]);
-
-    const dataFieldMenuLabels = [
-        "Timer",                //  0
-        "Dist.",                //  1
-        "Pace",                 //  2
-        "Speed",                //  3
-        "Avg\nPace",            //  4
-        "Avg\nSpeed",           //  5
-        "Heart\nRate",          //  6
-        "% max\nHeart\nRate",   //  7
-        "Avg\nHeart\nRate",     //  8
-        "Lap\nTimer",           //  9
-        "Lap\nDist.",           // 10
-        "Lap\nPace",            // 11
-        "Lap\nSpeed",           // 12
-        "Last\nLap\nPace",      // 13
-        "Last\nLap\nSpeed",     // 14
-        "Laps",                 // 15
-        "Alt",                  // 16
-        "Clock\nTime",          // 17
-        "Bat."];                // 18
-
-    const dataFieldLabels = [
-        "Timer",                    //  0   TIMER
-        "Distance",                 //  1   DisTANCE
-        "Pace",                     //  2   PACE
-        "Speed",                    //  3   SPEED
-        AVG_CHAR + " Pace",         //  4   AVERAGE_PACE
-        AVG_CHAR + " Speed",        //  5   AVERAGE_SPEED  
-        "Heart Rate",               //  6   CURRENT_HEART_RATE
-         "% max HR",                //  7   PERCENT_HEART_RATE
-        AVG_CHAR + "Heart Rate",    //  8   AVERAGE_HEART_RATE
-        "Lap Timer",                //  9   LAP_TIMER
-        "Lap Dist.",                // 10   LAP_DISTANCE
-        "Lap Pace",                 // 11   LAP_PACE
-        "Lap Speed",                // 12   LAP_SPEED
-        "LL Pace",                  // 13   LAST_LAP_PACE
-        "LL Speed",                 // 14   LAST_LAP_SPEED
-        "Laps",                     // 15   LAP
-        "Altitude",                 // 16   ALTITUDE
-        "Clock Time",               // 17   CLOCK_TIME
-        "Battery"];                 // 18   BATTERY
-
+    const dataFieldLabels = $.application.split("Timer|Distance|Pace|Speed|" + 
+            "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
+            "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     
+            "Altitude|Clock Time|Battery",'|'); 
 
     const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
 
     var dataScreens = dataScreensDefault;
     var activeDataScreens = [];
-    var maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
+    var maxHeartRate = null;
 
-    function updateMaxHeartRate() {
+    function setMaxHeartRate() {
         maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
     }
 
@@ -82,21 +48,10 @@ module Data {
     function determineActiveDataScreens() {
         activeDataScreens = [];
         for(var i=0; i < dataScreens.size(); i+=1) {
-            if(dataScreens[i]!= null && dataScreens[i].size() > 0) {
+            if(dataScreens[i] != null && dataScreens[i].size() > 0) {
                 activeDataScreens.add(dataScreens[i]);
             }
         }
-        Sys.println("determineActiveDataScreens: " + activeDataScreens);
-    }
-
-    function timer() {
-        var data=Activity.getActivityInfo().timerTime;
-        return data!=null? Data.msToTime(data) : "--";
-    }
-
-    function distance() {
-        var data=Activity.getActivityInfo().elapsedDistance;
-        return data!=null? (0.001*data+0.0001).format("%.2f") : "--";
     }
 
     function getDataFieldLabelValue(i) {
@@ -104,33 +59,35 @@ module Data {
         var data = null;
         switch(i) {
             case 0: // TIMER
-                dataValue = timer();
+                data = Activity.getActivityInfo().timerTime;
+                dataValue = data != null? Data.msToTime(data) : "--";
                 break;
             case 1: // DISTANCE
-                dataValue = distance();
+                data = Activity.getActivityInfo().elapsedDistance;
+                dataValue = data != null? (0.001*data+0.0001).format("%.2f") : "--";
                 break;
             case 2: // PACE
                 data = Activity.getActivityInfo().currentSpeed;
-                dataValue = data!=null? Data.convertSpeedToPace(data) : null;
+                dataValue = data != null? Data.convertSpeedToPace(data) : null;
                 break;
             case 3: // SPEED
                 data = Activity.getActivityInfo().currentSpeed;
-                dataValue = data!=null ? (3.6*data).format("%.2f") : null;
+                dataValue = data != null ? (3.6*data).format("%.2f") : null;
                 break;
             case 4: // AVERAGE_PACE
                 data = Activity.getActivityInfo().averageSpeed;
-                dataValue = data!=null?  Data.convertSpeedToPace(data) : null;
+                dataValue = data != null?  Data.convertSpeedToPace(data) : null;
                 break;
             case 5: // AVERAGE_SPEED
                 data = Activity.getActivityInfo().averageSpeed;
-                dataValue = data!=null?  (3.6*data).format("%.2f") : null;
+                dataValue = data != null?  (3.6*data).format("%.2f") : null;
                 break;
             case 6: // CURRENT_HEART_RATE
                 dataValue = Activity.getActivityInfo().currentHeartRate;
                 break;
             case 7: // PERCENT_HEART_RATE
                 data = Activity.getActivityInfo().currentHeartRate;
-                dataValue = data!=null ? (100.0*data/maxHeartRate).format("%.0f") + "%" : null;
+                dataValue = data != null ? (100.0*data/maxHeartRate).format("%.0f") + "%" : null;
                 break;
             case 8: // AVERAGE_HEART_RATE
                 dataValue = Activity.getActivityInfo().averageHeartRate;
@@ -161,18 +118,18 @@ module Data {
                 break;
             case 16: // ALTITUDE
                 data = Activity.getActivityInfo().altitude;
-                dataValue = data!=null ? data.format("%.0f") : null;
+                dataValue = data != null ? data.format("%.0f") : null;
                 break;
             case 17: // CLOCK_TIME
                 data = Sys.getClockTime();
-                dataValue =  data!=null ?
+                dataValue =  data != null ?
                     data.hour.format("%02d") + ":" +
                     data.min.format("%02d") + ":" +
                     data.sec.format("%02d"): null;
                 break;
             case 18: // BATTERY
                 data = Sys.getSystemStats().battery;
-                dataValue = data!=null ? data.format("%.1f") + "%" : null;
+                dataValue = data != null ? data.format("%.1f") + "%" : null;
                 break;
             default:
                 break;
@@ -232,41 +189,6 @@ module Data {
 
         //return Lang.format("$1$:$2$$3$", [result_min, result_sec.format("%02d"), result_per]);
         return Lang.format("$1$:$2$", [result_min, result_sec.format("%02d")]);
-    }
-
-     function convertDistance(metres) {
-        var result;
-
-        if( metres == null ) {
-            result = 0;
-        } else {
-            var settings = Sys.getDeviceSettings();
-            if( settings.distanceUnits == Sys.UNIT_METRIC ) {
-                result = metres / 1000.0;
-            } else {
-                result = metres / 1609.34;
-            }
-
-        }
-
-        return Lang.format("$1$", [result.format("%.2f")]);
-    }
-
-    function convertToMeters(distance){
-        var meters;
-
-        if (distance == null){
-            meters = 0;
-        }
-        else{
-            var settings = Sys.getDeviceSettings();
-            if( settings.distanceUnits == Sys.UNIT_METRIC ) {
-                meters = distance * 1000.0;
-            } else {
-                meters = distance * 1609.34;
-            }
-        }
-        return meters;
     }
 
     // Print pace as min:sec

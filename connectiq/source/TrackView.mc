@@ -2,7 +2,7 @@ using Toybox.WatchUi;
 using Transform;
 using Trace;
 
-class TrackView extends WatchUi.View {
+class TrackView extends GenericView {
 
     var cursorSizePixel;
     var posCursor;
@@ -11,8 +11,6 @@ class TrackView extends WatchUi.View {
     var fontsize = Graphics.FONT_MEDIUM;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
-    var foregroundColor = Graphics.COLOR_BLACK;
-    var backgroundColor = Graphics.COLOR_WHITE;
 
     function drawBreadCrumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -46,8 +44,8 @@ class TrackView extends WatchUi.View {
         var data;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = "D: " + Data.distance();
-            activity_values[1] = "T: " + Data.timer();
+            activity_values[0] = "D: " + Data.getDataFieldLabelValue(1)[1];
+            activity_values[1] = "T: " + Data.getDataFieldLabelValue(0)[1];
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -105,8 +103,6 @@ class TrackView extends WatchUi.View {
 
         var xy_pos = Transform.xy_2_screen(Transform.x_pos, Transform.y_pos);
 
-        //dc.drawCircle(xy_pos[0], xy_pos[1], 3);
-
         dc.setPenWidth(3);
         var x1 = xy_pos[0]+dx1;
         var y1 = xy_pos[1]+dy1;
@@ -148,9 +144,7 @@ class TrackView extends WatchUi.View {
         dc.fillPolygon(points);
 
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        points = [[Transform.compass_x + dx1, Transform.compass_y + dy1 - bottomPadding],
-                  [Transform.compass_x + dx2, Transform.compass_y + dy2 - bottomPadding],
-                  [Transform.compass_x + dx3, Transform.compass_y + dy3 - bottomPadding]];
+        points[1] = [Transform.compass_x + dx2, Transform.compass_y + dy2 - bottomPadding];
         dc.fillPolygon(points);
 
         if(Trace.breadCrumbDist > 0) {
@@ -159,10 +153,10 @@ class TrackView extends WatchUi.View {
     }
 
     function initialize() {
+        GenericView.initialize();
         if($.device.equals("vivoactive")) {
             fontsize=Graphics.FONT_XTINY;
         }
-        View.initialize();
         Trace.reset();
         activity_values = new[2];
         setDarkMode($.isDarkMode);
@@ -191,17 +185,6 @@ class TrackView extends WatchUi.View {
         }
     }
 
-    function setDarkMode(isDarkMode) {
-        if(isDarkMode) {
-            foregroundColor = Graphics.COLOR_WHITE;
-            backgroundColor = Graphics.COLOR_BLACK; 
-        }
-        else {
-            foregroundColor = Graphics.COLOR_BLACK;
-            backgroundColor = Graphics.COLOR_WHITE; 
-        }
-    }
-
     // Update the view
     function onUpdate(dc) {
         // Call the parent onUpdate function to redraw the layout
@@ -227,24 +210,9 @@ class TrackView extends WatchUi.View {
             drawActivityInfo(dc);
         }
 
-
         drawScale(dc);
+        drawStartStop(dc);
 
-        if($.sessionEvent == 1) {
-            dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(Transform.pixelWidth2, Transform.pixelHeight2, 0.15*Transform.pixelMin);
-        } else if($.sessionEvent == 2){
-            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(Transform.pixelWidth2 - 0.15*Transform.pixelMin, 
-                Transform.pixelHeight2 - 0.15*Transform.pixelMin, 0.3*Transform.pixelMin, 0.3*Transform.pixelMin);
-        }
-
-    }
-
-    // Called when this View is removed from the screen. Save the
-    // state of this View here. This includes freeing resources from
-    // memory.
-    function onHide() {
     }
 
 }

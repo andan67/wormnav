@@ -137,7 +137,7 @@ class GenericPickerDelegate extends WatchUi.PickerDelegate {
             case :activityType:
                 $.activityType = values[0];
                 Application.getApp().setProperty("activityType", $.activityType);
-                Data.updateMaxHeartRate();
+                Data.setMaxHeartRate();
                 break;
             case :track:
             default:

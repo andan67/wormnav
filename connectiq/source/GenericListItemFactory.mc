@@ -11,6 +11,11 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
     function initialize(itemValueList, itemLabelList, options) {
         PickerFactory.initialize();
         
+        // if itemLabelList is String split into array
+        if(itemLabelList instanceof String) {
+            itemLabelList = $.application.split(itemLabelList,'|');
+        }
+
         if(itemValueList != null) {
             mItemValueList = itemValueList;
             if(itemLabelList == null || itemValueList.size() != itemLabelList.size()) {
@@ -57,7 +62,6 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
         return 0;
     }
     
-
     function getSize() {
         return mItemValueList.size();
     }

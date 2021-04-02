@@ -4,7 +4,7 @@ using Data;
 using Trace;
 
 
-class DataView extends WatchUi.View {
+class DataView extends GenericView {
 
     hidden var width;
     hidden var height;
@@ -15,14 +15,11 @@ class DataView extends WatchUi.View {
     hidden var dfCenters;
     hidden var font;
     hidden var fontNumber;
-    var foregroundColor = Graphics.COLOR_BLACK;
-    var backgroundColor = Graphics.COLOR_WHITE;
     
     // Set the label of the field here
     function initialize(dataFields) {
-        View.initialize();
+        GenericView.initialize();
         setDataFields(dataFields);
-        setDarkMode($.isDarkMode);
     }
 
     function setDataFields(dataFields) {
@@ -55,12 +52,6 @@ class DataView extends WatchUi.View {
                 }
                 break;
         }
-    }
-
-    function onShow() {
-    }
-
-    function onHide() {
     }
 
     function onLayout(dc) {
@@ -124,10 +115,12 @@ class DataView extends WatchUi.View {
             dataLabelValue = Data.getDataFieldLabelValue(mDataFields[i]);
             drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
         }
+
+        drawStartStop(dc);
     }
 
     function drawField(dc, label, value, x, y1, y2) {
-        if(value==null) {
+        if(value == null) {
             value="--";
         }
         if( label == null ) {
@@ -139,17 +132,7 @@ class DataView extends WatchUi.View {
         dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         return;
     }
-    
-    function setDarkMode(isDarkMode) {
-        if(isDarkMode) {
-            foregroundColor = Graphics.COLOR_WHITE;
-            backgroundColor = Graphics.COLOR_BLACK; 
-        }
-        else {
-            foregroundColor = Graphics.COLOR_BLACK;
-            backgroundColor = Graphics.COLOR_WHITE; 
-        }
-    }
+   
 }
 
 

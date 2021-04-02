@@ -6,6 +6,7 @@ using Toybox.ActivityRecording;
 using Toybox.Sensor;
 
 using Trace;
+using Data;
 
 var messageReceived = false;
 
@@ -31,6 +32,8 @@ var appTimerTicks = 0;
 
 var isDarkMode = false;
 
+var application = null;
+
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
     var sessionEventTicker = 0;
@@ -40,15 +43,17 @@ class WormNavApp extends Application.AppBase {
     
     function initialize() {
         AppBase.initialize();
+        application = self;
     }
 
     // onStart() is called on application start up
     function onStart(state) {
-        //System.println("onStart");
-
+        System.println("onStart");
+        
         // start page is map
         mode=TRACK_MODE;
         device = WatchUi.loadResource(Rez.Strings.device);
+        Data.setMaxHeartRate();
         //System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
 
@@ -209,4 +214,27 @@ class WormNavApp extends Application.AppBase {
         }
           
     }
+
+     // split string str by separator char c into string array
+    function split(str,c) {
+        if(str != null && c != null) {
+            var result = [];
+            var charArray = str.toCharArray();
+            var start = 0;
+            var pos = 0;
+            while (pos <= charArray.size()) {
+                if(pos == charArray.size() || charArray[pos] == c) {
+                    if(pos > start) {
+                        result.add(str.substring(start, pos));    
+                    }
+                    pos += 1;
+                    start = pos;
+                }
+                pos += 1;
+            }
+            return result;
+        }
+        return null;
+    }
+
 }

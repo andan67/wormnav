@@ -64,7 +64,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 Transform.setZoomLevel(-1);
                 updateView();
                 $.trackViewCounter = 0;
-                //WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
                 dataPageChange(-1);
@@ -128,7 +127,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
                 if($.session==null) {
-                    $.session = ActivityRecording.createSession({:name=>"WormNavActivity", :sport=>$.activityType});
+                    $.session = ActivityRecording.createSession({:name => "WormNavActivity", :sport => $.activityType});
                 }
                 $.session.start();
                 $.sessionEvent = 1;
