@@ -146,13 +146,15 @@ module Transform {
             cos_lat_view_center = Math.cos(lat_view_center);
             sin_lat_view_center = Math.sin(lat_view_center);
         }
+
         var xy = ll_2_xy(lat_pos, lon_pos);
+       
         x_pos = xy[0];
         y_pos = xy[1];
         setViewCenter(lat_pos,lon_pos);
         setHeading();
     }
-
+    
     function xy_2_screen(x, y) {
         var xr = scaleFactor*(x-x_d);
         var yr = scaleFactor*(y-y_d);
@@ -162,14 +164,6 @@ module Transform {
             return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
                     ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
         }
-    }
-
-    function ll_2_screen(lat, lon) {
-        var ll = lon-lon_view_center;
-        var cos_lat = Math.cos(lat);
-        var x = cos_lat*Math.sin(ll);
-        var y = cos_lat_view_center*Math.sin(lat)-sin_lat_view_center*cos_lat*Math.cos(ll);
-        return xy_2_screen(x, y);
     }
 
     function ll_2_xy(lat, lon) {

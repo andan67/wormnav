@@ -58,15 +58,39 @@ class TrackView extends GenericView {
         dc.setPenWidth(2);
 
         var xya = $.track.xyArray;
+        
+        var scaleFactor = Transform.scaleFactor;
+        var x_d = Transform.x_d;
+        var y_d = Transform.y_d;
+        var xs_center = Transform.xs_center;
+        var ys_center = Transform.ys_center;
+        var cos_heading_smooth = 1.0;
+        var sin_heading_smooth = 0.0;
+        if( !Transform.northHeading && !Transform.centerMap && !Transform.isTrackCentered) {
+            cos_heading_smooth = Transform.cos_heading_smooth;
+            sin_heading_smooth = Transform.sin_heading_smooth;    
+        }
 
-        // set pos_2 to first position on start
         var xy_pos1;
-        var xy_pos2 = Transform.xy_2_screen(xya[0],xya[1]);
-
-        for(var i = 0; i < xya.size()-3; i+=2 ) {
-            xy_pos1 = xy_pos2;
-            xy_pos2 = Transform.xy_2_screen(xya[i+2],xya[i+3]);
-            dc.drawLine(xy_pos1[0],xy_pos1[1],xy_pos2[0],xy_pos2[1]);
+        var xy_pos2;
+        var x1 = 0.0;
+        var y1 = 0.0;
+        var x2 = 0.0;
+        var y2 = 0.0;
+        var xr = 0.0;
+        var yr = 0.0;
+        for(var i = -2; i < xya.size()-3; i+=2 ) {
+            if(i >= 0) {
+                x1 = x2;
+                y1 = y2;    
+            }
+            xr = scaleFactor*(xya[i+2]-x_d);
+            yr = scaleFactor*(xya[i+3]-y_d);
+            x2 = xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth;
+            y2 = ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth;
+            if(i >= 0) {
+                dc.drawLine(x1,y1,x2,y2); 
+            }
         }
     }
 
@@ -87,19 +111,19 @@ class TrackView extends GenericView {
 
         if(Transform.northHeading || Transform.centerMap) {
             heading = Transform.heading_smooth;
-            dx1= cursorSizePixel*Transform.sin_heading_smooth;
-            dy1=-cursorSizePixel*Transform.cos_heading_smooth;
+            dx1 = cursorSizePixel*Transform.sin_heading_smooth;
+            dy1 =-cursorSizePixel*Transform.cos_heading_smooth;
         }
         else {
             heading = 0;
-            dx1=0;
-            dy1=-cursorSizePixel;
+            dx1 =0;
+            dy1 = -cursorSizePixel;
         }
 
-        dx2= sf*Math.sin(heading+Transform.ANGLE_R);
-        dy2=-sf*Math.cos(heading+Transform.ANGLE_R);
-        dx3= sf*Math.sin(heading+Transform.ANGLE_L);
-        dy3=-sf*Math.cos(heading+Transform.ANGLE_L);
+        dx2 =  sf*Math.sin(heading+Transform.ANGLE_R);
+        dy2 = -sf*Math.cos(heading+Transform.ANGLE_R);
+        dx3 =  sf*Math.sin(heading+Transform.ANGLE_L);
+        dy3 = -sf*Math.cos(heading+Transform.ANGLE_L);
 
         var xy_pos = Transform.xy_2_screen(Transform.x_pos, Transform.y_pos);
 
@@ -169,8 +193,8 @@ class TrackView extends GenericView {
         Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
         cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
         if($.device.equals("vivoactive")) {
-            topPadding=0.5*dc.getFontAscent(fontsize);
-            bottomPadding=0.5*dc.getFontAscent(fontsize);
+            topPadding = 0.5*dc.getFontAscent(fontsize);
+            bottomPadding = 0.5*dc.getFontAscent(fontsize);
         }
     }
 
