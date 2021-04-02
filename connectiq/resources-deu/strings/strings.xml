@@ -6,14 +6,14 @@
 
     <string id="prompt">Click the menu button</string>
 
-    <string id="main_menu_label">Main Menu</string>
-    <string id="main_menu_label_orient">Map orientation</string>
+    <string id="main_menu_label">Hauptmenü</string>
+    <string id="main_menu_label_orient">Kartenausrichtung</string>
     <string id="main_menu_label_track">Track</string>
-    <string id="main_menu_label_activity_type">Activity type</string>    
+    <string id="main_menu_label_activity_type">Aktivitätsart</string>    
     <string id="main_menu_label_lap">Auto lap</string>
     <string id="main_menu_label_bc">Bread crumbs</string>
-    <string id="main_menu_label_center">Center map</string>
-    <string id="main_menu_label_screens">Data screens</string>
+    <string id="main_menu_label_center">Zentrieren die Karte</string>
+    <string id="main_menu_label_screens">Datenbildschirme</string>
     <string id="main_menu_label_refresh_periods">Refresh periods</string>
     
 
@@ -23,14 +23,14 @@
     <string id="center_opt1">on</string>
     <string id="center_opt2">off</string>
 
-    <string id="save_menu_label_1">Resume</string>
-    <string id="save_menu_label_2">Save</string>
-    <string id="save_menu_label_3">Discard</string>
+    <string id="save_menu_label_1">Fortsetzen</string>
+    <string id="save_menu_label_2">Sparen</string>
+    <string id="save_menu_label_3">Verwerfen</string>
 
-    <string id="Field_1">Field 1</string>
-    <string id="Field_2">Field 2</string>
-    <string id="Field_3">Field 3</string>
-    <string id="Field_4">Field 4</string>
+    <string id="Field_1">Feld 1</string>
+    <string id="Field_2">Feld 2</string>
+    <string id="Field_3">Feld 3</string>
+    <string id="Field_4">Feld 4</string>
 
     <string id="None">None</string>
     <string id="Timer">Timer</string>
@@ -78,10 +78,10 @@
     <string id="DFLabel_Clock_Time">Clock Time</string>
     <string id="DFLabel_Battery">Battery</string>    
 
-    <string id="Defaults">Defaults</string>
-    <string id="Screen_1">Screen 1</string>
-    <string id="Screen_2">Screen 2</string>
-    <string id="Screen_3">Screen 3</string>  
+    <string id="Defaults">Standard</string>
+    <string id="Screen_1">Bildschirm 1</string>
+    <string id="Screen_2">Bildschirm 2</string>
+    <string id="Screen_3">Bildschirm 3</string>  
     
     <string id="num_data_fields"># Data fields</string>  
            
@@ -91,20 +91,20 @@
     <string id="Auto_lap_view">Auto lap view</string>
 
     <string id="Info">Info</string>
-    <string id="Delete">Delete</string>
+    <string id="Delete">Löschen</string>
 
-    <string id="Generic">Generic</string>
-    <string id="Running">Running</string>
-    <string id="Walking">Walking</string>        
-    <string id="Cycling">Cycling</string>    
+    <string id="Generic">Generisch</string>
+    <string id="Running">Laufen</string>
+    <string id="Walking">Gehen</string>        
+    <string id="Cycling">Radfahren</string>    
     
-    <string id="msg_continue">Continue?</string> 
-    <string id="msg_delete_track">Delete Track?</string>   
-    <string id="msg_exit_app">Exit App?</string>   
-    <string id="msg_discard">Discard?</string>  
+    <string id="msg_continue">Fortsetzen?</string> 
+    <string id="msg_delete_track">Löschen Track?</string>   
+    <string id="msg_exit_app">Beenden App?</string>   
+    <string id="msg_discard">Verwerfen?</string>  
 
-    <string id="info_lenght">Length/km:</string>
+    <string id="info_lenght">Länge/km:</string>
     <string id="info_name">Name:</string>        
-    <string id="info_points"># points:</string>      
+    <string id="info_points"># punkte:</string>      
         
 </strings>

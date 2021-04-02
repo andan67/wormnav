@@ -26,7 +26,9 @@
             <iq:uses-permission id="Sensor"/>
         </iq:permissions>
         <iq:languages>
+            <iq:language>deu</iq:language>
             <iq:language>eng</iq:language>
+            <iq:language>fre</iq:language>
             <iq:language>spa</iq:language>
         </iq:languages>
         <iq:barrels/>
