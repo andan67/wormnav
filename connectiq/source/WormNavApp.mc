@@ -17,7 +17,7 @@ var trackView;
 var dataView;
 var lapView;
 var viewDelegate;
-var device = "generic";
+var device = null;
 var track = null;
 var session = null;
 var sessionEvent = 0;
@@ -50,11 +50,20 @@ class WormNavApp extends Application.AppBase {
     function onStart(state) {
         System.println("onStart");
         
+        try
+        {
+            device = WatchUi.loadResource(Rez.Strings.device);
+        } catch (ex) {
+            device = "generic";
+        }
+
+
+        System.println("Device: " + device);
+
+        Data.setMaxHeartRate();
+
         // start page is map
         mode=TRACK_MODE;
-        device = WatchUi.loadResource(Rez.Strings.device);
-        Data.setMaxHeartRate();
-        //System.println("Device: " + device);
         var data= Application.getApp().getProperty("trackData");
 
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM

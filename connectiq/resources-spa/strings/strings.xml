@@ -1,0 +1,108 @@
+<strings>
+    <string id="AppName">WormNav</string>
+    <!--  
+    <string id="device">generic</string>
+    -->
+    
+    <string id="prompt">Click el Botón Menu</string>
+
+    <string id="main_menu_label">Menu Raiz</string>
+    <string id="main_menu_label_orient">Orient. Mapa</string>
+    <string id="main_menu_label_activity_type">Tipo Actividad</string>
+    <string id="main_menu_label_track">Track</string>
+    <string id="main_menu_label_lap">Dist. Vuelta</string>
+    <string id="main_menu_label_bc">Marcas del GPS</string>
+    <string id="main_menu_label_center">Centrar el mapa</string>   
+    <string id="main_menu_label_screens">Pantallas Datos</string>
+    <string id="main_menu_label_refresh_periods">Tiempo de Refresco</string>
+    
+    <string id="north_opt1">Sent.\nNorte</string>
+    <string id="north_opt2">Sent.\nRuta</string>    
+
+    <string id="center_opt1">SI</string>
+    <string id="center_opt2">NO</string>
+
+    <string id="save_menu_label_1">Continuar</string>
+    <string id="save_menu_label_2">Guardar</string>
+    <string id="save_menu_label_3">Descartar</string>
+
+    <string id="Field_1">Campo 1</string>
+    <string id="Field_2">Campo 2</string>
+    <string id="Field_3">Campo 3</string>
+    <string id="Field_4">Campo 4</string>
+
+    <string id="None">Nada</string>
+    <string id="Timer">Tiempo</string>
+    <string id="Distance">Distancia</string>
+    <string id="Avg_Pace">Ritmo Medio</string>
+    <string id="Hear_Rate">Pulso</string>
+    <string id="Pace">Ritmo</string>
+    <string id="Speed">Velocidad</string> 
+
+    <string id="DFMenuLabel_Timer">Tiempo</string>
+    <string id="DFMenuLabel_Distance">Dist.</string>
+    <string id="DFMenuLabel_Pace">Ritmo</string>
+    <string id="DFMenuLabel_Speed">Veloc.</string>
+    <string id="DFMenuLabel_Avg_Pace">Ritmo\nMedio</string>
+    <string id="DFMenuLabel_Avg_Speed">Veloc.\nMedia</string>
+    <string id="DFMenuLabel_Heart_Rate">Pulso</string> 
+    <string id="DFMenuLabel_Avg_Heart_Rate">Pulso\nMedio</string> 
+    <string id="DFMenuLabel_Lap_Timer">Tiempo\nVuelta</string>
+    <string id="DFMenuLabel_Lap_Dist">Dist.\nVuelta</string>
+    <string id="DFMenuLabel_Lap_Pace">Ritmo\nVuelta</string>
+    <string id="DFMenuLabel_Lap_Speed">Veloc\nVuelta</string>
+    <string id="DFMenuLabel_Last_Lap_Pace">Ult.\nVuelta\nRitmo</string>
+    <string id="DFMenuLabel_Last_Lap_Speed">Ult.\nVuelta\nVeloc</string>
+    <string id="DFMenuLabel_Laps">Vueltas</string>
+    <string id="DFMenuLabel_Altitude">Alt.</string>
+    <string id="DFMenuLabel_Clock_Time">Reloj\nHora</string>
+    <string id="DFMenuLabel_Battery">Bat.</string>
+
+    <string id="DFLabel_Timer">Tiempo</string>
+    <string id="DFLabel_Distance">Distancia</string>
+    <string id="DFLabel_Pace">Ritmo</string>
+    <string id="DFLabel_Speed">Velocidad</string>
+    <string id="DFLabel_Avg_Pace"> Ritmo</string>
+    <string id="DFLabel_Avg_Speed"> Veloc.</string>
+    <string id="DFLabel_Heart_Rate">Pulso</string> 
+    <string id="DFLabel_Avg_Heart_Rate"> Pulso</string> 
+    <string id="DFLabel_Lap_Timer">Tiempo Lap</string>
+    <string id="DFLabel_Lap_Dist">Dist. Lap</string>
+    <string id="DFLabel_Lap_Pace">Ritmo Lap</string>
+    <string id="DFLabel_Lap_Speed">Veloc. Lap</string>
+    <string id="DFLabel_Last_Lap_Pace">Ult.Lap Ritmo</string>
+    <string id="DFLabel_Last_Lap_Speed">Ult.Lap Vel.</string>
+    <string id="DFLabel_Laps">Vueltas</string>
+    <string id="DFLabel_Altitude">Altitud</string>
+    <string id="DFLabel_Clock_Time">Reloj Hora</string>
+    <string id="DFLabel_Battery">Bateria</string>    
+           
+    <string id="Defaults">Reset</string>
+    <string id="Screen_1">Pantalla 1</string>
+    <string id="Screen_2">Pantalla 2</string>
+    <string id="Screen_3">Pantalla 3</string> 
+
+    <string id="num_data_fields">Num. Campos</string>  
+
+    <string id="Track_view">Vista Track</string>
+    <string id="Data_view">Vista Datos</string>
+    <string id="Auto_lap_view">Vista Auto Lap</string>
+
+    <string id="Info">Info</string>
+    <string id="Delete">Borrar</string>
+
+    <string id="Generic">Gener.</string>
+    <string id="Running">Correr</string>
+    <string id="Walking">Andar</string>        
+    <string id="Cycling">Bici</string> 
+    
+    <string id="msg_delete_track">Borrar Track?</string>  
+    <string id="msg_continue">Continuar?</string>  
+    <string id="msg_exit_app">Salir?</string> 
+    <string id="msg_discard">Descartar?</string>
+
+    <string id="info_lenght">Dist./km:</string>
+    <string id="info_name">Nombre:</string>        
+    <string id="info_points"># puntos:</string>    
+                        
+</strings>

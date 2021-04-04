@@ -17,14 +17,16 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
         var factory;
         var defaultValue;
         
-        var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
-        var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
+    	var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
+    	var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
+    	
+    	var text_label;
         
         switch(item) {
             
             case :delete:
                 if(track!=null) {
-                    var message = "Continue?";
+                    var message = WatchUi.loadResource(Rez.Strings.msg_continue);
                     var dialog = new WatchUi.Confirmation(message);
                     WatchUi.pushView(
                         dialog,
@@ -35,22 +37,30 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 return true;
             case :north:
                 defaultValue = Transform.northHeading;
-                factory =  new GenericListItemFactory(
-                    [true,false],["North\nup","Move-\nment"],{:font => Graphics.FONT_MEDIUM});
-                picker = new GenericListItemPicker("Map orientation", [factory], [defaultValue], null);
+                 factory =  new GenericListItemFactory(
+                     [true,false],
+                     WatchUi.loadResource(Rez.Strings.north_opts),
+                     {:font => Graphics.FONT_MEDIUM});
+				text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_orient);
+				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:north), WatchUi.SLIDE_IMMEDIATE);
                 return true;
              case :center:
                 defaultValue = Transform.centerMap;
                 factory =  new GenericListItemFactory(
-                    [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
-                picker = new GenericListItemPicker("Center map", [factory], [defaultValue], null);
-                WatchUi.pushView(picker,  new GenericPickerDelegate(:center), WatchUi.SLIDE_IMMEDIATE);
+                    [true,false],
+                    WatchUi.loadResource(Rez.Strings.onoff_opts),
+                    {:font => Graphics.FONT_LARGE});
+                text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_center);
+				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:center), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :darkMode:
                 defaultValue = $.isDarkMode;
                 factory =  new GenericListItemFactory(
-                    [true,false],["on","off"],{:font => Graphics.FONT_LARGE});
+                    [true,false],
+                     WatchUi.loadResource(Rez.Strings.onoff_opts),
+                    {:font => Graphics.FONT_LARGE});
                 picker = new GenericListItemPicker("Dark mode", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:darkMode), WatchUi.SLIDE_IMMEDIATE);
                 return true;    
@@ -60,7 +70,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceValues,
                     distanceLabels,
                     null);
-                picker = new GenericListItemPicker("Auto lap", [factory], [defaultValue], null);
+                text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_lap);
+				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:autolap), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :breadCrumbs:
@@ -69,17 +80,19 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceValues,
                     distanceLabels,
                     null);
-                picker = new GenericListItemPicker("Bread crumbs", [factory], [defaultValue], null);
+                text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_bc);
+				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:breadCrumbs), WatchUi.SLIDE_UP);
                 return true;
             case :activityType:
                 defaultValue = $.activityType;
                 factory = new GenericListItemFactory(
                     [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING, ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
-                    ["Generic","Running","Walking","Cycling"],
+                    WatchUi.loadResource(Rez.Strings.Activities),
                     {:font => Graphics.FONT_SMALL});
-                picker = new GenericListItemPicker("Activity type", [factory], [defaultValue], null);
-                WatchUi.pushView(picker, new GenericPickerDelegate(:activityType), WatchUi.SLIDE_UP);
+                text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_activity_type);
+				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
+				WatchUi.pushView(picker, new GenericPickerDelegate(:activityType), WatchUi.SLIDE_UP);
                 return true;
             case :screens:
                 WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
@@ -177,7 +190,7 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
         dataMenuContext = screen;
         var defaultValue = Data.dataScreens[screen].size();
         var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
-        var picker = new GenericListItemPicker("# Data fields", [factory], [defaultValue], dataMenuContext);
+        var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.num_data_fields), [factory], [defaultValue], dataMenuContext);
         WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(dataMenuContext), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
@@ -198,6 +211,8 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
+        var text_label;
+        //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         var screen = mContext;
         var nDataFields = values[0];
@@ -213,8 +228,9 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
                 factories[i] = new GenericListItemFactory(
                     null, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
                 defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
-            }
-            var picker = new GenericListItemPicker("Data fields", factories, defaults, mContext);
+            }            
+            text_label = WatchUi.loadResource(Rez.Strings.main_menu_label_screens);
+			var picker = new GenericListItemPicker(text_label, factories, defaults, mContext);
             WatchUi.pushView(picker, new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
         }
     }
@@ -253,28 +269,35 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
         var defaultValue;
         var picker;
         var key;
+        var text_label;
         
         var periodValues = [1,2,5,10,15,30,60];
         var periodLabels = ["1s", "2s", "5s", "10s", "15s", "30s", "60s"];
         
         switch ( item ) {
             case :upt:
-                defaultValue = $.trackViewPeriod;
-                key = "trackViewPeriod";
-                factory =  new GenericListItemFactory(periodValues, periodLabels,null);
-                picker = new GenericListItemPicker("Track viev", [factory], [defaultValue], key);
+            	defaultValue = $.trackViewPeriod;
+            	key = "trackViewPeriod";
+            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
+                text_label = WatchUi.loadResource(Rez.Strings.Track_view);
+			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue], key);
+			
                 break;
             case :upd:
-                defaultValue = $.dataViewPeriod;
-                key = "dataViewPeriod";
-                factory =  new GenericListItemFactory(periodValues, periodLabels,null);
-                picker = new GenericListItemPicker("Data view", [factory], [defaultValue], key);
+            	defaultValue = $.dataViewPeriod;
+            	key = "dataViewPeriod";
+            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
+            	text_label = WatchUi.loadResource(Rez.Strings.Data_view);
+			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue], key);
+            	
                 break;
             case :upl:
-                defaultValue = $.lapViewPeriod;
-                key = "lapViewPeriod";
-                factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);
-                picker = new GenericListItemPicker("Lap view", [factory], [defaultValue], key);
+            	defaultValue = $.lapViewPeriod;
+            	key = "lapViewPeriod";
+            	factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);
+            	text_label = WatchUi.loadResource(Rez.Strings.Auto_lap_view);
+			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue], key);
+			    
                 break;
             default:
                 return false;
@@ -325,7 +348,9 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
         switch(item) {
             case :tdel:
                 if(track!=null) {
-                    var message = "Delete track?";
+                    //var message = "Delete track?";
+                    var message = WatchUi.loadResource(Rez.Strings.msg_delete_track);
+                    
                     var dialog = new WatchUi.Confirmation(message);
                     WatchUi.pushView(
                         dialog,
@@ -351,9 +376,7 @@ class DeleteConfirmationDelegate extends WatchUi.ConfirmationDelegate {
     
     function onResponse(response) {
         if (response == WatchUi.CONFIRM_NO) {
-            //System.println("Cancel");
         } else {
-            //System.println("Confirm");
             $.track=$.track.clean();
             Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
             $.track=null;

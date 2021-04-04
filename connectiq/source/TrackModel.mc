@@ -13,6 +13,7 @@ class TrackModel {
 
     // lat lon values must be in radians!
     function initialize(msg) {
+        
         data = msg;
         boundingBox = data[0];
         lat_center = boundingBox[4];

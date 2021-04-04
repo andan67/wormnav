@@ -5,19 +5,22 @@ using Toybox.Lang as Lang;
 using Toybox.StringUtil;
 using Toybox.Sensor;
 using Toybox.UserProfile;
+using Toybox.WatchUi;
 
 module Data {
-    const dataFieldMenuLabels = 
-        "Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|" +
-        "Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|" +
-        "Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|" +
-        "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
-        "Alt|Clock\nTime|Bat.";
+    const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.DFMenuLabels);
 
-    const dataFieldLabels = $.application.split("Timer|Distance|Pace|Speed|" + 
-            "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
-            "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     
-            "Altitude|Clock Time|Battery",'|'); 
+        // "Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|" +
+        // "Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|" +
+        // "Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|" +
+        // "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
+        // "Alt|Clock\nTime|Bat.";
+
+    const dataFieldLabels = $.application.split(WatchUi.loadResource(Rez.Strings.DFLabels),'|');
+        // "Timer|Distance|Pace|Speed|" + 
+        //     "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
+        //     "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     
+        //     "Altitude|Clock Time|Battery",'|'); 
 
     const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
 
