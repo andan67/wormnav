@@ -213,7 +213,7 @@ class TrackView extends GenericView {
     // Update the view
     function onUpdate(dc) {
         // Call the parent onUpdate function to redraw the layout
-        //View.onUpdate(dc);
+        GenericView.onUpdate(dc);
         dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
 

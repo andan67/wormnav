@@ -57,9 +57,9 @@ class WormNavApp extends Application.AppBase {
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
         
         System.println("Device: " + device);
-        var data= Application.getApp().getProperty("trackData");
-        
+
         Transform.setPixelDimensions(System.getDeviceSettings().screenWidth, System.getDeviceSettings().screenHeight);
+        var data= Application.getApp().getProperty("trackData");
         if(data!=null) {
             //System.println("load data from property store");
             createNewTrack(data);
