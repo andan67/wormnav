@@ -24,7 +24,7 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
               System.exit();
               return true;             
         }
-        //return false;
+        return false;
     }
 }
 
@@ -51,7 +51,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
                 updateView();
-                WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
                 dataPageChange(1);

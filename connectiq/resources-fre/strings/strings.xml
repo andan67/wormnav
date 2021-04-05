@@ -15,13 +15,10 @@
     <string id="main_menu_label_center">Centre le Carte</string>
     <string id="main_menu_label_screens">Écrans de données</string>
     <string id="main_menu_label_refresh_periods">Refresh periods</string>
-    
+    <string id="main_menu_label_dark_mode">Mode sombre</string>
 
-    <string id="north_opt1">North\nup</string>
-    <string id="north_opt2">Move-\nment</string>
-
-    <string id="center_opt1">on</string>
-    <string id="center_opt2">off</string>
+    <string id="north_opts">North\nup|Move-\nment</string>
+    <string id="onoff_opts">on|off</string>
 
     <string id="save_menu_label_1">Continuer</string>
     <string id="save_menu_label_2">Sauvegarder</string>
@@ -32,51 +29,8 @@
     <string id="Field_3">Données 3</string>
     <string id="Field_4">Données 4</string>
 
-    <string id="None">None</string>
-    <string id="Timer">Timer</string>
-    <string id="Distance">Distance</string>
-    <string id="Avg_Pace">Avg Pace</string>
-    <string id="Hear_Rate">Hear Rate</string>
-    <string id="Pace">Pace</string>
-    <string id="Speed">Speed</string> 
-
-    <string id="DFMenuLabel_Timer">Timer</string>
-    <string id="DFMenuLabel_Distance">Dist.</string>
-    <string id="DFMenuLabel_Pace">Pace</string>
-    <string id="DFMenuLabel_Speed">Speed</string>
-    <string id="DFMenuLabel_Avg_Pace">Avg\nPace</string>
-    <string id="DFMenuLabel_Avg_Speed">Avg\nSpeed</string>
-    <string id="DFMenuLabel_Heart_Rate">Heart\nRate</string> 
-    <string id="DFMenuLabel_Avg_Heart_Rate">Avg\nHeart\nRate</string> 
-    <string id="DFMenuLabel_Lap_Timer">Lap\nTimer</string>
-    <string id="DFMenuLabel_Lap_Dist">Lap\nDist.</string>
-    <string id="DFMenuLabel_Lap_Pace">Lap\nPace</string>
-    <string id="DFMenuLabel_Lap_Speed">Lap\nSpeed</string>
-    <string id="DFMenuLabel_Last_Lap_Pace">Last\nLap\nPace</string>
-    <string id="DFMenuLabel_Last_Lap_Speed">Last\nLap\nSpeed</string>
-    <string id="DFMenuLabel_Laps">Laps</string>
-    <string id="DFMenuLabel_Altitude">Alt</string>
-    <string id="DFMenuLabel_Clock_Time">Clock\nTime</string>
-    <string id="DFMenuLabel_Battery">Bat.</string>
-
-    <string id="DFLabel_Timer">Timer</string>
-    <string id="DFLabel_Distance">Distance</string>
-    <string id="DFLabel_Pace">Pace</string>
-    <string id="DFLabel_Speed">Speed</string>
-    <string id="DFLabel_Avg_Pace"> Pace</string>
-    <string id="DFLabel_Avg_Speed"> Speed</string>
-    <string id="DFLabel_Heart_Rate">Heart Rate</string> 
-    <string id="DFLabel_Avg_Heart_Rate"> Heart Rate</string> 
-    <string id="DFLabel_Lap_Timer">Lap Timer</string>
-    <string id="DFLabel_Lap_Dist">Lap Dist.</string>
-    <string id="DFLabel_Lap_Pace">Lap Pace</string>
-    <string id="DFLabel_Lap_Speed">Lap Speed</string>
-    <string id="DFLabel_Last_Lap_Pace">Last Lap Pace</string>
-    <string id="DFLabel_Last_Lap_Speed">Last Lap Speed</string>
-    <string id="DFLabel_Laps">Laps</string>
-    <string id="DFLabel_Altitude">Altitude</string>
-    <string id="DFLabel_Clock_Time">Clock Time</string>
-    <string id="DFLabel_Battery">Battery</string>    
+    <string id="DFMenuLabels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Alt|Clock\nTime|Bat.</string>
+    <string id="DFLabels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Altitude|Clock Time|Battery</string>
 
     <string id="Defaults">défaut</string>
     <string id="Screen_1">Écran 1</string>
@@ -93,11 +47,8 @@
     <string id="Info">Info</string>
     <string id="Delete">Efface</string>
 
-    <string id="Generic">Generic</string>
-    <string id="Running">Running</string>
-    <string id="Walking">Walking</string>        
-    <string id="Cycling">Cycling</string>    
-    
+    <string id="Activities">Generic|Running|Walking|Cycling</string>
+     
     <string id="msg_continue">Continuer?</string> 
     <string id="msg_delete_track">Efface Track?</string>   
     <string id="msg_exit_app">Quit App?</string>   
