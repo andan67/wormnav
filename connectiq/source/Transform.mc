@@ -1,5 +1,4 @@
 using Toybox.Math;
-using Toybox.System;
 using Trace;
 
 module Transform {
@@ -61,7 +60,7 @@ module Transform {
         pixelHeight = height;
         pixelHeight2 = 0.5 * pixelHeight;
         pixelHeight3 = 0.6666667*pixelHeight;
-        pixelMin =pixelWidth < pixelHeight ? pixelWidth : pixelHeight;
+        pixelMin = pixelWidth < pixelHeight ? pixelWidth : pixelHeight;
         scale_x1 = pixelWidth*(0.5-SCALE_PIXEL);
         scale_y1 = (1.0-0.45*SCALE_PIXEL)*pixelHeight;
         scale_y2 = (1.0-0.2*SCALE_PIXEL)*pixelHeight;
@@ -120,7 +119,6 @@ module Transform {
     }
 
     function newTrack() {
-        System.println("newTrack()");
         lat_view_center=$.track.lat_center;
         lon_view_center=$.track.lon_center;
         cos_lat_view_center = Math.cos(lat_view_center);
@@ -136,11 +134,11 @@ module Transform {
             last_x_pos = x_pos;
             last_y_pos = y_pos;
         }
-        if(lat_first_position==null) {
+        if(lat_first_position == null) {
             lat_first_position = lat_pos;
             lon_first_position = lon_pos;
         }
-        if($.track==null) {
+        if($.track == null) {
             lat_view_center = lat_first_position;
             lon_view_center = lon_first_position;
             cos_lat_view_center = Math.cos(lat_view_center);
@@ -197,7 +195,7 @@ module Transform {
         zoomLevel = 0;
         for(zoomLevel= 0; zoomLevel < 25; zoomLevel+=1 ) {
             refScale = refScaleFromLevel(zoomLevel);
-            if(pixelMin/(0.2*pixelWidth)*refScaleFromLevel(zoomLevel)*0.95>$.track.diagonal) {
+            if(pixelMin/(0.2*pixelWidth)*refScale*0.95 > $.track.diagonal) {
                 break;
             }
         }

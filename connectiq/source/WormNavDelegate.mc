@@ -1,4 +1,6 @@
 using Toybox.WatchUi;
+using Toybox.Application;
+
 using Transform;
 
 var eventText;
@@ -46,7 +48,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
                 updateView();
-                WatchUi.requestUpdate();
                 break;
             case DATA_MODE:
                 dataPageChange(1);
@@ -75,7 +76,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
-		//System.println("onBack");
 		// If active session is stopped asked for discard/save/resume		
 		if( $.session != null  &&  $.session.isRecording() == false ) {
         	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
@@ -84,18 +84,18 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         
         // If there is no session exit;
         if ($.session == null || $.session.isRecording() == false) {
-        	System.exit();
+            System.exit();
         	return true;
         }
-        if(mode==TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
+        if(mode == TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
             if(dataView==null) {
             	dataView = new DataView(Data.activeDataScreens[dataPage]);
             }
-            mode=DATA_MODE;
+            mode = DATA_MODE;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);             
         }
-        else if(mode==DATA_MODE) {
-        	mode=TRACK_MODE;
+        else if(mode == DATA_MODE) {
+        	mode = TRACK_MODE;
             WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
         }      
         return true;
@@ -126,7 +126,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     private function startStopActivity() {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
-                if($.session==null) {
+                if($.session == null) {
                     $.session = ActivityRecording.createSession({:name => "WormNavActivity", :sport => $.activityType});
                 }
                 $.session.start();

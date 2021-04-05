@@ -6,11 +6,10 @@ class TrackView extends GenericView {
 
     var cursorSizePixel;
     var posCursor;
-    var isNewTrack=false;
-    var activity_values;
     var fontsize = Graphics.FONT_MEDIUM;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
+    var isPartialTrackDraw = false;
 
     function drawBreadCrumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -43,13 +42,9 @@ class TrackView extends GenericView {
     function drawActivityInfo(dc) {
         var data;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = "D: " + Data.getDataFieldLabelValue(1)[1];
-            activity_values[1] = "T: " + Data.getDataFieldLabelValue(0)[1];
-        }
         var y = 0.5*dc.getFontAscent(fontsize);
-        dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(Transform.pixelWidth2, topPadding + 3*y, fontsize, activity_values[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, "D: " + Data.getDataFieldLabelValue(1)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(Transform.pixelWidth2, topPadding + 3*y, fontsize, "T: " + Data.getDataFieldLabelValue(0)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
 
@@ -78,8 +73,16 @@ class TrackView extends GenericView {
         var x2 = 0.0;
         var y2 = 0.0;
         var xr = 0.0;
-        var yr = 0.0;
-        for(var i = -2; i < xya.size()-3; i+=2 ) {
+        var yr = 0.0; 
+        var stepSize = 2;
+        
+        if(isPartialTrackDraw) {
+            stepSize = 2*(1 + xya.size()/501);
+            //System.println("isPartialTrackDraw: " + stepSize);
+            isPartialTrackDraw = false;
+        }
+        // System.println("drawTrack: " + stepSize);
+        for(var i = -2; i < xya.size()-3; i += stepSize ) {
             if(i >= 0) {
                 x1 = x2;
                 y1 = y2;    
@@ -182,16 +185,12 @@ class TrackView extends GenericView {
             fontsize=Graphics.FONT_XTINY;
         }
         Trace.reset();
-        activity_values = new[2];
-        setDarkMode($.isDarkMode);
     }
 
 
     // Load your resources here
     function onLayout(dc) {
-        //System.println("onLayout(dc)");
-        Transform.setPixelDimensions(dc.getWidth(), dc.getHeight());
-        cursorSizePixel=Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
+        cursorSizePixel = Transform.pixelWidth*Transform.SCALE_PIXEL*0.5;
         if($.device.equals("vivoactive")) {
             topPadding = 0.5*dc.getFontAscent(fontsize);
             bottomPadding = 0.5*dc.getFontAscent(fontsize);
@@ -202,10 +201,12 @@ class TrackView extends GenericView {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        //System.println("onShow()");
-        View.onShow();
-        if($.track==null) {
+        // System.println("onShow()");
+        // View.onShow();
+        if($.track == null) {
             Transform.setZoomLevel(5);
+        } else {
+            isPartialTrackDraw = true;
         }
     }
 
@@ -215,12 +216,6 @@ class TrackView extends GenericView {
         //View.onUpdate(dc);
         dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
-
-        if(isNewTrack && $.track!=null) {
-            isNewTrack = false;
-            Trace.reset();
-            Transform.newTrack();
-        }
 
         if($.track!=null) {
             drawTrack(dc);

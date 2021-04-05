@@ -5,6 +5,7 @@ using Toybox.Lang as Lang;
 using Toybox.StringUtil;
 using Toybox.Sensor;
 using Toybox.UserProfile;
+using Toybox.Application;
 
 module Data {
     const dataFieldMenuLabels = 
@@ -14,7 +15,7 @@ module Data {
         "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
         "Alt|Clock\nTime|Bat.";
 
-    const dataFieldLabels = $.application.split("Timer|Distance|Pace|Speed|" + 
+    const dataFieldLabels = Application.getApp().split("Timer|Distance|Pace|Speed|" + 
             "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
             "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     
             "Altitude|Clock Time|Battery",'|'); 

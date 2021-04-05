@@ -4,6 +4,7 @@ using Toybox.Timer;
 using Toybox.Attention as Att;
 using Toybox.ActivityRecording;
 using Toybox.Sensor;
+using Toybox.System;
 
 using Trace;
 using Data;
@@ -32,8 +33,6 @@ var appTimerTicks = 0;
 
 var isDarkMode = false;
 
-var application = null;
-
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
     var sessionEventTicker = 0;
@@ -43,7 +42,6 @@ class WormNavApp extends Application.AppBase {
     
     function initialize() {
         AppBase.initialize();
-        application = self;
     }
 
     // onStart() is called on application start up
@@ -53,16 +51,18 @@ class WormNavApp extends Application.AppBase {
         // start page is map
         mode=TRACK_MODE;
         device = WatchUi.loadResource(Rez.Strings.device);
+
         Data.setMaxHeartRate();
-        //System.println("Device: " + device);
-        var data= Application.getApp().getProperty("trackData");
-
-        // explicit enablement of heart rate sensor seems to be required to detect an external HRM
+         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
-
+        
+        System.println("Device: " + device);
+        var data= Application.getApp().getProperty("trackData");
+        
+        Transform.setPixelDimensions(System.getDeviceSettings().screenWidth, System.getDeviceSettings().screenHeight);
         if(data!=null) {
             //System.println("load data from property store");
-            track = new TrackModel(data);
+            createNewTrack(data);
             //System.println("Created track from property store!");
         }
 
@@ -118,14 +118,13 @@ class WormNavApp extends Application.AppBase {
     // onStop() is called when your application is exiting
     function onStop(state) {
         Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
+        appTimer.stop();
+        System.println("onStop");
     }
 
     // Return the initial view of your application here
     function getInitialView() {
         trackView = new TrackView();
-        if(track!= null) {
-            trackView.isNewTrack=true;
-        }
         viewDelegate = new WormNavDelegate();
         phoneMethod = method(:onPhone);
         if(Communications has :registerForPhoneAppMessages) {
@@ -136,14 +135,19 @@ class WormNavApp extends Application.AppBase {
         return [trackView, viewDelegate];
     }
 
+    function createNewTrack(data) {
+        track = new TrackModel(data);
+        Trace.reset();
+        Transform.newTrack();
+    }
+
     function onPhone(msg) {
         System.println("onPhone(msg)");
         messageReceived = true;
         mode=TRACK_MODE;
-        track = new TrackModel(msg.data);
         try {
+            createNewTrack(msg.data);
             Application.getApp().setProperty("trackData", msg.data);
-            $.trackView.isNewTrack=true;
             WatchUi.requestUpdate();
         }
         catch( ex ) {
