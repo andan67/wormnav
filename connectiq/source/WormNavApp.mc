@@ -32,8 +32,6 @@ var appTimerTicks = 0;
 
 var isDarkMode = false;
 
-var application = null;
-
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
     var sessionEventTicker = 0;
@@ -43,7 +41,6 @@ class WormNavApp extends Application.AppBase {
     
     function initialize() {
         AppBase.initialize();
-        application = self;
     }
 
     // onStart() is called on application start up

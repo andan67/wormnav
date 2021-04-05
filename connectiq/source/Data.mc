@@ -6,6 +6,7 @@ using Toybox.StringUtil;
 using Toybox.Sensor;
 using Toybox.UserProfile;
 using Toybox.WatchUi;
+using Toybox.Application;
 
 module Data {
     const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.DFMenuLabels);
@@ -16,7 +17,7 @@ module Data {
         // "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
         // "Alt|Clock\nTime|Bat.";
 
-    const dataFieldLabels = $.application.split(WatchUi.loadResource(Rez.Strings.DFLabels),'|');
+    const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.DFLabels),'|');
         // "Timer|Distance|Pace|Speed|" + 
         //     "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
         //     "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     

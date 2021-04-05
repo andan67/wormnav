@@ -1,6 +1,7 @@
 using Toybox.Graphics;
 using Toybox.WatchUi;
 using Toybox.Lang;
+using Toybox.Application;
 
 class GenericListItemFactory extends WatchUi.PickerFactory {
     hidden var mItemValueList = [];
@@ -13,7 +14,7 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
         
         // if itemLabelList is String split into array
         if(itemLabelList instanceof String) {
-            itemLabelList = $.application.split(itemLabelList,'|');
+            itemLabelList =Application.getApp().split(itemLabelList,'|');
         }
 
         if(itemValueList != null) {
