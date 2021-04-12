@@ -1,6 +1,6 @@
 <menu id="DataScreens">
-	<menu-item id="ds0" label="@Strings.Defaults" />
-	<menu-item id="ds1" label="@Strings.Screen_1" />
-	<menu-item id="ds2" label="@Strings.Screen_2" />
-	<menu-item id="ds3" label="@Strings.Screen_3" />
+	<menu-item id="ds0" label="@Strings.ds_def" />
+	<menu-item id="ds1" label="@Strings.ds_1" />
+	<menu-item id="ds2" label="@Strings.ds_2" />
+	<menu-item id="ds3" label="@Strings.ds_3" />
 </menu>

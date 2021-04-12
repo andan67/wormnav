@@ -1,49 +1,49 @@
 <strings>
     <string id="AppName">WormNav</string>
-    <string id="prompt">Click the menu button</string>
-
-    <string id="main_menu_label">Main Menu</string>
-    <string id="main_menu_label_orient">Map orientation</string>
-    <string id="main_menu_label_track">Track</string>
-    <string id="main_menu_label_activity_type">Activity type</string>    
-    <string id="main_menu_label_lap">Auto lap</string>
-    <string id="main_menu_label_bc">Bread crumbs</string>
-    <string id="main_menu_label_center">Center map</string>
-    <string id="main_menu_label_screens">Data screens</string>
-    <string id="main_menu_label_refresh_periods">Refresh periods</string>
-    <string id="main_menu_label_dark_mode">Dark mode</string>
     
-    <string id="north_opts">North\nup|Move-\nment</string>
+    <string id="mm_title">Main menu</string>
+    <string id="mm_orient">Map orientation</string>
+    <string id="mm_course">Course</string>
+    <string id="mm_type">Activity type</string>    
+    <string id="mm_al">Auto lap</string>
+    <string id="mm_bc">Breadcrumbs</string>
+    <string id="mm_center">Center map</string>
+    <string id="mm_screens">Data screens</string>
+    <string id="mm_periods">Refresh periods</string>
+    <string id="mm_bgc">Background color</string>
+    
+    <string id="orient_opts">North\nup|Track-\nup</string>
     <string id="onoff_opts">on|off</string>
+    <string id="color_opts">black|white</string>
+
+    <string id="sm_res">Resume</string>
+    <string id="sm_save">Save</string>
+    <string id="sm_disc">Discard</string>
+
+    <string id="field_1">Field 1</string>
+    <string id="field_2">Field 2</string>
+    <string id="field_3">Field 3</string>
+    <string id="field_4">Field 4</string>
+
+    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
+    <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
+
+    <string id="ds_def">Defaults</string>
+    <string id="ds_1">Screen 1</string>
+    <string id="ds_2">Screen 2</string>
+    <string id="ds_3">Screen 3</string>  
     
-    <string id="save_menu_label_1">Resume</string>
-    <string id="save_menu_label_2">Save</string>
-    <string id="save_menu_label_3">Discard</string>
-
-    <string id="Field_1">Field 1</string>
-    <string id="Field_2">Field 2</string>
-    <string id="Field_3">Field 3</string>
-    <string id="Field_4">Field 4</string>
-
-    <string id="DFMenuLabels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Alt|Clock\nTime|Bat.</string>
-    <string id="DFLabels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Altitude|Clock Time|Battery</string>
-
-    <string id="Defaults">Defaults</string>
-    <string id="Screen_1">Screen 1</string>
-    <string id="Screen_2">Screen 2</string>
-    <string id="Screen_3">Screen 3</string>  
-    
-    <string id="num_data_fields"># Data fields</string>  
+    <string id="num_df"># Data fields</string>  
            
     
-    <string id="Track_view">Track view</string>
-    <string id="Data_view">Data view</string>
-    <string id="Auto_lap_view">Auto lap view</string>
+    <string id="track_view">Track view</string>
+    <string id="data_view">Data view</string>
+    <string id="al_view">Auto lap view</string>
 
-    <string id="Info">Info</string>
-    <string id="Delete">Delete</string>
+    <string id="info">Info</string>
+    <string id="delete">Delete</string>
 
-    <string id="Activities">Generic|Running|Walking|Cycling</string>
+    <string id="activities">Generic|Running|Walking|Cycling</string>
 
     <string id="msg_continue">Continue?</string> 
     <string id="msg_delete_track">Delete Track?</string>   

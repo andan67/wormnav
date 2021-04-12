@@ -1,6 +1,6 @@
 <menu id="DataFields">
-	<menu-item id="df1" label="@Strings.Field_1" />
-	<menu-item id="df2" label="@Strings.Field_2" />
-	<menu-item id="df3" label="@Strings.Field_3" />
-	<menu-item id="df4" label="@Strings.Field_4" />
+	<menu-item id="df1" label="@Strings.field_1" />
+	<menu-item id="df2" label="@Strings.field_2" />
+	<menu-item id="df3" label="@Strings.field_3" />
+	<menu-item id="df4" label="@Strings.field_4" />
 </menu>

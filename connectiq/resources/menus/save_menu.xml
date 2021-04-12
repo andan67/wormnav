@@ -1,5 +1,5 @@
 <menu id="SaveMenu">
-	<menu-item id="resume" label="@Strings.save_menu_label_1" />
-	<menu-item id="save" label="@Strings.save_menu_label_2" />
-	<menu-item id="discard" label="@Strings.save_menu_label_3" />
+	<menu-item id="resume" label="@Strings.sm_res" />
+	<menu-item id="save" label="@Strings.sm_save" />
+	<menu-item id="discard" label="@Strings.sm_disc" />
 </menu>

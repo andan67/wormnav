@@ -1,5 +1,5 @@
 <menu id="RefreshPeriods">	
-	<menu-item id="upt" label="@Strings.Track_view" />
-	<menu-item id="upd" label="@Strings.Data_view" />
-	<menu-item id="upl" label="@Strings.Auto_lap_view" />
+	<menu-item id="update_track" label="@Strings.track_view" />
+	<menu-item id="update_data" label="@Strings.data_view" />
+	<menu-item id="update_al" label="@Strings.al_view" />
 </menu>

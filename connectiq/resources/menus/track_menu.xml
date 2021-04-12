@@ -1,4 +1,4 @@
 <menu id="TrackMenu">
-	<menu-item id="tinfo" label="@Strings.Info" />
-	<menu-item id="tdel" label="@Strings.Delete" />
+	<menu-item id="track_info" label="@Strings.info" />
+	<menu-item id="track_del" label="@Strings.delete" />
 </menu>

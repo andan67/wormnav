@@ -1,5 +1,61 @@
 <strings>
     <string id="AppName">WormNav</string>
+
+<string id="mm_title">Main menu</string>
+    <string id="mm_orient">Map orientation</string>
+    <string id="mm_course">Course</string>
+    <string id="mm_type">Activity type</string>    
+    <string id="mm_al">Auto lap</string>
+    <string id="mm_bc">Breadcrumbs</string>
+    <string id="mm_center">Center map</string>
+    <string id="mm_screens">Data screens</string>
+    <string id="mm_periods">Refresh periods</string>
+    <string id="mm_bgc">Background color</string>
+    
+    <string id="orient_opts">North\nup|Track-\nup</string>
+    <string id="onoff_opts">on|off</string>
+    <string id="color_opts">black|white</string>
+
+    <string id="sm_res">Resume</string>
+    <string id="sm_save">Save</string>
+    <string id="sm_disc">Discard</string>
+
+    <string id="field_1">Field 1</string>
+    <string id="field_2">Field 2</string>
+    <string id="field_3">Field 3</string>
+    <string id="field_4">Field 4</string>
+
+    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
+    <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
+
+    <string id="ds_def">Defaults</string>
+    <string id="ds_1">Screen 1</string>
+    <string id="ds_2">Screen 2</string>
+    <string id="ds_3">Screen 3</string>  
+    
+    <string id="num_df"># Data fields</string>  
+           
+    
+    <string id="track_view">Track view</string>
+    <string id="data_view">Data view</string>
+    <string id="al_view">Auto lap view</string>
+
+    <string id="info">Info</string>
+    <string id="delete">Delete</string>
+
+    <string id="activities">Generic|Running|Walking|Cycling</string>
+
+    <string id="msg_continue">Continue?</string> 
+    <string id="msg_delete_track">Delete Track?</string>   
+    <string id="msg_exit_app">Exit App?</string>   
+    <string id="msg_discard">Discard?</string>  
+
+    <string id="info_lenght">Length/km:</string>
+    <string id="info_name">Name:</string>        
+    <string id="info_points"># points:</string>      
+
+    
+
     <!--  
     <string id="device">generic</string>
     -->
