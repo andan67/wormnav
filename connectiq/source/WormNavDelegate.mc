@@ -120,6 +120,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         var menu = new Rez.Menus.MainMenu();
         menu.setTitle("Main Menu");
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
+        Application.getApp().stopTimer();
         return true;
     }
 

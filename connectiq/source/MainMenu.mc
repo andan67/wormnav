@@ -1,4 +1,3 @@
-
 using Toybox.WatchUi;
 using Toybox.System;
 using Toybox.ActivityRecording;
@@ -19,7 +18,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
         
         var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
         var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
-        
+
         switch(item) {
             
             case :delete:

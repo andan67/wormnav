@@ -112,8 +112,18 @@ class WormNavApp extends Application.AppBase {
 
         // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
-        appTimer.start(method(:onTimer), 1000, true);
+        startTimer();
     }
+
+    function startTimer() {
+        appTimer.start(method(:onTimer), 1000, true);    
+    }
+    
+    function stopTimer() {
+        appTimer.stop();
+    }
+
+
 
     // onStop() is called when your application is exiting
     function onStop(state) {

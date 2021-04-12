@@ -1,6 +1,8 @@
 using Toybox.WatchUi;
+using Toybox.Application;
 using Transform;
 using Trace;
+
 
 class TrackView extends GenericView {
 
@@ -9,7 +11,8 @@ class TrackView extends GenericView {
     var fontsize = Graphics.FONT_MEDIUM;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
-    var isPartialTrackDraw = false;
+    //var isPartialTrackDraw = false;
+    var isPartialTrackDraw = 0;
 
     function drawBreadCrumbs(dc) {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
@@ -76,10 +79,12 @@ class TrackView extends GenericView {
         var yr = 0.0; 
         var stepSize = 2;
         
-        if(isPartialTrackDraw) {
+        //if(isPartialTrackDraw) {
+        if(isPartialTrackDraw > 0) {
             stepSize = 2*(1 + xya.size()/501);
             //System.println("isPartialTrackDraw: " + stepSize);
-            isPartialTrackDraw = false;
+            //isPartialTrackDraw = false;
+            isPartialTrackDraw -= 1;
         }
         // System.println("drawTrack: " + stepSize);
         for(var i = -2; i < xya.size()-3; i += stepSize ) {
@@ -201,13 +206,19 @@ class TrackView extends GenericView {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        // System.println("onShow()");
+        //System.println("onShow()");
         // View.onShow();
         if($.track == null) {
             Transform.setZoomLevel(5);
         } else {
-            isPartialTrackDraw = true;
+            //isPartialTrackDraw = true;
+            Application.getApp().startTimer();
+            isPartialTrackDraw = 2;
         }
+    }
+
+    function onHide() {
+        //System.println("onHide()");
     }
 
     // Update the view
