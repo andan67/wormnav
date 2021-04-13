@@ -1,61 +1,61 @@
 <strings>
+
     <string id="AppName">WormNav</string>
-    <!--  
-    <string id="device">generic</string>
-    -->
+    <string id="prompt">Drücke Menüknopf</string>
 
-    <string id="prompt">Click the menu button</string>
-
-    <string id="main_menu_label">Hauptmenü</string>
-    <string id="main_menu_label_orient">Kartenausrichtung</string>
-    <string id="main_menu_label_track">Track</string>
-    <string id="main_menu_label_activity_type">Aktivitätsart</string>    
-    <string id="main_menu_label_lap">Auto lap</string>
-    <string id="main_menu_label_bc">Bread crumbs</string>
-    <string id="main_menu_label_center">Zentrieren die Karte</string>
-    <string id="main_menu_label_screens">Datenbildschirme</string>
-    <string id="main_menu_label_refresh_periods">Refresh periods</string>
-    <string id="main_menu_label_dark_mode">Dunkelmodus</string>
+    <string id="mm_title">Hauptmenü</string>
+    <string id="mm_orient">Kartenorient.</string>
+    <string id="mm_course">Strecke</string>
+    <string id="mm_type">Aktivitätstyp</string>    
+    <string id="mm_al">Auto lap</string>
+    <string id="mm_bc">Brotkrumen</string>
+    <string id="mm_center">Kartenzentrie.</string>
+    <string id="mm_screens">Datenseiten</string>
+    <string id="mm_periods">Refresh periods</string>
+    <string id="mm_bgc">Hintergrundfarbe</string>
     
-    <string id="north_opts">North\nup|Move-\nment</string>
-    <string id="onoff_opts">on|off</string>
+    <string id="orient_opts">Norden\noben|In\nBewegungsri.</string>
+    <string id="onoff_opts">an|aus</string>
+    <string id="yesno_opts">ja|nein</string>
+    <string id="color_opts">schwarz|weiss</string>
+
+
+    <string id="sm_res">Weiter</string>
+    <string id="sm_save">Speichern</string>
+    <string id="sm_disc">Verwerfen</string>
+
+    <string id="field_1">Feld 1</string>
+    <string id="field_2">Feld 2</string>
+    <string id="field_3">Feld 3</string>
+    <string id="field_4">Feld 4</string>
+
+    <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø Geschw.|Herz-\nfreq.|Herz-\nfreq.\n%Max|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden\nPace|Runden-\ngeschw.|Letze\nRunden\nPace|Letze\nRunden-\ngeschw.|Runden|Höhe|Uhr-\nzeit|Akku</string>
+    <string id="df_labels">Timer|Distanz|Pace|Geschw.|Ø Pace|Ø Geschw.|Herzfreq.|HF % Max|Ø Herzfreq.|Rundenzeit|Rundendist.|Rundenpace|Rundengeschw.|LR Pace|LR Geschwin.|Runden|Höhe|Uhrzeit|Akku</string>
+
+    <string id="ds_def">Standard</string>
+    <string id="ds_1">Seite 1</string>
+    <string id="ds_2">Seite 2</string>
+    <string id="ds_3">Seite 3</string>  
     
-    <string id="save_menu_label_1">Fortsetzen</string>
-    <string id="save_menu_label_2">Sparen</string>
-    <string id="save_menu_label_3">Verwerfen</string>
-
-    <string id="Field_1">Feld 1</string>
-    <string id="Field_2">Feld 2</string>
-    <string id="Field_3">Feld 3</string>
-    <string id="Field_4">Feld 4</string>
-
-    <string id="DFMenuLabels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Alt|Clock\nTime|Bat.</string>
-    <string id="DFLabels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Altitude|Clock Time|Battery</string>
-
-    <string id="Defaults">Standard</string>
-    <string id="Screen_1">Bildschirm 1</string>
-    <string id="Screen_2">Bildschirm 2</string>
-    <string id="Screen_3">Bildschirm 3</string>  
-    
-    <string id="num_data_fields"># Data fields</string>  
+    <string id="num_df"># Datenfelder</string>  
            
     
-    <string id="Track_view">Track view</string>
-    <string id="Data_view">Data view</string>
-    <string id="Auto_lap_view">Auto lap view</string>
+    <string id="track_view">Streckensicht</string>
+    <string id="data_view">Datensicht</string>
+    <string id="al_view">Auto lap Sicht</string>
 
-    <string id="Info">Info</string>
-    <string id="Delete">Löschen</string>
-    
-    <string id="Activities">Generisch|Laufen|Gehen|Radfahren</string>
-    
-    <string id="msg_continue">Fortsetzen?</string> 
-    <string id="msg_delete_track">Löschen Track?</string>   
-    <string id="msg_exit_app">Beenden App?</string>   
+    <string id="info">Info</string>
+    <string id="delete">Löschen</string>
+
+    <string id="activities">Generisch|Laufen|Walking|Radfahren</string>
+
+    <string id="msg_continue">Weiter?</string> 
+    <string id="msg_delete_track">Strecke löschen?</string>   
+    <string id="msg_exit_app">App beenden?</string>   
     <string id="msg_discard">Verwerfen?</string>  
 
     <string id="info_lenght">Länge/km:</string>
     <string id="info_name">Name:</string>        
-    <string id="info_points"># punkte:</string>      
-        
+    <string id="info_points"># Punkte:</string>  
+            
 </strings>

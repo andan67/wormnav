@@ -89,7 +89,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 defaultValue = $.activityType;
                 factory = new GenericListItemFactory(
                     [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING, ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
-                    WatchUi.loadResource(Rez.Strings.Activities),
+                    WatchUi.loadResource(Rez.Strings.activities),
                     {:font => Graphics.FONT_SMALL});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_al);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
@@ -191,7 +191,7 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
         dataMenuContext = screen;
         var defaultValue = Data.dataScreens[screen].size();
         var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
-        var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Stringsnum_df), [factory], [defaultValue], dataMenuContext);
+        var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.num_df), [factory], [defaultValue], dataMenuContext);
         WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(dataMenuContext), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }

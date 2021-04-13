@@ -1,5 +1,6 @@
 <strings>
     <string id="AppName">WormNav</string>
+    <string id="prompt">Click the menu button</string>
     
     <string id="mm_title">Main menu</string>
     <string id="mm_orient">Map orientation</string>
@@ -14,7 +15,9 @@
     
     <string id="orient_opts">North\nup|Track-\nup</string>
     <string id="onoff_opts">on|off</string>
+    <string id="yesno_opts">yes|no</string>
     <string id="color_opts">black|white</string>
+
 
     <string id="sm_res">Resume</string>
     <string id="sm_save">Save</string>
@@ -25,8 +28,8 @@
     <string id="field_3">Field 3</string>
     <string id="field_4">Field 4</string>
 
-    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
-    <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
+    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|Heart\nRate\n%Max|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
+    <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|HR % Max|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
 
     <string id="ds_def">Defaults</string>
     <string id="ds_1">Screen 1</string>
