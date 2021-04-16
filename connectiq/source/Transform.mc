@@ -154,6 +154,7 @@ module Transform {
         setViewCenter(lat_pos,lon_pos);
         setHeading();
     }
+    
     function xy_2_screen(x, y) {
         var xr = scaleFactor*(x-x_d);
         var yr = scaleFactor*(y-y_d);
