@@ -4,10 +4,8 @@ using Toybox.Position;
 
 module Trace {
 
-    const BUFFER_SIZE = 10;
-
-    var x_array = new [BUFFER_SIZE];
-    var y_array = new [BUFFER_SIZE];
+    var xy;
+    var breadCrumbNumber = 10;
     var pos_start_index;
     var pos_nelements;
     var cumDistance;
@@ -31,11 +29,11 @@ module Trace {
     var lastPositionTime = 0;
     var positionDistance = 0.0;
 
-    
     function reset() {
+        xy = new [2 * breadCrumbNumber];
         pos_nelements = 0;
         pos_start_index = 0;
-        cumDistance=breadCrumbDist;
+        cumDistance = breadCrumbDist;
         lat_last_pos=null;
         lon_last_pos=null;
         positionTime = 0;
@@ -43,20 +41,32 @@ module Trace {
         positionDistance = 0.0;
     }
 
-    function putPosition(lat,lon) {
-        var xy = Transform.ll_2_xy(lat,lon);
+    function setBreadCrumbNumber(number) {
+        breadCrumbNumber = number;
+        reset();
+    }
 
-        if(pos_nelements<BUFFER_SIZE) {
-            x_array[pos_nelements] = xy[0];
-            y_array[pos_nelements] = xy[1];
+    function putBreadcrumbLastPosition() {
+        if(lat_last_pos != null) {
+            putBreadcrumbPosition(lat_last_pos, lon_last_pos);
+            cumDistance = 0.0;
+        }
+    } 
+
+
+    function putBreadcrumbPosition(lat,lon) {
+        var _xy = Transform.ll_2_xy(lat,lon);
+
+        if(pos_nelements < breadCrumbNumber) {
+            xy[2*pos_nelements] = _xy[0];
+            xy[2*pos_nelements + 1] = _xy[1];
             pos_nelements += 1;
         }
         else {
-            x_array[pos_start_index] = xy[0];
-            y_array[pos_start_index] = xy[1];
-            pos_start_index = (pos_start_index +1) % BUFFER_SIZE;
+            xy[2*pos_start_index] = _xy[0];
+            xy[2*pos_start_index + 1] = _xy[1];
+            pos_start_index = (pos_start_index +1) % breadCrumbNumber;
         }
-
     }
 
     function newLatLonPosition(lat_pos,lon_pos) {
@@ -71,7 +81,7 @@ module Trace {
         lon_last_pos=lon_pos;
 
         if((cumDistance >= breadCrumbDist) && (breadCrumbDist > 0)) {
-            putPosition(lat_last_pos,lon_last_pos);
+            putBreadcrumbPosition(lat_last_pos,lon_last_pos);
             cumDistance -= breadCrumbDist;
         }
     }

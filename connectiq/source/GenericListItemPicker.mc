@@ -5,9 +5,8 @@ using Toybox.WatchUi;
 class GenericListItemPicker extends WatchUi.Picker {
      var mContext;
      
-    function initialize(title, pattern, defaultValues, context) {
+    function initialize(title, pattern, defaultValues) {
         var defaults = null;
-        mContext = context;
         if(defaultValues != null && pattern.size()==defaultValues.size()) {
             defaults = new [pattern.size()];
             for(var i=0; i<defaults.size(); i+=1) {
@@ -28,13 +27,4 @@ class GenericListItemPicker extends WatchUi.Picker {
         dc.clear();
         Picker.onUpdate(dc);
     }
-    
-    function getContext() {
-        return mContext;
-    }
-    
-    function setContext(context) {
-        mContext=context;
-    }
-    
 }

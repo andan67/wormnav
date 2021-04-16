@@ -84,6 +84,10 @@ class WormNavApp extends Application.AppBase {
             Trace.autolapDistance = Application.getApp().getProperty("autolapDistance");
         }
 
+        if(Application.getApp().getProperty("breadCrumbNumber")!=null) {
+            Trace.breadCrumbNumber = Application.getApp().getProperty("breadCrumbNumber");
+        }
+
         if(Application.getApp().getProperty("breadCrumbDist")!=null) {
             Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }

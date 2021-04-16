@@ -19,14 +19,14 @@ It consists of two apps:
 
 **Features**
 - Manage tracks and routes with companion app
-- Standalone navigation along selected track using Garmin device
-- Configurable auto lap and bread crumb navigation
-- Map zoom in/out and center
+- Standalone track navigation with the Garmin device (i.e. no smartphone needed)
+- Map zoom in/out and center 
+- Auto lap by configurable distance
 - Show activity data on configurable data screens
+- Breadcrumb tracking by configurable distance or manual setting
  
 **Limitations**
 - The ConnectIQ app is optimized for Garmin FR 23x, but also runnable on FR 245, FR 6xx, FR 735xt, vivoactive 3&4, Venu
-- Potential issue with Garmin's Android BLE library on Android 11 devices
 
 **alsama/wormnav CHANGES:**
 - Added function: "get_va_device" to determine vivoactive devices so can use the "resources-LANG" strings XML files to transalate texts.

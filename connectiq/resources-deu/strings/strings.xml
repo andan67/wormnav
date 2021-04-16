@@ -29,7 +29,7 @@
     <string id="field_3">Feld 3</string>
     <string id="field_4">Feld 4</string>
 
-    <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø Geschw.|Herz-\nfreq.|Herz-\nfreq.\n%Max|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden\nPace|Runden-\ngeschw.|Letze\nRunden\nPace|Letze\nRunden-\ngeschw.|Runden|Höhe|Uhr-\nzeit|Akku</string>
+    <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø\nGeschw.|Herz-\nfreq.|Herz-\nfreq.\n% Max|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden\nPace|Runden-\ngeschw.|Letze\nRunden\nPace|Letze\nRunden-\ngeschw.|Runden|Höhe|Uhr-\nzeit|Akku</string>
     <string id="df_labels">Timer|Distanz|Pace|Geschw.|Ø Pace|Ø Geschw.|Herzfreq.|HF % Max|Ø Herzfreq.|Rundenzeit|Rundendist.|Rundenpace|Rundengeschw.|LR Pace|LR Geschwin.|Runden|Höhe|Uhrzeit|Akku</string>
 
     <string id="ds_def">Standard</string>

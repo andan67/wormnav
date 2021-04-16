@@ -46,7 +46,7 @@
     <string id="info">Info</string>
     <string id="delete">Supprimer</string>
 
-    <string id="activities">Génériq.Course\nà\npied|Marcher|Cyclisme</string>
+    <string id="activities">Génériq.|Course\nà\npied|Marcher|Cyclisme</string>
 
     <string id="msg_continue">Reprendre?</string> 
     <string id="msg_delete_track">Supprimer le parcours?</string>   

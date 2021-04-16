@@ -10,19 +10,8 @@ using Toybox.Application;
 
 module Data {
     const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.dm_labels);
-
-        // "Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|" +
-        // "Heart\nRate|% max\nHeart\nRate|Avg\nHeart\nRate|" +
-        // "Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|" +
-        // "Last\nLap\nPace|Last\nLap\nSpeed|Laps|" +
-        // "Alt|Clock\nTime|Bat.";
-
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
-        // "Timer|Distance|Pace|Speed|" + 
-        //     "Ø Pace|Ø Speed|Heart Rate|% max HR|Ø Heart Rate|" + 
-        //     "Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|" +     
-        //     "Altitude|Clock Time|Battery",'|'); 
-
+    
     const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
 
     var dataScreens = dataScreensDefault;
@@ -103,7 +92,8 @@ module Data {
                 dataValue = Trace.autolapDistance > 0 ? (0.001*Data.Trace.lapDistance).format("%.2f") : null;
                 break;
             case 11: // LAP_PACE
-                 dataValue = Trace.autolapDistance > 0 ? Trace.lapCounter : null;
+                dataValue = (Trace.autolapDistance > 0 && Trace.lapTime > 0) ?
+                    Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime) : null;
                 break;
             case 12: // LAP_SPEED
                 dataValue = (Trace.autolapDistance > 0  && Trace.lapTime > 0) ?

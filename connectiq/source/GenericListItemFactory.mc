@@ -14,7 +14,7 @@ class GenericListItemFactory extends WatchUi.PickerFactory {
         
         // if itemLabelList is String split into array
         if(itemLabelList instanceof String) {
-            itemLabelList =Application.getApp().split(itemLabelList,'|');
+            itemLabelList = Application.getApp().split(itemLabelList,'|');
         }
 
         if(itemValueList != null) {

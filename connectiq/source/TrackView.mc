@@ -32,8 +32,8 @@ class TrackView extends GenericView {
         var data;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = "D: " + Data.getDataFieldLabelValue(1)[1];
-            activity_values[1] = "T: " + Data.getDataFieldLabelValue(0)[1];
+            activity_values[0] = Data.getDataFieldLabelValue(1)[1] + "km";
+            activity_values[1] = Data.getDataFieldLabelValue(0)[1];
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -81,15 +81,13 @@ class TrackView extends GenericView {
             }
         }
 
-        if(Trace.breadCrumbDist > 0) {
-            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-
-            for(var i=0; i < Trace.pos_nelements; i += 1) {
-                var j = (Trace.pos_start_index + i) % Trace.BUFFER_SIZE;
-                xr = scaleFactor*(Trace.x_array[j] - x_d);
-                yr = scaleFactor*(Trace.y_array[j] - y_d);
-                dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
-            }
+        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+        xya = Trace.xy; 
+        for(var i=0; i < Trace.pos_nelements; i += 1) {
+            var j = (Trace.pos_start_index + i) % Trace.breadCrumbNumber;
+            xr = scaleFactor*(xya[2*j] - x_d);
+            yr = scaleFactor*(xya[2*j + 1] - y_d);
+            dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
         }
     }
 
@@ -199,7 +197,7 @@ class TrackView extends GenericView {
     function onShow() {
         //System.println("onShow()");
         View.onShow();
-        if($.track==null) {
+        if($.track == null) {
             Transform.setZoomLevel(5);
         }
     }
@@ -211,13 +209,13 @@ class TrackView extends GenericView {
         dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
 
-        if(isNewTrack && $.track!=null) {
+        if(isNewTrack && $.track != null) {
             isNewTrack = false;
             Trace.reset();
             Transform.newTrack();
         }
 
-        if($.track!=null) {
+        if($.track != null) {
             drawTrack(dc);
         }
 
@@ -225,7 +223,7 @@ class TrackView extends GenericView {
             drawPositionArrowAndCompass(dc);
         }
 
-        if(session!=null) {
+        if(session != null) {
             drawActivityInfo(dc);
         }
 
