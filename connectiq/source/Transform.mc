@@ -136,7 +136,7 @@ module Transform {
             last_x_pos = x_pos;
             last_y_pos = y_pos;
         }
-        if(lat_first_position==null) {
+        if(lat_first_position == null) {
             lat_first_position = lat_pos;
             lon_first_position = lon_pos;
         }
@@ -165,7 +165,7 @@ module Transform {
                     ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
         }
     }
-
+    
     function ll_2_xy(lat, lon) {
         var ll = lon-lon_view_center;
         var cos_lat = Math.cos(lat);

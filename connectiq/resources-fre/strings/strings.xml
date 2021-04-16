@@ -24,9 +24,9 @@
     <string id="sm_disc">Ignorer</string>
 
     <string id="field_1">Champ 1</string>
-    <string id="field_2">Champ  2</string>
-    <string id="field_3">Champ  3</string>
-    <string id="field_4">Champ  4</string>
+    <string id="field_2">Champ 2</string>
+    <string id="field_3">Champ 3</string>
+    <string id="field_4">Champ 4</string>
 
     <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\nCard.|Fréq.\nCard.\n% Max|Fréq.\nCard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits |Alt.|Heure|Bat.</string>
     <string id="df_labels">Chrono|Distance|Allure|Vitesse|Ø Allure|Ø Vitesse|Fréq. Card.|FR % Max|Ø Fréq. Card.|Temps circuit|Dist. circuit|Allure circuit|Vitesse circuit|Allure d.c.|Vitesse d.c.|Circuits |Altitude|Heure|Batterie</string>

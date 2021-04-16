@@ -50,7 +50,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 factory =  new GenericListItemFactory(
                     [true,false],
                     WatchUi.loadResource(Rez.Strings.onoff_opts),
-                    null;)
+                    null);
                     //{:font => Graphics.FONT_LARGE});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_center);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
