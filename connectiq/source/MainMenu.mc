@@ -50,7 +50,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 factory =  new GenericListItemFactory(
                     [true,false],
                     WatchUi.loadResource(Rez.Strings.onoff_opts),
-                    {:font => Graphics.FONT_LARGE});
+                    null;)
+                    //{:font => Graphics.FONT_LARGE});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_center);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:center), WatchUi.SLIDE_IMMEDIATE);
@@ -60,9 +61,10 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 factory =  new GenericListItemFactory(
                     [true,false],
                      WatchUi.loadResource(Rez.Strings.color_opts),
-                    {:font => Graphics.FONT_LARGE});
+                    null);
+                    //{:font => Graphics.FONT_LARGE});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_bgc);
-                picker = new GenericListItemPicker("Dark mode", [factory], [defaultValue], null);
+                picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:background), WatchUi.SLIDE_IMMEDIATE);
                 return true;    
             case :autolap:
@@ -91,7 +93,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING, ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
                     WatchUi.loadResource(Rez.Strings.activities),
                     {:font => Graphics.FONT_SMALL});
-                text_label = WatchUi.loadResource(Rez.Strings.mm_al);
+                text_label = WatchUi.loadResource(Rez.Strings.mm_type);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
 				WatchUi.pushView(picker, new GenericPickerDelegate(:activity), WatchUi.SLIDE_UP);
                 return true;
@@ -276,7 +278,7 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
         var periodLabels = ["1s", "2s", "5s", "10s", "15s", "30s", "60s"];
         
         switch ( item ) {
-            case :upt:
+            case :update_track:
             	defaultValue = $.trackViewPeriod;
             	key = "trackViewPeriod";
             	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
@@ -284,7 +286,7 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
 			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue], key);
 			
                 break;
-            case :upd:
+            case :update_data:
             	defaultValue = $.dataViewPeriod;
             	key = "dataViewPeriod";
             	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
@@ -292,7 +294,7 @@ class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
 			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue], key);
             	
                 break;
-            case :upl:
+            case :update_al:
             	defaultValue = $.lapViewPeriod;
             	key = "lapViewPeriod";
             	factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);

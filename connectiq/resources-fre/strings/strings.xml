@@ -14,7 +14,7 @@
     <string id="mm_bgc">Couleur d'arrière-plan</string>
     
     <string id="orient_opts">Nord\nen\nhaut|Tracé\nen\nhaut</string>
-    <string id="onoff_opts">marche|arrêt</string>
+    <!-- <string id="onoff_opts">marche|arrêt</string> -->
     <string id="yesno_opts">oui|non</string>
     <string id="color_opts">noir|blanc</string>
 
@@ -36,7 +36,7 @@
     <string id="ds_2">Écran 2</string>
     <string id="ds_3">Écran 3</string>  
     
-    <string id="num_df"># champs de données</string>  
+    <string id="num_df"># champs données</string>  
            
     
     <string id="track_view">Vue parcours</string>
@@ -46,7 +46,7 @@
     <string id="info">Info</string>
     <string id="delete">Supprimer</string>
 
-    <string id="activities">Générique|Course à pied|Marcher|Cyclisme</string>
+    <string id="activities">Génériq.Course\nà\npied|Marcher|Cyclisme</string>
 
     <string id="msg_continue">Reprendre?</string> 
     <string id="msg_delete_track">Supprimer le parcours?</string>   
