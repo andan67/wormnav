@@ -12,18 +12,6 @@ class TrackView extends GenericView {
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
-    function drawBreadCrumbs(dc) {
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-        var xy_pos;
-
-        for(var i=0; i < Trace.pos_nelements; i+=1) {
-            var j = (Trace.pos_start_index +i) % Trace.BUFFER_SIZE;
-            xy_pos = Transform.xy_2_screen(Trace.x_array[j], Trace.y_array[j]);
-            dc.fillCircle(xy_pos[0],xy_pos[1] , 3);
-        }
-    }
-
-
     function drawScale(dc) {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
@@ -79,22 +67,33 @@ class TrackView extends GenericView {
         var y2 = 0.0;
         var xr = 0.0;
         var yr = 0.0;
-        for(var i = -2; i < xya.size()-3; i+=2 ) {
+        for(var i = -2; i < xya.size() - 3; i += 2 ) {
             if(i >= 0) {
                 x1 = x2;
                 y1 = y2;    
             }
-            xr = scaleFactor*(xya[i+2]-x_d);
-            yr = scaleFactor*(xya[i+3]-y_d);
+            xr = scaleFactor*(xya[i+2] - x_d);
+            yr = scaleFactor*(xya[i+3] - y_d);
             x2 = xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth;
             y2 = ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth;
             if(i >= 0) {
                 dc.drawLine(x1,y1,x2,y2); 
             }
         }
+
+        if(Trace.breadCrumbDist > 0) {
+            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+
+            for(var i=0; i < Trace.pos_nelements; i += 1) {
+                var j = (Trace.pos_start_index + i) % Trace.BUFFER_SIZE;
+                xr = scaleFactor*(Trace.x_array[j] - x_d);
+                yr = scaleFactor*(Trace.y_array[j] - y_d);
+                dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
+            }
+        }
     }
 
-    function drawTrace(dc) {
+    function drawPositionArrowAndCompass(dc) {
 
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
@@ -170,10 +169,6 @@ class TrackView extends GenericView {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         points[1] = [Transform.compass_x + dx2, Transform.compass_y + dy2 - bottomPadding];
         dc.fillPolygon(points);
-
-        if(Trace.breadCrumbDist > 0) {
-            drawBreadCrumbs(dc);
-        }
     }
 
     function initialize() {
@@ -227,7 +222,7 @@ class TrackView extends GenericView {
         }
 
         if(Transform.x_pos != null) {
-            drawTrace(dc);
+            drawPositionArrowAndCompass(dc);
         }
 
         if(session!=null) {

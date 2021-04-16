@@ -62,7 +62,7 @@ module Trace {
     function newLatLonPosition(lat_pos,lon_pos) {
         Transform.isTrackCentered = false;
         Transform.setPosition(lat_pos,lon_pos);
-        if(lat_last_pos!=null) {
+        if(lat_last_pos != null) {
             positionDistance = Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
             cumDistance += positionDistance;            
         }
@@ -72,7 +72,7 @@ module Trace {
 
         if((cumDistance >= breadCrumbDist) && (breadCrumbDist > 0)) {
             putPosition(lat_last_pos,lon_last_pos);
-            cumDistance -=breadCrumbDist;
+            cumDistance -= breadCrumbDist;
         }
     }
 
@@ -93,7 +93,7 @@ module Trace {
 
     function isAutolap(setNewLap) {
         var isLap = false;
-        if(autolapDistance > 0 && $.session!=null && $.session.isRecording() && Activity.getActivityInfo()!=null) {
+        if(autolapDistance > 0 && $.session != null && $.session.isRecording() && Activity.getActivityInfo() != null) {
             isAutoLapActive = true;
             var distance = Activity.getActivityInfo().elapsedDistance;
             var time = Activity.getActivityInfo().timerTime;

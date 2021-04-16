@@ -154,17 +154,6 @@ module Transform {
         setViewCenter(lat_pos,lon_pos);
         setHeading();
     }
-    
-    function xy_2_screen(x, y) {
-        var xr = scaleFactor*(x-x_d);
-        var yr = scaleFactor*(y-y_d);
-        if(Transform.northHeading || Transform.centerMap || Transform.isTrackCentered) {
-            return [xs_center+scaleFactor*(x-x_d), ys_center-scaleFactor*(y-y_d)];
-        } else {
-            return [xs_center+xr*cos_heading_smooth - yr*sin_heading_smooth,
-                    ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
-        }
-    }
 
     function ll_2_xy(lat, lon) {
         var ll = lon-lon_view_center;

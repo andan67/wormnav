@@ -69,7 +69,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceValues,
                     distanceLabels,
                     null);
-                picker = new GenericListItemPicker("Bread crumbs", [factory], [defaultValue], null);
+                picker = new GenericListItemPicker("Breadcrumbs", [factory], [defaultValue], null);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:breadCrumbs), WatchUi.SLIDE_UP);
                 return true;
             case :activityType:
