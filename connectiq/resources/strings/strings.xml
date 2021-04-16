@@ -28,6 +28,11 @@
     <string id="field_3">Field 3</string>
     <string id="field_4">Field 4</string>
 
+    <string id="bc_set">Set current</string>
+    <string id="bc_clear">Clear</string>
+    <string id="bc_number">Number</string>
+    <string id="bc_distance">Distance</string>
+
     <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|Heart\nRate\n%Max|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
     <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|HR % Max|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
 
