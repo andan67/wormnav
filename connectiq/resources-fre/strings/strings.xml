@@ -11,12 +11,12 @@
     <string id="mm_center">Carte centrée </string>
     <string id="mm_screens">Écrans de données</string>
     <string id="mm_periods">Cycle de rafraîchissement</string>
-    <string id="mm_bgc">Couleur d'arrière-plan</string>
+    <string id="mm_bgc">Couleur de fond</string>
     
     <string id="orient_opts">Nord\nen\nhaut|Tracé\nen\nhaut</string>
     <!-- <string id="onoff_opts">marche|arrêt</string> -->
-    <string id="yesno_opts">oui|non</string>
-    <string id="color_opts">noir|blanc</string>
+    <string id="yesno_opts">Oui|Non</string>
+    <string id="color_opts">Noir|Blanc</string>
 
 
     <string id="sm_res">Reprendre</string>
@@ -28,8 +28,8 @@
     <string id="field_3">Champ 3</string>
     <string id="field_4">Champ 4</string>
 
-    <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\nCard.|Fréq.\nCard.\n% Max|Fréq.\nCard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits |Alt.|Heure|Bat.</string>
-    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Ø Allure|Ø Vitesse|Fréq. Card.|FR % Max|Ø Fréq. Card.|Temps circuit|Dist. circuit|Allure circuit|Vitesse circuit|Allure d.c.|Vitesse d.c.|Circuits |Altitude|Heure|Batterie</string>
+    <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\ncard.|Fréq.\ncard.\n%max.|Fréq.\ncard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits|Alt.|Heure|Bat.</string>
+    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréquence card.|FC % maximale|FC moyenne|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vit. dern. circ.|Circuits|Altitude|Heure|Batterie</string>
 
     <string id="ds_def">Défaut</string>
     <string id="ds_1">Écran 1</string>

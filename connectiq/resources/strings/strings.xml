@@ -14,9 +14,9 @@
     <string id="mm_bgc">Background color</string>
     
     <string id="orient_opts">North\nup|Track-\nup</string>
-    <string id="onoff_opts">on|off</string>
-    <string id="yesno_opts">yes|no</string>
-    <string id="color_opts">black|white</string>
+    <string id="onoff_opts">On|Off</string>
+    <string id="yesno_opts">Yes|No</string>
+    <string id="color_opts">Black|White</string>
 
 
     <string id="sm_res">Resume</string>
@@ -33,8 +33,8 @@
     <string id="bc_number">Number</string>
     <string id="bc_distance">Distance</string>
 
-    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|Heart\nRate\n%Max|Avg\nHeart\nRate|Lap\nTimer|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Clock\nTime|Bat.</string>
-    <string id="df_labels">Timer|Distance|Pace|Speed|Ø Pace|Ø Speed|Heart Rate|HR % Max|Ø Heart Rate|Lap Timer|Lap Dist.|Lap Pace|Lap Speed|LL Pace|LL Speed|Laps|Elevation|Clock Time|Battery</string>
+    <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|Heart\nRate\n%Max|Avg\nHeart\nRate|Lap\nTime|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Time\nof\nDay|Battery</string>
+    <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
 
     <string id="ds_def">Defaults</string>
     <string id="ds_1">Screen 1</string>

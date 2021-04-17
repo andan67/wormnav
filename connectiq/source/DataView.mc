@@ -29,7 +29,7 @@ class DataView extends GenericView {
             mDataFields[i] = dataFields[i];
         }
         numberDataFields = Data.min(4,mDataFields.size());
-
+        font = Graphics.FONT_SMALL;
         switch(numberDataFields) {
             case 1:
                 font = Graphics.FONT_LARGE;
@@ -42,12 +42,12 @@ class DataView extends GenericView {
             case 3:
             case 4:
             default:
-                if($.device=="vivoactive") {
-                    font = Graphics.FONT_SMALL;
-                    fontNumber = Graphics.FONT_NUMBER_HOT;
+                if($.device.equals("vivoactive")) {
+                    font = Graphics.FONT_XTINY;
+                    fontNumber = Graphics.FONT_NUMBER_MEDIUM;
                 } else
                 {
-                    font = Graphics.FONT_MEDIUM;
+                    font = Graphics.FONT_SMALL;
                     fontNumber = Graphics.FONT_NUMBER_MEDIUM;
                 }
                 break;
@@ -113,7 +113,7 @@ class DataView extends GenericView {
         var dataLabelValue = null;
         for(var i=0; i< numberDataFields; i+= 1) {
             dataLabelValue = Data.getDataFieldLabelValue(mDataFields[i]);
-            drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1],dfCenters[i][2]);
+            drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1], dfCenters[i][2]);
         }
 
         drawStartStop(dc);
@@ -147,7 +147,6 @@ class LapView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_BLACK);
         dc.clear();
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        //System.println("WormNavLapView");
         dc.drawText(dc.getWidth()/2, dc.getFontHeight(Graphics.FONT_LARGE), Graphics.FONT_LARGE, "Lap " + Trace.lapCounter, Graphics.TEXT_JUSTIFY_CENTER);
         dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTimeWithDecimals(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
     }
