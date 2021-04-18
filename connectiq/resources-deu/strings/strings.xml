@@ -30,7 +30,7 @@
     <string id="field_4">Feld 4</string>
 
     <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø\nGeschw.|Herz-\nfreq.|Herz-\nfreq.\n%Max.|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden-\npace|Runden-\ngeschw.|Letze\nRunden\n- Pace|Letze\nRunde\n- Geschw.|Runden|Höhe|Uhr-\nzeit|Akku-\nstand</string>
-    <string id="df_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø Geschw.|Herzfrequenz|HF - %Max.|Ø HF|Rundenzeit|Rundendist.|Rundenpace|Rd. Geschw.|Pace - Letz. Rd.|Geschw. Le. Rd.|Runden|Höhe|Uhrzeit|Akkustand</string>
+    <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist,|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
 
     <string id="ds_def">Standard</string>
     <string id="ds_1">Seite 1</string>

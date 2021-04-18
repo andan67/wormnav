@@ -36,8 +36,13 @@ class DataView extends GenericView {
                 fontNumber = Graphics.FONT_NUMBER_HOT;
                 break;
             case 2:
-                font = Graphics.FONT_LARGE;
-                fontNumber = Graphics.FONT_NUMBER_HOT;
+                if($.device.equals("vivoactive")) {
+                    font = Graphics.FONT_MEDIUM;
+                    fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+                } else {
+                    font = Graphics.FONT_LARGE;
+                    fontNumber = Graphics.FONT_NUMBER_HOT;
+                }
                 break;
             case 3:
             case 4:
@@ -55,10 +60,10 @@ class DataView extends GenericView {
     }
 
     function onLayout(dc) {
-        width=dc.getWidth();
-        height=dc.getHeight();
+        width = dc.getWidth();
+        height = dc.getHeight();
 
-        if(numberDataFields==0) {
+        if(numberDataFields == 0) {
             return;
         }
 
@@ -68,31 +73,41 @@ class DataView extends GenericView {
         var h2 = dc.getFontHeight(fontNumber);
         var a2 = dc.getFontAscent(fontNumber);
         var d2 = dc.getFontDescent(fontNumber);
-
-        var h = height/Data.min(numberDataFields,3);
-        var b = 0.5*(h-a1-a2-d1);
-        var y1 = b + 0.5*h1;
-        var y2 = b + h1 + 0.5*(a2-d2);
-        var w2= 0.5*width;
-
+        
+        var offset = 0;
+        var h = height / Data.min(numberDataFields,3);
+        if($.device.equals("vivoactive") && numberDataFields > 1) {
+            // narrow vertical size of data fields for vivoactive devices with round screen
+            if(numberDataFields > 2) {
+                offset = 2 * (h - h1 - h2);
+                h = (height - 2* offset) / 3;
+            } else {
+                offset = 1* (h - h1 - h2);
+                h = (height - 2* offset) / 2;
+            }
+        }
+        // top position of data label text in pixels from top of data field
+        var y1 = 0.5 * (h - h1 - h2 + d2);
+        // top position of data value text in pixels from top of data field
+        var y2 = y1 + a1;
+        var w2= 0.5 * width;
         switch(numberDataFields) {
             case 1:
-                //
                 dfLines = [];
                 dfCenters = [[w2, y1-d2, y2-d2]];
                 break;
             case 2:
-                dfLines = [[[0,h],[width,h]]];
-                dfCenters = [[w2,y1,y2],[w2,h+y1,h+y2]];
+                dfLines = [[[0, offset + h],[width, offset + h]]];
+                dfCenters = [[w2, offset + y1, offset + y2],[w2, offset + h + y1, offset + h + y2]];
                 break;
             case 3:
-                dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]]];
-                dfCenters = [[w2,y1,y2],[w2,h+y1,h+y2],[w2,2*h+y1,2*h+y2]];
+                dfLines = [[[0, offset + h],[width, offset + h]],[[0, offset + 2*h],[width, offset + 2*h]]];
+                dfCenters = [[w2, offset + y1, offset + y2],[w2, offset + h + y1, offset + h + y2],[w2, offset + 2*h + y1, offset + 2*h + y2]];
                 break;
             case 4:
             default:
-                dfLines = [[[0,h],[width,h]],[[0,2*h],[width,2*h]],[[w2,h],[w2,2*h]]];
-                dfCenters = [[w2,y1,y2],[0.5*w2,h+y1,h+y2],[1.5*w2,h+y1,h+y2],[w2,2*h+y1,2*h+y2]];
+                dfLines = [[[0,offset + h],[width,offset + h]],[[0,offset + 2*h],[width,offset + 2*h]],[[w2,offset + h],[w2,offset + 2*h]]];
+                dfCenters = [[w2, offset + y1, offset + y2],[0.5*w2, offset + h+ y1, offset + h + y2],[1.5*w2, offset + h+ y1, offset + h + y2],[w2, offset + 2*h + y1, offset +2*h + y2]];
                 break;
         }
     }
@@ -128,8 +143,10 @@ class DataView extends GenericView {
 
         }
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        //dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        //dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER);
         return;
     }
    

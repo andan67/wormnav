@@ -29,7 +29,7 @@
     <string id="field_4">Champ 4</string>
 
     <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\ncard.|Fréq.\ncard.\n%max.|Fréq.\ncard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits|Alt.|Heure|Bat.</string>
-    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréquence card.|FC % maximale|FC moyenne|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vit. dern. circ.|Circuits|Altitude|Heure|Batterie</string>
+    <string id="df_labels">Chrono |Distance |Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Heure|Batterie</string>
 
     <string id="ds_def">Défaut</string>
     <string id="ds_1">Écran 1</string>

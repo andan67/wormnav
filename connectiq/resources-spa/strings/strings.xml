@@ -29,7 +29,7 @@
     <string id="field_4">Campo 4</string>
 
     <string id="dm_labels">Tiempo|Dist.|Ritmo|Veloc.|Ritmo\nmedio|Veloc.\nmedia|Frec.\ncard.|Frec.\ncard.\n% máx.|Frec.\ncard.\nmedia|Tiempo\nde\nvuelta|Dist.\nvuelta|Ritmo\nvuelta|Veloc.\nvuelta|Ritmo\nen ult.\nvuelta|Veloc.\nde ult.\nvuelta\nVeloc.|Vueltas|Alt.|Hora\ndel\ndía|Bat.</string>
-    <string id="df_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo medio|Velocidad media|Frec. cardiaca|%FC máxima|FC media|Tiempo de vuelta|Distancia vuelta|Ritmo en vuelta|Velocidad vuelta |Ritmo últ. vuelta|Vel. últ. vuel.|Vueltas|Altitud|Hora del día|Batería </string>
+    <string id="df_labels">Tiempo|Distancia |Ritmo|Velocidad |Ritmo med.|Vel. media|FC media|%FC máx.|FC media|Tiempo v.|Dist. vuelta|Rit. vuel.|Vel. vuelta|Rmo ú. vue|Vel. ú. vue|Vueltas|Altitud |Hora del día|Batería</string>
 
     <string id="ds_def">Reset</string>
     <string id="ds_1">Pantalla 1</string>

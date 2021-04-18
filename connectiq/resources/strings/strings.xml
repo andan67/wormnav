@@ -34,7 +34,7 @@
     <string id="bc_distance">Distance</string>
 
     <string id="dm_labels">Timer|Dist.|Pace|Speed|Avg\nPace|Avg\nSpeed|Heart\nRate|Heart\nRate\n%Max|Avg\nHeart\nRate|Lap\nTime|Lap\nDist.|Lap\nPace|Lap\nSpeed|Last\nLap\nPace|Last\nLap\nSpeed|Laps|Elev.|Time\nof\nDay|Battery</string>
-    <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
+    <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max.|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|L Lap Pace|L Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
 
     <string id="ds_def">Defaults</string>
     <string id="ds_1">Screen 1</string>
