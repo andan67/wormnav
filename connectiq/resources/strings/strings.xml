@@ -2,7 +2,7 @@
     <string id="AppName">WormNav</string>
     <string id="prompt">Click the menu button</string>
     
-    <string id="mm_title">Main menu</string>
+    <string id="mm_title">Menu</string>
     <string id="mm_orient">Map orientation</string>
     <string id="mm_course">Course</string>
     <string id="mm_type">Activity type</string>    
@@ -48,6 +48,7 @@
     <string id="data_view">Data view</string>
     <string id="al_view">Auto lap view</string>
 
+    <string id="update">Update</string>
     <string id="info">Info</string>
     <string id="delete">Delete</string>
 

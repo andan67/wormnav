@@ -99,9 +99,6 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
             case :screens:
                 WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
                 return true;
-            case :periods:
-                WatchUi.pushView(new Rez.Menus.RefreshPeriods(), new PeriodsMenuDelegate(), WatchUi.SLIDE_UP);
-                return true;
             case :course:
                 WatchUi.pushView(new Rez.Menus.TrackMenu(), new TrackMenuDelegate(), WatchUi.SLIDE_UP);
                 return true;       
@@ -159,19 +156,10 @@ class GenericPickerDelegate extends WatchUi.PickerDelegate {
                 Application.getApp().setProperty("activityType", $.activityType);
                 Data.setMaxHeartRate();
                 break;
-            case :update_track:
+            case :track_update:
                 $.trackViewPeriod = values[0];
     			Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
                 break;
-            case :update_data:
-                $.dataViewPeriod = values[0];
-    			Application.getApp().setProperty("dataViewPeriod", $.dataViewPeriod);
-                break;
-            case :update_al:
-                $.lapViewPeriod = values[0];
-    			Application.getApp().setProperty("lapViewPeriod", $.lapViewPeriod);
-                break;
-            case :course:
             default:
                 break;
         }
@@ -275,54 +263,6 @@ class DataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     }
 }
 
-
-class PeriodsMenuDelegate extends WatchUi.MenuInputDelegate {
-
-    function initialize() {
-        MenuInputDelegate.initialize();
-    }
-
-    function onMenuItem(item) {
-        var factory;
-        var defaultValue;
-        var picker;
-        var key;
-        var text_label;
-        
-        var periodValues = [1,2,5,10,15,30,60];
-        var periodLabels = ["1s", "2s", "5s", "10s", "15s", "30s", "60s"];
-        
-        switch ( item ) {
-            case :update_track:
-            	defaultValue = $.trackViewPeriod;
-            	key = "trackViewPeriod";
-            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
-                text_label = WatchUi.loadResource(Rez.Strings.track_view);
-			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
-                WatchUi.pushView(picker, new GenericPickerDelegate(:update_track), WatchUi.SLIDE_IMMEDIATE);
-                break;
-            case :update_data:
-            	defaultValue = $.dataViewPeriod;
-            	key = "dataViewPeriod";
-            	factory =  new GenericListItemFactory(periodValues, periodLabels,null);
-            	text_label = WatchUi.loadResource(Rez.Strings.data_view);
-			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
-            	WatchUi.pushView(picker, new GenericPickerDelegate(:update_data), WatchUi.SLIDE_IMMEDIATE);
-                break;
-            case :update_al:
-            	defaultValue = $.lapViewPeriod;
-            	key = "lapViewPeriod";
-            	factory =  new GenericListItemFactory([5,10,15,20],["5s", "10s", "15s", "20s"],null);
-            	text_label = WatchUi.loadResource(Rez.Strings.al_view);
-			    picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
-			    WatchUi.pushView(picker, new GenericPickerDelegate(:update_al), WatchUi.SLIDE_IMMEDIATE); 
-                break;
-            default:
-                return false;
-        }
-    }
-}
-
 class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
 
     function initialize() {
@@ -331,6 +271,14 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
 
     function onMenuItem(item) {
         switch(item) {
+            case :track_update:
+                WatchUi.pushView(
+                    new GenericListItemPicker(
+                        WatchUi.loadResource(Rez.Strings.update), 
+                        [new GenericListItemFactory([1,2,5,10,15,30,60],["1s", "2s", "5s", "10s", "15s", "30s", "60s"], null)],
+                        [$.trackViewPeriod]), 
+                    new GenericPickerDelegate(:update_track), WatchUi.SLIDE_IMMEDIATE);
+                break;
             case :track_del:
                 if(track!=null) {
                     //var message = "Delete track?";

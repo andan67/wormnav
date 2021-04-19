@@ -1,11 +1,10 @@
 <menu id="MainMenu">
 	<menu-item id="orient" label="@Strings.mm_orient" />
+	<menu-item id="center" label="@Strings.mm_center" />
+	<menu-item id="breadcrumbs" label="@Strings.mm_bc" />
+	<menu-item id="autolap" label="@Strings.mm_al" />
 	<menu-item id="activity" label="@Strings.mm_type" />
 	<menu-item id="course" label="@Strings.mm_course" />
-	<menu-item id="autolap" label="@Strings.mm_al" />
-	<menu-item id="breadcrumbs" label="@Strings.mm_bc" />
-	<menu-item id="center" label="@Strings.mm_center" />
 	<menu-item id="screens" label="@Strings.mm_screens" />
 	<menu-item id="background" label="@Strings.mm_bgc" />
-	<menu-item id="periods" label="@Strings.mm_periods" />
 </menu>

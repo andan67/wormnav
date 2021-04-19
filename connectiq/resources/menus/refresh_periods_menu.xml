@@ -1,5 +1,0 @@
-<menu id="RefreshPeriods">	
-	<menu-item id="update_track" label="@Strings.track_view" />
-	<menu-item id="update_data" label="@Strings.data_view" />
-	<menu-item id="update_al" label="@Strings.al_view" />
-</menu>

@@ -105,14 +105,6 @@ class WormNavApp extends Application.AppBase {
         if(Application.getApp().getProperty("trackViewPeriod")!=null) {
             trackViewPeriod = Application.getApp().getProperty("trackViewPeriod");
         }
-        
-        if(Application.getApp().getProperty("dataViewPeriod")!=null) {
-            dataViewPeriod = Application.getApp().getProperty("dataViewPeriod");
-        }
-        
-        if(Application.getApp().getProperty("lapViewPeriod")!=null) {
-            lapViewPeriod = Application.getApp().getProperty("lapViewPeriod");
-        }
 
         if(Application.getApp().getProperty("isDarkMode")!=null) {
             isDarkMode = Application.getApp().getProperty("isDarkMode");
