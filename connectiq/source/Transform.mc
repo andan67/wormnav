@@ -13,7 +13,7 @@ module Transform {
     var refScale = 2.0;
     const SCALE_PIXEL = 0.1;
   
-    var zoomLevel;
+    var zoomLevel = null;
     var scaleFactor;
 
     var x_pos;
@@ -21,15 +21,15 @@ module Transform {
     var last_x_pos;
     var last_y_pos;
 
-    var lat_view_center;
-    var lon_view_center;
+    // center of perspective projection (usually defined by track) 
+    var lat_view_center = null;
+    var lon_view_center = null;
     var cos_lat_view_center;
     var sin_lat_view_center;
+
     var xs_center;
     var ys_center;
     var isTrackCentered;
-    var lat_first_position=null;
-    var lon_first_position=null;
 
     var x_d;
     var y_d;
@@ -132,17 +132,17 @@ module Transform {
     }
 
     function setPosition(lat_pos,lon_pos) {
+
+        // store last screen coordinates for heading
         if(x_pos != null) {
             last_x_pos = x_pos;
             last_y_pos = y_pos;
         }
-        if(lat_first_position == null) {
-            lat_first_position = lat_pos;
-            lon_first_position = lon_pos;
-        }
-        if($.track==null) {
-            lat_view_center = lat_first_position;
-            lon_view_center = lon_first_position;
+
+        // Use first position as view center if not set by track
+        if(lat_view_center == null) {
+            lat_view_center = lat_pos;
+            lon_view_center = lon_pos;
             cos_lat_view_center = Math.cos(lat_view_center);
             sin_lat_view_center = Math.sin(lat_view_center);
         }
@@ -151,6 +151,8 @@ module Transform {
        
         x_pos = xy[0];
         y_pos = xy[1];
+        
+        // set center in projected (x,y) coordinates
         setViewCenter(lat_pos,lon_pos);
         setHeading();
     }

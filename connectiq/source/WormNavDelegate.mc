@@ -30,6 +30,12 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
+
+    // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage 
+    // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
+    var onPrevPageTick = 0;
+    var isOnPrevPageLastEvent = false;
+
     function initialize() {
         BehaviorDelegate.initialize();
     }
@@ -47,6 +53,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onNextPage() {
         //System.println("onNextPage()");
+        isOnPrevPageLastEvent = false;
         switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
@@ -73,6 +80,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 dataPageChange(-1);
                 break;
         }
+        onPrevPageTick = $.appTimerTicks;
+        isOnPrevPageLastEvent = true;
         return true;
     }
 
@@ -80,7 +89,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
 		//System.println("onBack");
-		// If active session is stopped asked for discard/save/resume		
+		// If active session is stopped asked for discard/save/resume
+        isOnPrevPageLastEvent = false;
 		if( $.session != null  &&  $.session.isRecording() == false ) {
         	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
             return true;    
@@ -134,6 +144,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function onMenu() {
         // System.println("onMenu()");
+        // Workaround for issue
+        if(isOnPrevPageLastEvent && $.appTimerTicks - onPrevPageTick < 3) {
+            // counteract 
+            onNextPage(); 
+        }
+        isOnPrevPageLastEvent = false;
         var menu = new Rez.Menus.MainMenu();
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;

@@ -1,4 +1,4 @@
-<menu id="DataScreens" title="@Strings.mm_screens">
+<menu id="DataScreens" title="@Strings.mm_screens_s">
 	<menu-item id="ds0" label="@Strings.ds_def" />
 	<menu-item id="ds1" label="@Strings.ds_1" />
 	<menu-item id="ds2" label="@Strings.ds_2" />

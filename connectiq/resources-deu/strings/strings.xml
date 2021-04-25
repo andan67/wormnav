@@ -9,7 +9,9 @@
     <string id="mm_type">Aktivitätstyp</string>    
     <string id="mm_al">Auto lap</string>
     <string id="mm_bc">Breadcrumbs</string>
+    <string id="mm_bc_s">Breadc.</string>
     <string id="mm_screens">Datenseiten</string>
+    <string id="mm_screens_s">Seiten</string>
     <string id="mm_bgc">Hintergrundfarbe</string>
     
     <string id="orient_opts">Track\noben|Norden\noben|Zent-\nriert</string>

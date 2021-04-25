@@ -6,10 +6,12 @@
     <string id="mm_orient">Map orientation</string>
     <string id="mm_orient_s">Orientation</string>
     <string id="mm_course">Course</string>
-    <string id="mm_type">Activity type</string>    
+    <string id="mm_type">Activity type</string>
     <string id="mm_al">Auto lap</string>
     <string id="mm_bc">Breadcrumbs</string>
+    <string id="mm_bc_s">Breadc.</string>
     <string id="mm_screens">Data screens</string>
+    <string id="mm_screens_s">Screens</string>
     <string id="mm_bgc">Background color</string>
     
     <string id="orient_opts">Track\nup|North\nup|Center</string>

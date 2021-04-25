@@ -95,7 +95,7 @@ class TrackView extends GenericView {
                 var j = (Trace.pos_start_index + i) % Trace.breadCrumbNumber;
                 xr = scaleFactor*(xya[2*j] - x_d);
                 yr = scaleFactor*(xya[2*j + 1] - y_d);
-                dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
+                dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 4);
             }
         }
     }
@@ -206,7 +206,8 @@ class TrackView extends GenericView {
     function onShow() {
         //System.println("onShow()");
         View.onShow();
-        if($.track == null) {
+        // inital zoom level when no track is loaded
+        if($.track == null && Transform.zoomLevel == null) {
             Transform.setZoomLevel(5);
         }
     }

@@ -345,7 +345,7 @@ class DeleteConfirmationDelegate extends WatchUi.ConfirmationDelegate {
             $.track=$.track.clean();
             Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
             $.track=null;
-            Trace.reset();
+            //Trace.reset();
         }
     }
 }
