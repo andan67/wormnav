@@ -1,36 +1,38 @@
 <strings>
-
     <string id="AppName">WormNav</string>
     <string id="prompt">Drücke Menüknopf</string>
 
-    <string id="mm_title">Hauptmenü</string>
-    <string id="mm_orient">Kartenorient.</string>
+    <string id="mm_title">Menü</string>
+    <string id="mm_orient">Kartenorientierung</string>
+    <string id="mm_orient_s">Kartenorient.</string>
     <string id="mm_course">Strecke</string>
     <string id="mm_type">Aktivitätstyp</string>    
     <string id="mm_al">Auto lap</string>
-    <string id="mm_bc">Brotkrumen</string>
-    <string id="mm_center">Kartenzentrie.</string>
+    <string id="mm_bc">Breadcrumbs</string>
     <string id="mm_screens">Datenseiten</string>
-    <string id="mm_periods">Refresh periods</string>
     <string id="mm_bgc">Hintergrundfarbe</string>
     
-    <string id="orient_opts">Norden\noben|In\nBewegungsri.</string>
-    <string id="onoff_opts">an|aus</string>
-    <string id="yesno_opts">ja|nein</string>
-    <string id="color_opts">schwarz|weiss</string>
-
+    <string id="orient_opts">Track\noben|Norden\noben|Zent-\nriert</string>
+    <string id="yesno_opts">Ja|Nein</string>
+    <string id="color_opts">Schwarz|Weiss</string>
 
     <string id="sm_res">Weiter</string>
     <string id="sm_save">Speichern</string>
     <string id="sm_disc">Verwerfen</string>
 
+    <string id="fields">Datenfelder</string>
     <string id="field_1">Feld 1</string>
     <string id="field_2">Feld 2</string>
     <string id="field_3">Feld 3</string>
     <string id="field_4">Feld 4</string>
 
+    <string id="bc_set">Setze Position</string>
+    <string id="bc_clear">Löschen</string>
+    <string id="bc_number">Anzahl</string>
+    <string id="bc_distance">Distanz</string>
+
     <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø\nGeschw.|Herz-\nfreq.|Herz-\nfreq.\n%Max.|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden-\npace|Runden-\ngeschw.|Letze\nRunden\n- Pace|Letze\nRunde\n- Geschw.|Runden|Höhe|Uhr-\nzeit|Akku-\nstand</string>
-    <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist,|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
+    <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist.|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
 
     <string id="ds_def">Standard</string>
     <string id="ds_1">Seite 1</string>
@@ -39,15 +41,14 @@
     
     <string id="num_df"># Datenfelder</string>  
            
-    
-    <string id="track_view">Streckensicht</string>
-    <string id="data_view">Datensicht</string>
-    <string id="al_view">Auto lap Sicht</string>
+    <string id="lap">Runde</string> 
 
+    <string id="update">Aktual. Periode</string>
+    <string id="update_s">Aktual.</string>
     <string id="info">Info</string>
     <string id="delete">Löschen</string>
 
-    <string id="activities">Generisch|Laufen|Walking|Radfahren</string>
+    <string id="activities">Gener-\nisch|Laufen|Walking|Rad-\nfahren</string>
 
     <string id="msg_continue">Weiter?</string> 
     <string id="msg_delete_track">Strecke löschen?</string>   

@@ -2,19 +2,17 @@
     <string id="AppName">WormNav</string>
     <string id="prompt">Cliquez sur le bouton de menu</string>
     
-    <string id="mm_title">Menu principal</string>
+    <string id="mm_title">Menu</string>
     <string id="mm_orient">Orientation de la carte</string>
+    <string id="mm_orient_s">Orientation</string>
     <string id="mm_course">Parcours</string>
     <string id="mm_type">Type d'activité</string>    
     <string id="mm_al">Auto lap</string>
-    <string id="mm_bc">Marqueur GPS</string>
-    <string id="mm_center">Carte centrée </string>
+    <string id="mm_bc">Breadcrumbs</string>
     <string id="mm_screens">Écrans de données</string>
-    <string id="mm_periods">Cycle de rafraîchissement</string>
     <string id="mm_bgc">Couleur de fond</string>
     
-    <string id="orient_opts">Nord\nen\nhaut|Tracé\nen\nhaut</string>
-    <!-- <string id="onoff_opts">marche|arrêt</string> -->
+    <string id="orient_opts">Tracé\nen\nhaut|Nord\nen\nhaut|Centré</string>
     <string id="yesno_opts">Oui|Non</string>
     <string id="color_opts">Noir|Blanc</string>
 
@@ -23,13 +21,19 @@
     <string id="sm_save">Enregistrer</string>
     <string id="sm_disc">Ignorer</string>
 
+    <string id="fields">Champs données</string>
     <string id="field_1">Champ 1</string>
     <string id="field_2">Champ 2</string>
     <string id="field_3">Champ 3</string>
     <string id="field_4">Champ 4</string>
 
+    <string id="bc_set">Définir la position</string>
+    <string id="bc_clear">Supprimer</string>
+    <string id="bc_number">Numéro</string>
+    <string id="bc_distance">Distance</string>
+
     <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\ncard.|Fréq.\ncard.\n%max.|Fréq.\ncard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits|Alt.|Heure|Bat.</string>
-    <string id="df_labels">Chrono |Distance |Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Heure|Batterie</string>
+    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Heure|Batterie</string>
 
     <string id="ds_def">Défaut</string>
     <string id="ds_1">Écran 1</string>
@@ -38,11 +42,10 @@
     
     <string id="num_df"># champs données</string>  
            
-    
-    <string id="track_view">Vue parcours</string>
-    <string id="data_view">Vue des données</string>
-    <string id="al_view">Vue auto lap</string>
+    <string id="lap">Circuit</string> 
 
+    <string id="update">Période mise à jour</string>
+    <string id="update_s">Mise à jour</string>
     <string id="info">Info</string>
     <string id="delete">Supprimer</string>
 

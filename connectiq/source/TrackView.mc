@@ -32,8 +32,8 @@ class TrackView extends GenericView {
         var data;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = Data.getDataFieldLabelValue(1)[1] + "km";
-            activity_values[1] = Data.getDataFieldLabelValue(0)[1];
+            activity_values[0] = Data.getDataFieldLabelValue(0)[1];
+            activity_values[1] = Data.getDataFieldLabelValue(1)[1];
         }
         var y = 0.5*dc.getFontAscent(fontsize);
         dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
@@ -42,11 +42,7 @@ class TrackView extends GenericView {
 
 
     function drawTrack(dc) {
-        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
-
-        var xya = $.track.xyArray;
-        
+       
         var scaleFactor = Transform.scaleFactor;
         var x_d = Transform.x_d;
         var y_d = Transform.y_d;
@@ -59,6 +55,8 @@ class TrackView extends GenericView {
             sin_heading_smooth = Transform.sin_heading_smooth;    
         }
 
+
+
         var xy_pos1;
         var xy_pos2;
         var x1 = 0.0;
@@ -67,27 +65,38 @@ class TrackView extends GenericView {
         var y2 = 0.0;
         var xr = 0.0;
         var yr = 0.0;
-        for(var i = -2; i < xya.size() - 3; i += 2 ) {
-            if(i >= 0) {
-                x1 = x2;
-                y1 = y2;    
-            }
-            xr = scaleFactor*(xya[i+2] - x_d);
-            yr = scaleFactor*(xya[i+3] - y_d);
-            x2 = xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth;
-            y2 = ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth;
-            if(i >= 0) {
-                dc.drawLine(x1,y1,x2,y2); 
+        var xya = null;
+
+        if($.track != null) {
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.setPenWidth(2);
+
+            xya = $.track.xyArray;
+                
+            for(var i = -2; i < xya.size() - 3; i += 2 ) {
+                if(i >= 0) {
+                    x1 = x2;
+                    y1 = y2;    
+                }
+                xr = scaleFactor*(xya[i+2] - x_d);
+                yr = scaleFactor*(xya[i+3] - y_d);
+                x2 = xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth;
+                y2 = ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth;
+                if(i >= 0) {
+                    dc.drawLine(x1,y1,x2,y2); 
+                }
             }
         }
 
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-        xya = Trace.xy; 
-        for(var i=0; i < Trace.pos_nelements; i += 1) {
-            var j = (Trace.pos_start_index + i) % Trace.breadCrumbNumber;
-            xr = scaleFactor*(xya[2*j] - x_d);
-            yr = scaleFactor*(xya[2*j + 1] - y_d);
-            dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
+        if(Trace.pos_nelements > 0) {
+            dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
+            xya = Trace.xy; 
+            for(var i=0; i < Trace.pos_nelements; i += 1) {
+                var j = (Trace.pos_start_index + i) % Trace.breadCrumbNumber;
+                xr = scaleFactor*(xya[2*j] - x_d);
+                yr = scaleFactor*(xya[2*j + 1] - y_d);
+                dc.fillCircle(xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth, ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth, 3);
+            }
         }
     }
 
@@ -215,9 +224,7 @@ class TrackView extends GenericView {
             Transform.newTrack();
         }
 
-        if($.track != null) {
-            drawTrack(dc);
-        }
+        drawTrack(dc);
 
         if(Transform.x_pos != null) {
             drawPositionArrowAndCompass(dc);

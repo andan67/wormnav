@@ -135,9 +135,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onMenu() {
         // System.println("onMenu()");
         var menu = new Rez.Menus.MainMenu();
-        //menu.setTitle("Main Menu");
-        menu.setTitle(WatchUi.loadResource(Rez.Strings.mm_title));
-        
         WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }

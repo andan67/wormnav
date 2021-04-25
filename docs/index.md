@@ -153,7 +153,7 @@ It consists of two apps:
 - Start/stop/save activity
 - Set activity type
 - Configurable auto lap
-- Configurable 'bread crumbs' (i.e. trace)
+- Configurable 'breadcrumb' tracking
 - Configurable data screens
 - Zoom in/out of map with showing scale
 - Show position or track in view center
@@ -161,43 +161,49 @@ It consists of two apps:
 - Support for external heart rate monitor
 
 #### Button usage
-<img src="images/garmin_description_export.png" width="1024"/>
+<img src="images/garmin_description.png" width="1024"/>
 
-Vivoactive has a touch screen. All operations perform on touch screen rather then button.
-- tap: start/pause activity
+For devices with touch screen use following gestures:
+- single tap: start/pause activity
 - long tap: menu
 - swipe up/down: zoom out/in or previous/next data screen
 - swipe right: 
-  - switch data fields and map view (when activity started)
+  - Switch data fields and map view (when activity started)
   - Resume, save or discard activity (when activity paused)
-  - Exit (when activit not started)
+  - Exit (when activity not started)
 
 #### Screens
 
-##### Main menu
+##### Control Menu
 <div style="float: left; width: 50%">
 <img src="images/garmin_main_menu.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Available (sub-) menu items:
-- **Map orientation:** define orientation of track, see below)
-- **Activity type:** set type of activity
-- **Track**
+Available (sub-) menu items
+- **Map orientation** Set orientation/view of course
+    - **Track up** Up points to track/movement direction
+    - **North up** Up points to north direction
+    - **Center** Up points to north direction with track center as view center
+- **Breadcrumbs**
+    - **Set current pos** Set current position as breadcrumb marker
+    - **Clear** Clear all breadcrumb markers
+    - **Number** Set maximum number of breadcrumb markers
+    - **Distance** Set distance to automatically set breadcrumb markers
+- **Auto lap** Set distance for auto lap
+- **Activity type** Set type of activity
+- **Course**
+    - **Update period** Set update period of track view (larger periods might result in reduced power consumption)
     - **Info:** shows basic track information)
     - **Delete:** delete track)
-- **Auto lap:** set distance for auto lap
-- **Bread crumbs:** set distance for bread crumbs
-- **Center map:** set track center view on/off, see below)
-- **Data screens:** set number of screens and data fields, see below
-- **Refresh periods:** set refresh period/duration for track, data, and auto lap view to reduce power consumption 
+- **Data screens:** Set number of screens and data fields, see below
 
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Map view (north map orientation)
+##### Map view (North up orientation)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_standard_2.png" width="300"/>
 </div>
@@ -208,21 +214,21 @@ Standard view of map/track when activity has started
 - Elapsed time and distance shown on top
 - Track is shown as red line with north in up-direction
 - Position cursor points into direction of movement 
-- Bread crumbs are shown as blue filled circles
+- Breadcrumbs are shown as green filled circles
 - Scale and compass at bottom
 
 </div>
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Map view (heads-up)
+##### Map view (Track up orientation)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_heads_up.png" width="300"/>
 </div>
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Heads-up view of map/track
+Track-up view of map/track
 - Position cursor has fixed up-orientation  
 - Track and compass are rotated according to actual direction of movement  
 
@@ -230,7 +236,7 @@ Heads-up view of map/track
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-##### Track view (track centered)
+##### Track view (Map centered)
 <div style="float: left; width: 50%">
 <img src="images/garmin_track_nav_centered_2.png" width="300"/>
 </div>
@@ -258,7 +264,7 @@ Maximum number of three data screens can be configured with up to 4 data fields:
 - Distance: total/lap/last lap distance in km
 - Pace: current/average/lap/last lap pace in mm:ss/km
 - Speed: current/average/lap/last lap speed in km/h  
-- Heart rate: current/average heart rate in bpm (if sensor exists and activated)
+- Heart rate: current/average heart rate in bpm and % of max (if sensor exists and activated)
 - System: clock time, battery level
 
 </div>

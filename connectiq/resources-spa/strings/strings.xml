@@ -2,34 +2,37 @@
     <string id="AppName">WormNav</string>
     <string id="prompt">Click el Botón Menu</string>
 
-    <string id="mm_title">Menú Raiz</string>
-    <string id="mm_orient">Orient. Mapa</string>
+    <string id="mm_title">Menú</string>
+    <string id="mm_orient">Orientación Mapa</string>
+    <string id="mm_orient_s">Orient. Mapa</string>
     <string id="mm_course">Track</string>
     <string id="mm_type">Tipo Actividad</string>    
     <string id="mm_al">Auto lap</string>
-    <string id="mm_bc">Marcas del GPS</string>
-    <string id="mm_center">Centrar el mapa</string>
+    <string id="mm_bc">Breadcrumbs</string>
     <string id="mm_screens">Pantallas Datos</string>
-    <string id="mm_periods">Período de actualización</string>
     <string id="mm_bgc">Color de fondo</string>
     
-    <string id="orient_opts">Norte\narriba|Track\narriba</string>
-    <string id="onoff_opts">encendido|apagado</string>
+    <string id="orient_opts">Track\narriba|Norte\narriba|Cen\ntrado</string>
     <string id="yesno_opts">Si|No</string>
     <string id="color_opts">Negro|Blanco</string>
-
 
     <string id="sm_res">Continuar</string>
     <string id="sm_save">Guardar</string>
     <string id="sm_disc">Descartar</string>
 
+    <string id="fields">Campos de datos</string>
     <string id="field_1">Campo 1</string>
     <string id="field_2">Campo 2</string>
     <string id="field_3">Campo 3</string>
     <string id="field_4">Campo 4</string>
 
+    <string id="bc_set">Establecer posición</string>
+    <string id="bc_clear">Borrar</string>
+    <string id="bc_number">Número</string>
+    <string id="bc_distance">Distancia</string>
+
     <string id="dm_labels">Tiempo|Dist.|Ritmo|Veloc.|Ritmo\nmedio|Veloc.\nmedia|Frec.\ncard.|Frec.\ncard.\n% máx.|Frec.\ncard.\nmedia|Tiempo\nde\nvuelta|Dist.\nvuelta|Ritmo\nvuelta|Veloc.\nvuelta|Ritmo\nen ult.\nvuelta|Veloc.\nde ult.\nvuelta\nVeloc.|Vueltas|Alt.|Hora\ndel\ndía|Bat.</string>
-    <string id="df_labels">Tiempo|Distancia |Ritmo|Velocidad |Ritmo med.|Vel. media|FC media|%FC máx.|FC media|Tiempo v.|Dist. vuelta|Rit. vuel.|Vel. vuelta|Rmo ú. vue|Vel. ú. vue|Vueltas|Altitud |Hora del día|Batería</string>
+    <string id="df_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo med.|Vel. media|FC media|%FC máx.|FC media|Tiempo v.|Dist. vuelta|Rit. vuel.|Vel. vuelta|Rmo ú. vue|Vel. ú. vue|Vueltas|Altitud |Hora del día|Batería</string>
 
     <string id="ds_def">Reset</string>
     <string id="ds_1">Pantalla 1</string>
@@ -38,11 +41,10 @@
     
     <string id="num_df">Num. Campos</string>  
            
-    
-    <string id="track_view">Vista Track</string>
-    <string id="data_view">Vista Dato</string>
-    <string id="al_view">Vista Auto Lap</string>
+    <string id="lap">Vuelta</string> 
 
+    <string id="update">Período de actual.</string>
+    <string id="update_s">Actualización</string>
     <string id="info">Info</string>
     <string id="delete">Borrar</string>
 

@@ -4,17 +4,15 @@
     
     <string id="mm_title">Menu</string>
     <string id="mm_orient">Map orientation</string>
+    <string id="mm_orient_s">Orientation</string>
     <string id="mm_course">Course</string>
     <string id="mm_type">Activity type</string>    
     <string id="mm_al">Auto lap</string>
     <string id="mm_bc">Breadcrumbs</string>
-    <string id="mm_center">Center map</string>
     <string id="mm_screens">Data screens</string>
-    <string id="mm_periods">Refresh periods</string>
     <string id="mm_bgc">Background color</string>
     
-    <string id="orient_opts">North\nup|Track-\nup</string>
-    <string id="onoff_opts">On|Off</string>
+    <string id="orient_opts">Track\nup|North\nup|Center</string>
     <string id="yesno_opts">Yes|No</string>
     <string id="color_opts">Black|White</string>
 
@@ -23,12 +21,13 @@
     <string id="sm_save">Save</string>
     <string id="sm_disc">Discard</string>
 
+    <string id="fields">Data fields</string>
     <string id="field_1">Field 1</string>
     <string id="field_2">Field 2</string>
     <string id="field_3">Field 3</string>
     <string id="field_4">Field 4</string>
 
-    <string id="bc_set">Set current</string>
+    <string id="bc_set">Set current pos.</string>
     <string id="bc_clear">Clear</string>
     <string id="bc_number">Number</string>
     <string id="bc_distance">Distance</string>
@@ -41,14 +40,12 @@
     <string id="ds_2">Screen 2</string>
     <string id="ds_3">Screen 3</string>  
     
-    <string id="num_df"># Data fields</string>  
-           
-    
-    <string id="track_view">Track view</string>
-    <string id="data_view">Data view</string>
-    <string id="al_view">Auto lap view</string>
+    <string id="num_df"># points</string> 
 
-    <string id="update">Update</string>
+    <string id="lap">Lap</string> 
+
+    <string id="update">Update period</string>
+    <string id="update_s">Update</string>
     <string id="info">Info</string>
     <string id="delete">Delete</string>
 

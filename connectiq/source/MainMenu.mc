@@ -34,33 +34,25 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 }
                 return true;
             case :orient:
-                defaultValue = Transform.northHeading;
-                 factory =  new GenericListItemFactory(
-                     [true,false],
-                     WatchUi.loadResource(Rez.Strings.orient_opts),
-                     {:font => Graphics.FONT_MEDIUM});
-				text_label = WatchUi.loadResource(Rez.Strings.mm_orient);
+                if(Transform.northHeading) {
+                    defaultValue = Transform.centerMap? 2 : 1;
+                } else {
+                    defaultValue = 0;
+                }
+                factory =  new GenericListItemFactory(
+                    [0,1,2],
+                    WatchUi.loadResource(Rez.Strings.orient_opts),
+                    {:font => $.device.equals("vivoactive") ? Graphics.FONT_SMALL: Graphics.FONT_MEDIUM});
+				text_label = WatchUi.loadResource(Rez.Strings.mm_orient_s);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:orient), WatchUi.SLIDE_IMMEDIATE);
-                return true;
-             case :center:
-                defaultValue = Transform.centerMap;
-                factory =  new GenericListItemFactory(
-                    [true,false],
-                    WatchUi.loadResource(Rez.Strings.onoff_opts),
-                    null);
-                    //{:font => Graphics.FONT_LARGE});
-                text_label = WatchUi.loadResource(Rez.Strings.mm_center);
-				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
-                WatchUi.pushView(picker, new GenericPickerDelegate(:center), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :background:
                 defaultValue = $.isDarkMode;
                 factory =  new GenericListItemFactory(
                     [true,false],
                      WatchUi.loadResource(Rez.Strings.color_opts),
-                    null);
-                    //{:font => Graphics.FONT_LARGE});
+                    {:font => Graphics.FONT_SMALL});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_bgc);
                 picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:background), WatchUi.SLIDE_IMMEDIATE);
@@ -76,14 +68,6 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 WatchUi.pushView(picker, new GenericPickerDelegate(:autolap), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :breadcrumbs:
-                // defaultValue = Trace.breadCrumbDist;
-                // factory = new GenericListItemFactory(
-                //     distanceValues,
-                //     distanceLabels,
-                //     null);
-                // text_label = WatchUi.loadResource(Rez.Strings.mm_bc);
-				// picker = new GenericListItemPicker(text_label, [factory], [defaultValue], null);
-                //WatchUi.pushView(picker, new GenericPickerDelegate(:breadcrumbs), WatchUi.SLIDE_UP);
                 WatchUi.pushView(new Rez.Menus.BreadcrumbsMenu(), new BreadcrumbsMenuDelegate(), WatchUi.SLIDE_UP);
                 return true;
             case :activity:
@@ -91,7 +75,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                 factory = new GenericListItemFactory(
                     [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING, ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
                     WatchUi.loadResource(Rez.Strings.activities),
-                    {:font => Graphics.FONT_SMALL});
+                    {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_type);
 				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
 				WatchUi.pushView(picker, new GenericPickerDelegate(:activity), WatchUi.SLIDE_UP);
@@ -123,11 +107,14 @@ class GenericPickerDelegate extends WatchUi.PickerDelegate {
     function onAccept(values) {
         switch(mItem) {
             case :orient:
-                Transform.northHeading = values[0];
+                if(values[0] == 0) {
+                    Transform.northHeading = false;
+                    Transform.centerMap = false;
+                } else {
+                    Transform.northHeading = true;
+                    Transform.centerMap = (values[0] == 2);
+                }
                 Application.getApp().setProperty("northHeading", Transform.northHeading);
-                break;
-            case :center:
-                Transform.centerMap = values[0];
                 Application.getApp().setProperty("centerMap", Transform.centerMap);
                 break;
             case :background:
@@ -179,6 +166,7 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
         switch ( item ) {
             case :ds0:
                 Data.setDataScreens(Data.dataScreensDefault);
+                Application.getApp().setProperty("dataScreens",Data.getDataScreens());
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :ds1:
@@ -193,11 +181,10 @@ class DataMenuDelegate extends WatchUi.MenuInputDelegate {
             default:
                 return false;
         }
-        dataMenuContext = screen;
         var defaultValue = Data.dataScreens[screen].size();
         var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
         var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.num_df), [factory], [defaultValue]);
-        WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(dataMenuContext), WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(screen), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
 
@@ -217,7 +204,6 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-        var text_label;
         //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         var screen = mContext;
@@ -235,9 +221,9 @@ class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
                     null, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
                 defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
             }            
-            text_label = WatchUi.loadResource(Rez.Strings.mm_screens);
-			var picker = new GenericListItemPicker(text_label, factories, defaults);
-            WatchUi.pushView(picker, new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.pushView(
+                new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.fields), factories, defaults),
+                new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
         }
     }
 }
@@ -277,8 +263,8 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
                         WatchUi.loadResource(Rez.Strings.update), 
                         [new GenericListItemFactory([1,2,5,10,15,30,60],["1s", "2s", "5s", "10s", "15s", "30s", "60s"], null)],
                         [$.trackViewPeriod]), 
-                    new GenericPickerDelegate(:update_track), WatchUi.SLIDE_IMMEDIATE);
-                break;
+                    new GenericPickerDelegate(:track_update), WatchUi.SLIDE_IMMEDIATE);
+                return true;
             case :track_del:
                 if(track!=null) {
                     //var message = "Delete track?";

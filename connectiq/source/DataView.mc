@@ -48,11 +48,11 @@ class DataView extends GenericView {
             case 4:
             default:
                 if($.device.equals("vivoactive")) {
-                    font = Graphics.FONT_XTINY;
+                    font = Graphics.FONT_SMALL;
                     fontNumber = Graphics.FONT_NUMBER_MEDIUM;
                 } else
                 {
-                    font = Graphics.FONT_SMALL;
+                    font = Graphics.FONT_MEDIUM;
                     fontNumber = Graphics.FONT_NUMBER_MEDIUM;
                 }
                 break;
