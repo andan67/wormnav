@@ -15,7 +15,7 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
         var picker;
         var factory;
         var defaultValue;
-    	var text_label;
+        var text_label;
         
         var distanceValues = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
         var distanceLabels = ["off","100m","200m","400m","500m","1km","2km","5km"];
@@ -43,8 +43,8 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     [0,1,2],
                     WatchUi.loadResource(Rez.Strings.orient_opts),
                     {:font => $.device.equals("vivoactive") ? Graphics.FONT_SMALL: Graphics.FONT_MEDIUM});
-				text_label = WatchUi.loadResource(Rez.Strings.mm_orient_s);
-				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
+                text_label = WatchUi.loadResource(Rez.Strings.mm_orient_s);
+                picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:orient), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :background:
@@ -64,11 +64,17 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceLabels,
                     null);
                 text_label = WatchUi.loadResource(Rez.Strings.mm_al);
-				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
+                picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:autolap), WatchUi.SLIDE_IMMEDIATE);
                 return true;
             case :breadcrumbs:
                 WatchUi.pushView(new Rez.Menus.BreadcrumbsMenu(), new BreadcrumbsMenuDelegate(), WatchUi.SLIDE_UP);
+                var dSymbols = [:d0000,:d0005,:d0010,:d0020,:d0050,:d0100,:d0200,:d0500,:d1000,:d2000];
+                var dValues = [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0];
+                var dLabels = ["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"];
+                var menuItemList = new MenuItemList(dSymbols, dValues, dLabels);
+                var menu = menuItemList.createMenu("Bread", 500);
+                WatchUi.pushView(menu, new BreadcrumbsMenuDelegate(menuItemList), WatchUi.SLIDE_UP);                
                 return true;
             case :activity:
                 defaultValue = $.activityType;
@@ -77,11 +83,16 @@ class MainMenuDelegate extends WatchUi.MenuInputDelegate {
                     WatchUi.loadResource(Rez.Strings.activities),
                     {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});
                 text_label = WatchUi.loadResource(Rez.Strings.mm_type);
-				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
-				WatchUi.pushView(picker, new GenericPickerDelegate(:activity), WatchUi.SLIDE_UP);
+                picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
+                WatchUi.pushView(picker, new GenericPickerDelegate(:activity), WatchUi.SLIDE_UP);
                 return true;
             case :screens:
-                WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
+                //WatchUi.pushView(new Rez.Menus.DataScreens(), new DataMenuDelegate(), WatchUi.SLIDE_UP);
+                var view = new ListMenu(:DataScreens, "Data screens", 
+                    null, 
+                    "Defaults|Screen 1|Screen 2|Screen 3", 
+                    null, null);
+                WatchUi.pushView(view, new ListMenuDelegate (view, new DataMenuDelegate (view)), WatchUi.SLIDE_UP);
                 return true;
             case :course:
                 WatchUi.pushView(new Rez.Menus.TrackMenu(), new TrackMenuDelegate(), WatchUi.SLIDE_UP);
@@ -145,7 +156,7 @@ class GenericPickerDelegate extends WatchUi.PickerDelegate {
                 break;
             case :track_update:
                 $.trackViewPeriod = values[0];
-    			Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
+                Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
                 break;
             default:
                 break;
@@ -156,97 +167,131 @@ class GenericPickerDelegate extends WatchUi.PickerDelegate {
 
 class DataMenuDelegate extends WatchUi.MenuInputDelegate {
 
+    var    view;
     var dataMenuContext = null;
-    function initialize() {
+
+    function initialize(_view) {
         MenuInputDelegate.initialize();
+        view = _view;
     }
 
     function onMenuItem(item) {
         var screen = 0;
-        switch ( item ) {
-            case :ds0:
+        if(view.id == :DataScreens) {
+            if(item.id == 0) {
                 Data.setDataScreens(Data.dataScreensDefault);
                 Application.getApp().setProperty("dataScreens",Data.getDataScreens());
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
                 return true;
-            case :ds1:
-                screen=0;
-                break;
-            case :ds2:
-                screen=1;
-                break;
-            case :ds3:
-                screen=2;
-                break;
-            default:
-                return false;
+            } else {
+                screen = item.id -1;
+            }
+            var defaultValue = Data.dataScreens[screen].size();
+            //var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
+            //var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.num_df), [factory], [defaultValue]);
+            //WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(screen), WatchUi.SLIDE_IMMEDIATE);
+            var view = new ListMenu(:DataScreens, "# fields", 
+                    null, 
+                    ["Off", "1", "2", "3", "4"], 
+                    [0,1,2,3,4],defaultValue);
+            WatchUi.pushView(view, new ListMenuDelegate (view, new NumberDataFieldsDelegate (view, screen)), WatchUi.SLIDE_UP);
+            return true;
         }
-        var defaultValue = Data.dataScreens[screen].size();
-        var factory =  new GenericListItemFactory([0,1,2,3,4],["Off", "1", "2", "3", "4"],{:font => Graphics.FONT_MEDIUM});
-        var picker = new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.num_df), [factory], [defaultValue]);
-        WatchUi.pushView(picker, new NumberDataFieldsPickerDelegate(screen), WatchUi.SLIDE_IMMEDIATE);
-        return true;
     }
 
 }
 
 
-class NumberDataFieldsPickerDelegate extends WatchUi.PickerDelegate {
-    hidden var mContext;
+class NumberDataFieldsDelegate extends WatchUi.MenuInputDelegate {
+    hidden var screen;
+    hidden var view;
 
-    function initialize(context) {
-        PickerDelegate.initialize();
-        mContext = context;
+    function initialize(_view, _screen ) {
+        MenuInputDelegate.initialize ();
+        screen = _screen;
+        view = _view;
     }
 
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
+    function onMenuItem(item) {
         //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-        var screen = mContext;
-        var nDataFields = values[0];
+        //WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        var nDataFields = item.value;
 
-        if(nDataFields==0) {
-             Data.setDataScreen(screen,[]);
-             Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        if(nDataFields == 0) {
+            Data.setDataScreen(screen,[]);
+            Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         } else {
-            var factories = new [nDataFields];
-            var defaults = new [nDataFields];
-            for(var i=0; i<nDataFields; i+=1) {
-                factories[i] = new GenericListItemFactory(
-                    null, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
-                defaults[i] = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
-            }            
-            WatchUi.pushView(
-                new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.fields), factories, defaults),
-                new DataFieldsPickerDelegate(mContext), WatchUi.SLIDE_IMMEDIATE);
+            var defaultValue = 0 < Data.dataScreens[screen].size()? Data.dataScreens[screen][0] : 0;
+            var view = new ListMenu(:DataFields, "Field 1/" + nDataFields, null, Data.dataFieldMenuLabels, null, defaultValue);
+            WatchUi.pushView(view, new ListMenuDelegate (view, new DataFieldDelegate (view, screen, 0, nDataFields)), WatchUi.SLIDE_UP); 
+//            for(var i=0; i<nDataFields; i+=1) {
+//                //factories[i] = new GenericListItemFactory(
+//                //    null, Data.dataFieldMenuLabels, {:font => $.device.equals("vivoactive") ? Graphics.FONT_XTINY: Graphics.FONT_SMALL});                
+//                   var defaultValue = i < Data.dataScreens[screen].size()? Data.dataScreens[screen][i] : 0;
+//                var view = new ListMenu(:DataFields, "Field #" + (i+1), null,
+//                    Data.dataFieldMenuLabels, null, defaultValue);
+//                WatchUi.pushView(view, new ListMenuDelegate (view, new DataFieldDelegate (view, screen, i)), WatchUi.SLIDE_UP); 
+//                
+//            }            
+//            WatchUi.pushView(
+//                new GenericListItemPicker(WatchUi.loadResource(Rez.Strings.fields), factories, defaults),
+//                new DataFieldsPickerDelegate(screen), WatchUi.SLIDE_IMMEDIATE);
         }
     }
 }
 
-class DataFieldsPickerDelegate extends WatchUi.PickerDelegate {
-    hidden var mContext;
+class DataFieldDelegate extends WatchUi.MenuInputDelegate {
+    hidden var screen;
+    hidden var fieldIdx;
+    hidden var nFields;
+    hidden var view;
+    hidden var dataFields = [];
 
-    function initialize(context) {
-        PickerDelegate.initialize();
-        mContext = context;
+    function initialize(_view, _screen, _fieldIdx, _nFields) {
+        MenuInputDelegate.initialize ();
+        screen = _screen;
+        fieldIdx = _fieldIdx;
+        nFields = _nFields;
+        view = _view;
     }
 
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    function onMenuItem(item) {
+        dataFields.add(item.value);
+        System.println("field screen: " + screen);
+        System.println("field index: " + fieldIdx);
+        System.println("field number: " + nFields);
+        System.println("field data fields: " + dataFields);
+        System.println("field data value: " + item.value);
+        System.println("field data label: " + item.label);
+        fieldIdx++;
+        if(fieldIdx < nFields) {
+            //fieldIdx++;
+            var defaultValue = fieldIdx < Data.dataScreens[screen].size()? Data.dataScreens[screen][fieldIdx] : 0;
+            var view = new ListMenu(:DataFields, "Field " + fieldIdx +"/"  + nFields, null, Data.dataFieldMenuLabels, null, defaultValue);
+            WatchUi.switchToView(view, new ListMenuDelegate (view, self), WatchUi.SLIDE_UP);
+                        
+        } else
+        {
+            Data.setDataScreen(screen, dataFields);
+            Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        }
+        
     }
 
-    function onAccept(values) {
-        var screen = mContext;
-        Data.setDataScreen(screen, values);
-        Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-      
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
+//    function onCancel() {
+//        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+//    }
+//
+//    function onAccept(values) {
+//        var screen = mContext;
+//        Data.setDataScreen(screen, values);
+//        Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+//      
+//        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+//    }
 }
 
 class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
@@ -277,13 +322,13 @@ class TrackMenuDelegate extends WatchUi.MenuInputDelegate {
                         WatchUi.SLIDE_IMMEDIATE
                     );
                 }
-                return true;	
+                return true;    
             case :track_info:
                 if(track!=null) {
-                    WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);	
+                    WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);    
                 }
                 return true;
-        }	
+        }    
     }
 }
 
@@ -292,16 +337,19 @@ class BreadcrumbsMenuDelegate extends WatchUi.MenuInputDelegate {
     var factory;
     var defaultValue;
     var text_label;
+    var menuItemList;
 
     var distanceValues = [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0];
     var distanceLabels = ["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"];
 
 
-    function initialize() {
+    function initialize(_menuItemList) {
         MenuInputDelegate.initialize();
+        menuItemList = _menuItemList;
     }
 
     function onMenuItem(item) {
+        System.println("BreadcrumbsMenuDelegate: " + item + " " + menuItemList.getValueFromSymbol(item) );
         switch(item) {
             case :bc_set:
                 Trace.putBreadcrumbLastPosition();
@@ -326,10 +374,10 @@ class BreadcrumbsMenuDelegate extends WatchUi.MenuInputDelegate {
                     distanceLabels,
                     null);
                 text_label = WatchUi.loadResource(Rez.Strings.bc_distance);
-				picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
+                picker = new GenericListItemPicker(text_label, [factory], [defaultValue]);
                 WatchUi.pushView(picker, new GenericPickerDelegate(:bc_distance), WatchUi.SLIDE_UP);
                 return true;
-        }	
+        }
     }
 }
 
