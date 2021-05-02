@@ -3,37 +3,23 @@
     <string id="prompt">Drücke Menüknopf</string>
 
     <string id="mm_title">Menü</string>
-    <string id="mm_orient">Kartenorientierung</string>
-    <string id="mm_orient_s">Kartenorient.</string>
-    <string id="mm_course">Strecke</string>
-    <string id="mm_type">Aktivitätstyp</string>    
-    <string id="mm_al">Auto lap</string>
-    <string id="mm_bc">Breadcrumbs</string>
-    <string id="mm_bc_s">Breadc.</string>
-    <string id="mm_screens">Datenseiten</string>
-    <string id="mm_screens_s">Seiten</string>
-    <string id="mm_bgc">Hintergrundfarbe</string>
     
-    <string id="orient_opts">Track\noben|Norden\noben|Zent-\nriert</string>
+    <string id="orient_opts">Track oben|Norden oben|Zentriert</string>
     <string id="yesno_opts">Ja|Nein</string>
     <string id="color_opts">Schwarz|Weiss</string>
 
+    <string id="sm_title">Aktion?</string>
     <string id="sm_res">Weiter</string>
     <string id="sm_save">Speichern</string>
     <string id="sm_disc">Verwerfen</string>
 
     <string id="fields">Datenfelder</string>
-    <string id="field_1">Feld 1</string>
-    <string id="field_2">Feld 2</string>
-    <string id="field_3">Feld 3</string>
-    <string id="field_4">Feld 4</string>
+    <string id="field">Feld</string>
+    <string id="fields">Felder</string>   
 
-    <string id="bc_set">Setze Position</string>
-    <string id="bc_clear">Löschen</string>
-    <string id="bc_number">Anzahl</string>
-    <string id="bc_distance">Distanz</string>
+    <string id="bc_labels">Setze Position|Löschen|Anzahl|Distanz</string>
 
-    <string id="dm_labels">Timer|Dist.|Pace|Geschw.|Ø Pace|Ø\nGeschw.|Herz-\nfreq.|Herz-\nfreq.\n%Max.|Ø\nHerz-\nfreq.|Runden-\nzeit|Runden-\ndist.|Runden-\npace|Runden-\ngeschw.|Letze\nRunden\n- Pace|Letze\nRunde\n- Geschw.|Runden|Höhe|Uhr-\nzeit|Akku-\nstand</string>
+    <string id="dm_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø\nGeschwindigkeit|Herzfrequenz|Herzfreq. %Max.|Ø Herzfreq.|Rundenzeit|Rundendistanz|Runden-\npace|Rundengeschw.|Letze Runden Pace|Letze Runde Geschw.|Runden|Höhe|Uhrzeit|Akkustand</string>
     <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist.|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
 
     <string id="ds_def">Standard</string>

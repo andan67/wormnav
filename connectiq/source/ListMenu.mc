@@ -2,82 +2,11 @@ using Toybox.WatchUi as Ui;
 using Toybox.System as Sys;
 using Toybox.Graphics as Gfx;
 
-// Inherit from this if you want to store additional information in the menu entry and/or change how 
-// the menu is drawn - for example adding in a status icon.
-// Any overridden drawing should be constrained within the items boundaries, i.e. y .. y + height / 3.
-class ListMenuItem
-{
-    const LABEL_FONT = Gfx.FONT_SMALL;
-    const SELECTED_LABEL_FONT = Gfx.FONT_LARGE;
-    const VALUE_FONT = Gfx.FONT_MEDIUM;
-    const PAD = 0;
-
-    var    id, label, value;
-    var index;        // filled in with its index, if selected
-    
-    // _id           is typically a symbol but can be anything and is just used in menu delegate to identify 
-    //            which item has been selected.
-    // _label      the text to show as the item name.  Can be any object responding to toString ().
-    // _value      the value
-    function initialize (_id, _label, _value)
-    {
-        id = _id;
-        label = _label;
-        value = _value;
-    }
-
-    function draw (dc, y, highlight)
-    {
-
-        if (highlight)
-        {
-            setHighlightColor (dc);
-            drawHighlightedLabel (dc, y);
-        }
-        else
-        {
-            setColor (dc);
-            drawLabel (dc, y);
-        }
-    }
-    
-    function setHighlightColor (dc)
-    {
-        dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
-    }
-    
-    function setColor (dc)
-    {
-        dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
-    }
-    
-    function drawLabel (dc, y)
-    {
-        var width = dc.getWidth ();
-        var h3 = dc.getHeight () / 3;
-        var lab = label != null ? label.toString() : (value != null ? value.toString() : ""); 
-        var labDims = dc.getTextDimensions (lab, LABEL_FONT);
-        var yL = y + (h3 - labDims[1]) / 2;
-
-        dc.drawText (width / 2, yL, LABEL_FONT, lab, Gfx.TEXT_JUSTIFY_CENTER);
-    }
-
-    function drawHighlightedLabel (dc, y)
-    {
-        var width = dc.getWidth ();
-        var h3 = dc.getHeight () / 3;
-        var lab = label.toString ();
-        var labDims = dc.getTextDimensions (lab, SELECTED_LABEL_FONT);
-        var yL, h;
-
-        yL = y + (h3 - labDims[1]) / 2;
-        dc.drawText (width / 2, yL, SELECTED_LABEL_FONT, lab, Gfx.TEXT_JUSTIFY_CENTER);
-    }
-}
-
 class ListMenu extends Ui.View
 {
     const TITLE_FONT = Gfx.FONT_SMALL;
+    const LABEL_FONT = Gfx.FONT_SMALL;
+    const SELECTED_LABEL_FONT = Gfx.FONT_LARGE;
     
     var itemValueList;
     var itemLabelList;
@@ -122,31 +51,43 @@ class ListMenu extends Ui.View
             }
         }
         
-         // create menuList
-//        menuArray = [];
-//        for(var i = 0; i < nItems; i++) {
-//            menuArray.add(new ListMenuItem(
-//                itemIdList != null ? itemIdList[i]: i, 
-//                itemLabelList != null ? itemLabelList[i] : null,
-//                itemValueList != null ? itemValueList[i] : null ));
-//        }
-
+        // derive labels from values if set
+        if(itemLabelList == null) {
+            itemLabelList = [];
+            for(var i = 0; i < nItems; i++) {
+                itemLabelList.add(itemValueList[i].toString());    
+            }
+        }
+        
         title = _menuTitle;
-        initIndex = 0;
+        initIndex = -1;
 
         if(_initValue != null) {
             initIndex = getIndexForValue(_initValue);
             if(initIndex >= nItems ) {
-                initIndex = 0;
+                initIndex = -1;
             }
         }
-        index = initIndex;
-        nextIndex = initIndex;
+
+        index = 0;
+        nextIndex = 0;
         View.initialize ();
     }
     
     function getValueFromIndex(i) {
         return itemValueList[i];
+    }
+    
+    function getSelectedValue() {
+        return itemValueList[index];
+    }
+    
+    function getSelectedId() {
+        return itemIdList[index];
+    }
+    
+    function getSelectedLabel() {
+        return itemLabelList[index];
     }
 
      function getIndexForValue(value) {
@@ -178,20 +119,10 @@ class ListMenu extends Ui.View
         index = nextIndex;
     }
     
-    function selectedItem ()
+    function selectedItemIndex ()
     {
-        menuArray[index].index = index;
-        return menuArray[index];
+        return index;
     }
-    
-    function onHide ()
-    {
-        itemValueList = null;
-        itemLabelList = null;
-        itemIdList = null;
-        menuArray = null;
-    }
-    
     
     function onUpdate (dc)
     {
@@ -219,7 +150,6 @@ class ListMenu extends Ui.View
         var width = dc.getWidth ();
         var height = dc.getHeight ();
         var h3 = height / 3;
-        var items = menuArray.size ();
 
         // y for the middle of the three items.  
         var y = h3;
@@ -263,13 +193,24 @@ class ListMenu extends Ui.View
         var h3 = dc.getHeight () / 3;
 
         // Cannot see item if it doesn't exist or will not be visible.
-        if (idx < 0 || idx >= menuArray.size () || 
-            menuArray[idx] == null || y > dc.getHeight () || y < -h3)
+        if (idx < 0 || idx >= nItems || y > dc.getHeight () || y < -h3)
         {
             return;
         }
         
-        menuArray[idx].draw (dc, y, highlight);
+        if(idx == initIndex) {
+            dc.setColor (Gfx.COLOR_DK_RED, Gfx.COLOR_WHITE);
+        } else {
+            dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
+        }
+        
+        var width = dc.getWidth ();
+        var lab = itemLabelList[idx];
+        var labDims = dc.getTextDimensions (lab, highlight? SELECTED_LABEL_FONT : LABEL_FONT );
+        var yL, h;
+
+        yL = y + (h3 - labDims[1]) / 2;
+        dc.drawText (width / 2, yL, highlight? SELECTED_LABEL_FONT : LABEL_FONT, lab, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
 
@@ -296,7 +237,7 @@ class ListMenu extends Ui.View
             }
         }    
 
-        if (nextIndex != menuArray.size () - 1)
+        if (nextIndex != nItems - 1)
         {
             y = dc.getHeight () - TS - GAP;
             
@@ -359,7 +300,7 @@ class ListMenuDelegate extends Ui.BehaviorDelegate
                 }
             }
             
-            userMenuDelegate.onMenuItem (menu.selectedItem ());
+            userMenuDelegate.onMenuItem (menu.selectedItemIndex ());
             Ui.requestUpdate();
             return true;
         } 
@@ -390,7 +331,7 @@ class ListMenuDelegate extends Ui.BehaviorDelegate
         
         if (k == WatchUi.KEY_START || k == WatchUi.KEY_ENTER )
         {        
-            userMenuDelegate.onMenuItem (menu.selectedItem ());
+            userMenuDelegate.onMenuItem (menu.selectedItemIndex ());
             Ui.requestUpdate();
             return true;
         }

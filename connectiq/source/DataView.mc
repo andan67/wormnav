@@ -79,10 +79,12 @@ class DataView extends GenericView {
         if($.device.equals("vivoactive") && numberDataFields > 1) {
             // narrow vertical size of data fields for vivoactive devices with round screen
             if(numberDataFields > 2) {
-                offset = 2 * (h - h1 - h2);
+                //offset = 2 * (h - h1 - h2);
+                offset = 0.20*h;
                 h = (height - 2* offset) / 3;
             } else {
-                offset = 1* (h - h1 - h2);
+                //offset = 1* (h - h1 - h2);
+                offset = 0.3*h;
                 h = (height - 2* offset) / 2;
             }
         }

@@ -1,5 +1,0 @@
-<menu id="TrackMenu" title="@Strings.mm_course">
-	<menu-item id="track_update" label="@Strings.update" />
-	<menu-item id="track_info" label="@Strings.info" />
-	<menu-item id="track_del" label="@Strings.delete" />
-</menu>

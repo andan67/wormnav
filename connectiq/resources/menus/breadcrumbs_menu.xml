@@ -1,6 +1,0 @@
-<menu id="BreadcrumbsMenu" title="@Strings.mm_bc_s">
-	<menu-item id="bc_set" label="@Strings.bc_set" />
-	<menu-item id="bc_clear" label="@Strings.bc_clear" />
-	<menu-item id="bc_number" label="@Strings.bc_number" />
-	<menu-item id="bc_distance" label="@Strings.bc_distance" />
-</menu>

@@ -1,9 +1,1 @@
 project.manifest = manifest.xml
-vivoactive3.resourcePath = $(vivoactive3.resourcePath);resources-vivoactive
-vivoactive3d.resourcePath = $(vivoactive3d.resourcePath);resources-vivoactive
-vivoactive3m.resourcePath = $(vivoactive3m.resourcePath);resources-vivoactive
-vivoactive3mlte.resourcePath = $(vivoactive3mlte.resourcePath);resources-vivoactive
-vivoactive4.resourcePath = $(vivoactive4.resourcePath);resources-vivoactive
-vivoactive4s.resourcePath = $(vivoactive4s.resourcePath);resources-vivoactive
-venu.resourcePath = $(venu.resourcePath);resources-vivoactive
-venud.resourcePath = $(venud.resourcePath);resources-vivoactive

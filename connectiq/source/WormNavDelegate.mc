@@ -92,6 +92,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 		// If active session is stopped asked for discard/save/resume
         isOnPrevPageLastEvent = false;
 		if( $.session != null  &&  $.session.isRecording() == false ) {
+        	var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
+                                [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
+                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null);
+            
+            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
+        	
         	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
             return true;    
         }
@@ -150,8 +156,10 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             onNextPage(); 
         }
         isOnPrevPageLastEvent = false;
-        var menu = new Rez.Menus.MainMenu();
-        WatchUi.pushView(menu, new MainMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
+        var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
+                                [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
+                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null);
+        WatchUi.pushView(menu, new ListMenuDelegate (menu, new MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
         return true;
     }
 

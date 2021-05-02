@@ -46,15 +46,15 @@ class WormNavApp extends Application.AppBase {
     // onStart() is called on application start up
     function onStart(state) {
         System.println("onStart");
-        
-        try
-        {
-            device = WatchUi.loadResource(Rez.Strings.device);
-        } catch (ex) {
+
+        // vivoactive stands for all devices with round screen shape
+        // ToDo: Implement resource/annotation based method to set device dependent settings
+        if(System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_ROUND) {
+            device = "vivoactive";
+        } else {
             device = "generic";
         }
-
-
+        
         System.println("Device: " + device);
 
         Data.setMaxHeartRate();

@@ -1,9 +1,0 @@
-<menu id="MainMenu" title="@Strings.mm_title">
-	<menu-item id="orient" label="@Strings.mm_orient" />
-	<menu-item id="breadcrumbs" label="@Strings.mm_bc" />
-	<menu-item id="autolap" label="@Strings.mm_al" />
-	<menu-item id="activity" label="@Strings.mm_type" />
-	<menu-item id="course" label="@Strings.mm_course" />
-	<menu-item id="screens" label="@Strings.mm_screens" />
-	<menu-item id="background" label="@Strings.mm_bgc" />
-</menu>
