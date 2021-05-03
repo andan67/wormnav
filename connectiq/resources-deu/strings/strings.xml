@@ -3,6 +3,7 @@
     <string id="prompt">Drücke Menüknopf</string>
 
     <string id="mm_title">Menü</string>
+    <string id="mm_labels">Kartenorientierung|Breadcrumbs|Auto lap|Aktivitätstyp|Strecke|Datenseiten|Hintergrundfarbe</string>
     
     <string id="orient_opts">Track oben|Norden oben|Zentriert</string>
     <string id="yesno_opts">Ja|Nein</string>
@@ -13,30 +14,23 @@
     <string id="sm_save">Speichern</string>
     <string id="sm_disc">Verwerfen</string>
 
-    <string id="fields">Datenfelder</string>
+    <string id="data_fields">Datenfelder</string>
     <string id="field">Feld</string>
     <string id="fields">Felder</string>   
 
     <string id="bc_labels">Setze Position|Löschen|Anzahl|Distanz</string>
 
-    <string id="dm_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø\nGeschwindigkeit|Herzfrequenz|Herzfreq. %Max.|Ø Herzfreq.|Rundenzeit|Rundendistanz|Runden-\npace|Rundengeschw.|Letze Runden Pace|Letze Runde Geschw.|Runden|Höhe|Uhrzeit|Akkustand</string>
+    <string id="dm_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø Geschwindigkeit|Herzfrequenz|Herzfreq. %Max.|Ø Herzfrequenz|Rundenzeit|Rundendistanz|Rundennpace|Rundengeschw.|Letze Runde Pace|Letze R. Geschw.|Runden|Höhe|Uhrzeit|Akkustand</string>
     <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist.|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
 
-    <string id="ds_def">Standard</string>
-    <string id="ds_1">Seite 1</string>
-    <string id="ds_2">Seite 2</string>
-    <string id="ds_3">Seite 3</string>  
+    <string id="ds_labels">Standard|Seite 1|Seite 2|Seite 3</string>
     
     <string id="num_df"># Datenfelder</string>  
            
     <string id="lap">Runde</string> 
-
-    <string id="update">Aktual. Periode</string>
-    <string id="update_s">Aktual.</string>
-    <string id="info">Info</string>
-    <string id="delete">Löschen</string>
-
-    <string id="activities">Gener-\nisch|Laufen|Walking|Rad-\nfahren</string>
+    
+    <string id="course_labels">Aktual. Periode|Info|Löschen</string>
+    <string id="activities">Generisch|Laufen|Walking|Radfahren</string>
 
     <string id="msg_continue">Weiter?</string> 
     <string id="msg_delete_track">Strecke löschen?</string>   

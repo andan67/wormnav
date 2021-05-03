@@ -206,11 +206,16 @@ class ListMenu extends Ui.View
         
         var width = dc.getWidth ();
         var lab = itemLabelList[idx];
-        var labDims = dc.getTextDimensions (lab, highlight? SELECTED_LABEL_FONT : LABEL_FONT );
+        var font = highlight? SELECTED_LABEL_FONT : LABEL_FONT;
+        var labDims = dc.getTextDimensions (lab, font );
+        if(labDims[0] > 0.95*width) {
+            font = LABEL_FONT;
+            labDims = dc.getTextDimensions (lab, font );
+        } 
         var yL, h;
 
         yL = y + (h3 - labDims[1]) / 2;
-        dc.drawText (width / 2, yL, highlight? SELECTED_LABEL_FONT : LABEL_FONT, lab, Gfx.TEXT_JUSTIFY_CENTER);
+        dc.drawText (width / 2, yL, font, lab, Gfx.TEXT_JUSTIFY_CENTER);
     }
 
 

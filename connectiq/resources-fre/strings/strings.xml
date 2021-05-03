@@ -3,55 +3,34 @@
     <string id="prompt">Cliquez sur le bouton de menu</string>
     
     <string id="mm_title">Menu</string>
-    <string id="mm_orient">Orientation de la carte</string>
-    <string id="mm_orient_s">Orientation</string>
-    <string id="mm_course">Parcours</string>
-    <string id="mm_type">Type d'activité</string>    
-    <string id="mm_al">Auto lap</string>
-    <string id="mm_bc">Breadcrumbs</string>
-    <string id="mm_bc_s">Breadc.</string>
-    <string id="mm_screens">Écrans de données</string>
-    <string id="mm_screens_s">Écrans</string>
-    <string id="mm_bgc">Couleur de fond</string>
-    
-    <string id="orient_opts">Tracé\nen\nhaut|Nord\nen\nhaut|Centré</string>
+    <string id="mm_labels">Orientation|Breadcrumbs|Auto lap|Type d'activité|Parcours|Écrans de données|Couleur de fond</string>
+
+    <string id="orient_opts">Tracé en haut|Nord en haut|Centré</string>
     <string id="yesno_opts">Oui|Non</string>
     <string id="color_opts">Noir|Blanc</string>
 
-
+    <string id="sm_title">Action?</string>
     <string id="sm_res">Reprendre</string>
     <string id="sm_save">Enregistrer</string>
     <string id="sm_disc">Ignorer</string>
 
-    <string id="fields">Champs données</string>
-    <string id="field_1">Champ 1</string>
-    <string id="field_2">Champ 2</string>
-    <string id="field_3">Champ 3</string>
-    <string id="field_4">Champ 4</string>
+    <string id="data_fields">Champs données</string>
+    <string id="field">Champ</string>
+    <string id="fields">Champs</string>
 
-    <string id="bc_set">Définir la position</string>
-    <string id="bc_clear">Supprimer</string>
-    <string id="bc_number">Numéro</string>
-    <string id="bc_distance">Distance</string>
+    <string id="bc_labels">Définir la position|Supprimer|Numéro|Distance</string>
 
-    <string id="dm_labels">Chrono|Dist.|Allure|Vitesse|Allure\nmoyenne|Vitesse\nmoyenne|Fréq.\ncard.|Fréq.\ncard.\n%max.|Fréq.\ncard.\nmoyenne|Temps\ncircuit|Dist.\ncircuit|Allure\ncircuit|Vitesse\ncircuit|Allure\ndernier\ncircuit|Vitesse\ndernier\ncircuit|Circuits|Alt.|Heure|Bat.</string>
+    <string id="dm_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréq. cardiaque|Fréq. card. %max.|Fréq. card. moy.|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vitesse dern. circ.|Circuits|Altitude|Heure|Batterie</string>
     <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Heure|Batterie</string>
-
-    <string id="ds_def">Défaut</string>
-    <string id="ds_1">Écran 1</string>
-    <string id="ds_2">Écran 2</string>
-    <string id="ds_3">Écran 3</string>  
+    
+    <string id="ds_labels">Défaut|Écran 1|Écran 2|Écran 3</string>
     
     <string id="num_df"># champs données</string>  
            
     <string id="lap">Circuit</string> 
 
-    <string id="update">Période mise à jour</string>
-    <string id="update_s">Mise à jour</string>
-    <string id="info">Info</string>
-    <string id="delete">Supprimer</string>
-
-    <string id="activities">Génériq.|Course\nà\npied|Marcher|Cyclisme</string>
+    <string id="course_labels">Période mise à jour|Info|Supprimer</string>
+    <string id="activities">Générique|Course à pied|Marcher|Cyclisme</string>
 
     <string id="msg_continue">Reprendre?</string> 
     <string id="msg_delete_track">Supprimer le parcours?</string>   
