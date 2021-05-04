@@ -14,17 +14,30 @@ module Data {
     
     const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
 
-    var dataScreens = dataScreensDefault;
+    var dataScreens = [];
     var activeDataScreens = [];
+       
     var maxHeartRate = null;
 
     function setMaxHeartRate() {
         maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
     }
 
-    function setDataScreens(pDataScreens) {
-        dataScreens = pDataScreens;
-        determineActiveDataScreens();
+    function setDataScreens(_dataScreens) {
+        dataScreens = [];
+        for(var i = 0; i < _dataScreens.size(); i++) {
+            dataScreens.add(_dataScreens[i]);
+        }
+        setActiveDataScreens();
+    }
+   
+    function setActiveDataScreens() {
+       activeDataScreens = [];
+        for(var i = 0; i < dataScreens.size(); i++) {
+            if(dataScreens[i] != null && dataScreens[i].size() > 0) {
+                activeDataScreens.add(dataScreens[i]); 
+            }
+        } 
     }
 
     function getDataScreens() {
@@ -34,7 +47,7 @@ module Data {
     function setDataScreen(i, dataScreen) {
         if(i < dataScreens.size()) {
             dataScreens[i] = dataScreen;
-            determineActiveDataScreens();
+            setActiveDataScreens();
         }
     }
 

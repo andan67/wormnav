@@ -201,11 +201,11 @@ class GenericMenuDelegate extends WatchUi.MenuInputDelegate {
 	                return true;
 	            }
 	            // value denotes screen
-	            newMenu = new ListMenu(:DataScreens, "# " + WatchUi.loadResource(Rez.Strings.fields), 
+	            newMenu = new ListMenu(:screens, "# " + WatchUi.loadResource(Rez.Strings.fields), 
 	                    null, 
 	                    ["Off", "1", "2", "3", "4"], 
 	                    [0,1,2,3,4], Data.dataScreens[value - 1].size());
-	            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new NumberDataFieldsDelegate (newMenu, value - 1)), WatchUi.SLIDE_UP);
+	            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new DataFieldsDelegate (newMenu, value - 1)), WatchUi.SLIDE_UP);
 	            return true;
             default:
                 break;
@@ -215,65 +215,55 @@ class GenericMenuDelegate extends WatchUi.MenuInputDelegate {
     }
 }
 
-class NumberDataFieldsDelegate extends WatchUi.MenuInputDelegate {
+class DataFieldsDelegate extends WatchUi.MenuInputDelegate {
     hidden var screen;
     hidden var menu;
-
-    function initialize(_menu, _screen ) {
-        MenuInputDelegate.initialize ();
-        screen = _screen;
-        menu = _menu;
-    }
-
-    function onMenuItem(item) {
-        //Application.getApp().setProperty(mPicker.getPropertyKey(),values[0]);
-        //WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-        var nDataFields = menu.getSelectedValue();
-
-        if(nDataFields == 0) {
-            Data.setDataScreen(screen,[]);
-            Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-        } else {
-            var defaultValue = 0 < Data.dataScreens[screen].size()? Data.dataScreens[screen][0] : 0;
-            var view = new ListMenu(:DataFields, WatchUi.loadResource(Rez.Strings.field) + " 1/" + nDataFields, null, Data.dataFieldMenuLabels, null, defaultValue);
-            WatchUi.pushView(view, new ListMenuDelegate (view, new DataFieldDelegate (view, screen, 0, nDataFields)), WatchUi.SLIDE_UP); 
-        }
-    }
-}
-
-class DataFieldDelegate extends WatchUi.MenuInputDelegate {
-    hidden var screen;
-    hidden var fieldIdx;
-    hidden var nFields;
-    hidden var menu;
+    hidden var fieldIdx = 0;
+    hidden var nFields = 0;
     hidden var dataFields = [];
 
-    function initialize(_menu, _screen, _fieldIdx, _nFields) {
+    function initialize(_menu, _screen) {
         MenuInputDelegate.initialize ();
         screen = _screen;
-        fieldIdx = _fieldIdx;
-        nFields = _nFields;
         menu = _menu;
     }
 
     function onMenuItem(item) {
-        dataFields.add(menu.getSelectedValue());
-        fieldIdx++;
-        if(fieldIdx < nFields) {
-            //fieldIdx++;
-            var defaultValue = fieldIdx < Data.dataScreens[screen].size()? Data.dataScreens[screen][fieldIdx] : 0;
-            menu = new ListMenu(:DataFields, WatchUi.loadResource(Rez.Strings.field) + " " + fieldIdx +"/"  + nFields, null, Data.dataFieldMenuLabels, null, defaultValue);
-            WatchUi.switchToView(menu, new ListMenuDelegate (menu, self), WatchUi.SLIDE_UP);
-                        
-        } else
-        {
-            Data.setDataScreen(screen, dataFields);
-            Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        var value =  menu.getSelectedValue();
+        // first call for selecting number of fields;
+        if(nFields == 0) {
+            // get feom selected item
+            nFields = value;
+
+	        if(nFields == 0) {
+	            Data.setDataScreen(screen,[]);
+	            Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+	            menu = null;
+	            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+	            return;
+	        }
         }
-        
+        if(nFields > 0) {
+            var defaultValue = fieldIdx < Data.dataScreens[screen].size()? Data.dataScreens[screen][fieldIdx] : 0;
+            menu = new ListMenu(:fields, WatchUi.loadResource(Rez.Strings.field) + (fieldIdx+1) + "/" + nFields, null, Data.dataFieldMenuLabels, null, defaultValue);
+            
+            fieldIdx++;
+            // first field, push new view
+            if(fieldIdx == 1) {
+                WatchUi.pushView(menu, new ListMenuDelegate (menu, self), WatchUi.SLIDE_UP);     
+            } else {
+	            dataFields.add(value);
+	            if(fieldIdx <= nFields) {
+	                WatchUi.switchToView(menu, new ListMenuDelegate (menu, self), WatchUi.SLIDE_UP);    
+	            } else {
+	                menu = null;
+	                Data.setDataScreen(screen, dataFields);
+	                Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+	                WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+	                WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);    
+	            }
+            }
+        }
     }
 }
 
