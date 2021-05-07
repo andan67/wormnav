@@ -15,7 +15,7 @@ class DataView extends GenericView {
     hidden var dfCenters;
     hidden var font;
     hidden var fontNumber;
-    
+
     // Set the label of the field here
     function initialize(dataFields) {
         GenericView.initialize();
@@ -73,7 +73,7 @@ class DataView extends GenericView {
         var h2 = dc.getFontHeight(fontNumber);
         var a2 = dc.getFontAscent(fontNumber);
         var d2 = dc.getFontDescent(fontNumber);
-        
+
         var offset = 0;
         var h = height / Data.min(numberDataFields,3);
         if($.device.equals("vivoactive") && numberDataFields > 1) {
@@ -151,7 +151,7 @@ class DataView extends GenericView {
         dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER);
         return;
     }
-   
+
 }
 
 
@@ -167,6 +167,6 @@ class LapView extends WatchUi.View {
         dc.clear();
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth()/2, dc.getFontHeight(Graphics.FONT_LARGE), Graphics.FONT_LARGE, "Lap " + Trace.lapCounter, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTimeWithDecimals(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTime(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
     }
 }

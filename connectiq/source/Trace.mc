@@ -13,7 +13,7 @@ module Trace {
 
     var lat_last_pos;
     var lon_last_pos;
-  
+
     var lapTime = 0.0;
     var lapDistance = 0.0;
     var lapInitDistance = 0.0;
@@ -24,10 +24,23 @@ module Trace {
     var autolapDistance = 1000.0;
     var lapPace = "";
     var isAutoLapActive = false;
-    
+
     var positionTime = 0;
     var lastPositionTime = 0;
     var positionDistance = 0.0;
+
+    function getAutolapDistance() {
+        return autolapDistance;
+    }
+
+    function getBreadCrumbNumber() {
+        return breadCrumbNumber;
+    }
+
+    function getBreadCrumbDist() {
+        return breadCrumbDist;
+    }
+
 
     function reset() {
         xy = new [2 * breadCrumbNumber];
@@ -51,7 +64,7 @@ module Trace {
             putBreadcrumbPosition(lat_last_pos, lon_last_pos);
             cumDistance = 0.0;
         }
-    } 
+    }
 
 
     function putBreadcrumbPosition(lat,lon) {
@@ -74,7 +87,7 @@ module Trace {
         Transform.setPosition(lat_pos,lon_pos);
         if(lat_last_pos != null) {
             positionDistance = Transform.distance(lat_last_pos, lon_last_pos, lat_pos, lon_pos);
-            cumDistance += positionDistance;            
+            cumDistance += positionDistance;
         }
 
         lat_last_pos=lat_pos;

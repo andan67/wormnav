@@ -1,5 +1,7 @@
 using Toybox.WatchUi;
 using Transform;
+using MenuDelegates;
+using Toybox.Lang;
 
 var eventText;
 const TRACK_MODE = 0;
@@ -9,12 +11,12 @@ var mode;
 var dataPage = 0;
 
 class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
-    
+
     function initialize() {
         ConfirmationDelegate.initialize();
     }
-    
-    
+
+
     function onResponse(response) {
         if (response == WatchUi.CONFIRM_NO) {
             //System.println("Cancel");
@@ -22,7 +24,7 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
         } else {
             //System.println("Confirm");
               System.exit();
-              return true;             
+              return true;
         }
         return false;
     }
@@ -31,7 +33,7 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
 
-    // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage 
+    // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage
     // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
     var onPrevPageTick = 0;
     var isOnPrevPageLastEvent = false;
@@ -88,49 +90,49 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // When a back behavior occurs, onBack() is called.
     // @return [Boolean] true if handled, false otherwise
     function onBack() {
-		//System.println("onBack");
-		// If active session is stopped asked for discard/save/resume
+        //System.println("onBack");
+        // If active session is stopped asked for discard/save/resume
         isOnPrevPageLastEvent = false;
-		if( $.session != null  &&  $.session.isRecording() == false ) {
-        	var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
-                                [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
-                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null);
-            
-            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
-        	
-        	WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
-            return true;    
+        if( $.session != null  &&  $.session.isRecording() == false ) {
+            var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
+                                [:resume, :save, :discard],
+                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null, false);
+
+            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
+
+            WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
+            return true;
         }
-        
+
         // If there is no session exit;
         if ($.session == null || $.session.isRecording() == false) {
-        	//System.exit();
-        	
-        	//ASK_USER:
+            //System.exit();
+
+            //ASK_USER:
             //var message = "Exit App?";
             var message = WatchUi.loadResource(Rez.Strings.msg_exit_app);
-                    
+
             var dialog = new WatchUi.Confirmation(message);
             WatchUi.pushView(
                         dialog,
                         new ExitConfirmationDelegate(),
                         WatchUi.SLIDE_IMMEDIATE
-                    ); 
-            
-            return true;       	
-        	
+                    );
+
+            return true;
+
         }
         if(mode==TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
             if(dataView==null) {
-            	dataView = new DataView(Data.activeDataScreens[dataPage]);
+                dataView = new DataView(Data.activeDataScreens[dataPage]);
             }
             mode=DATA_MODE;
-            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);             
+            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         else if(mode==DATA_MODE) {
-        	mode=TRACK_MODE;
+            mode=TRACK_MODE;
             WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
-        }      
+        }
         return true;
     }
 
@@ -152,14 +154,15 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         // System.println("onMenu()");
         // Workaround for issue
         if(isOnPrevPageLastEvent && $.appTimerTicks - onPrevPageTick < 3) {
-            // counteract 
-            onNextPage(); 
+            // counteract
+            onNextPage();
         }
         isOnPrevPageLastEvent = false;
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
-                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null);
-        WatchUi.pushView(menu, new ListMenuDelegate (menu, new MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
+                                WatchUi.loadResource(Rez.Strings.mm_labels),
+                                new Lang.Method(MenuDelegates, :getValueLabelsForItems), null, true);
+        WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
         return true;
     }
 
@@ -185,7 +188,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                     Attention.playTone(Attention.TONE_STOP);
                 }
             }
-        }  
+        }
     }
 
     private function dataPageChange(n) {
