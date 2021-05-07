@@ -35,10 +35,10 @@ var isDarkMode = false;
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
     var sessionEventTicker = 0;
-    
+
     var appTimer;
     var vibrateData = [new Att.VibeProfile(  50, 250 )];
-    
+
     function initialize() {
         AppBase.initialize();
     }
@@ -54,7 +54,7 @@ class WormNavApp extends Application.AppBase {
         } else {
             device = "generic";
         }
-        
+
         System.println("Device: " + device);
 
         Data.setMaxHeartRate();
@@ -101,7 +101,7 @@ class WormNavApp extends Application.AppBase {
         if(Application.getApp().getProperty("activityType")!=null) {
             activityType = Application.getApp().getProperty("activityType");
         }
-        
+
         if(Application.getApp().getProperty("trackViewPeriod")!=null) {
             trackViewPeriod = Application.getApp().getProperty("trackViewPeriod");
         }
@@ -212,9 +212,21 @@ class WormNavApp extends Application.AppBase {
             if(dataViewCounter %  dataViewPeriod == 0) {
                 WatchUi.requestUpdate();
             }
-            dataViewCounter += 1;	
+            dataViewCounter += 1;
         }
-          
+
+    }
+
+    function getActivityType() {
+        return activityType;
+    }
+
+    function getDarkMode() {
+        return isDarkMode;
+    }
+
+    function getTrackViewPeriod() {
+        return trackViewPeriod;
     }
 
      // split string str by separator char c into string array
@@ -227,7 +239,7 @@ class WormNavApp extends Application.AppBase {
             while (pos <= charArray.size()) {
                 if(pos == charArray.size() || charArray[pos] == c) {
                     if(pos > start) {
-                        result.add(str.substring(start, pos));    
+                        result.add(str.substring(start, pos));
                     }
                     pos += 1;
                     start = pos;

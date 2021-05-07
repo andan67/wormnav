@@ -3,6 +3,8 @@ using Toybox.WatchUi;
 using Toybox.System;
 using Toybox.Lang;
 using Toybox.ActivityRecording;
+using Toybox.Application;
+
 using Trace;
 
 module MenuDelegates {
@@ -13,22 +15,52 @@ module MenuDelegates {
                         :bc_number => [null,
                                       [1,2,5,10,20,50,100],
                                       new Lang.Method(Trace, :getBreadCrumbNumber)],
-                        :bc_distance =>[["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
+                        :bc_distance => [["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
                                         [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0],
-                                         new Lang.Method(Trace, :getBreadCrumbDist)]
+                                         new Lang.Method(Trace, :getBreadCrumbDist)],
+                        :orient => [WatchUi.loadResource(Rez.Strings.orient_opts),
+                                    null,
+                                    new Lang.Method(Transform, :getOrientation)],
+                        :activity => [WatchUi.loadResource(Rez.Strings.activities),
+                                      [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING,
+                                       ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
+                                       Application.getApp().method(:getActivityType) ],
+                        :background => [WatchUi.loadResource(Rez.Strings.color_opts),
+                                        [true, false],
+                                        Application.getApp().method(:getDarkMode) ],
+                        :track_update => [["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
+                                          [1,2,5,10,15,30,60],
+                                          Application.getApp().method(:getTrackViewPeriod)]
                        };
 
     function getValueLabelForItem(id) {
         if(id != null) {
             var entry = menuItemDict.get(id);
-            if(entry != null && entry[0] != null && entry[1] != null && (entry[2]).invoke()!= null) {
+            if(entry != null) {
+                var labels = entry[0];
+                if(entry[0] instanceof Lang.String) {
+                    labels = Application.getApp().split(entry[0],'|');
+                }
+                var values = entry[1];
                 var i;
-                for(i = 0; i < entry[1].size(); i++) {
-                    if(entry[1][i] == (entry[2]).invoke()) {
-                        break;
+                if(values == null && labels instanceof Lang.Array ) {
+                    values = [];
+                    for(i = 0; i < labels.size(); i++) {
+                        values.add(i);
                     }
                 }
-                return entry[0][i];
+                if(values != null && (entry[2]).invoke()!= null) {
+                    for(i = 0; i < values.size(); i++) {
+                        if(values[i] == (entry[2]).invoke()) {
+                            break;
+                        }
+                    }
+                    if(labels != null) {
+                        return labels[i];
+                    } else {
+                        return values[i].toString();
+                    }
+                }
             }
         }
         return null;
@@ -96,11 +128,10 @@ module MenuDelegates {
                     break;
                 case :breadcrumbs:
                     defaultValue = null;
-                    showValue = false;
+                    showValue = true;
                     idList = [:bc_set, :bc_clear, :bc_number, :bc_distance];
                     labelList = WatchUi.loadResource(Rez.Strings.bc_labels);
-                    //valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
-                    valueList = null;
+                    valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
                     break;
                 case :activity:
                     defaultValue = $.activityType;
@@ -117,9 +148,10 @@ module MenuDelegates {
                     break;
                 case :course:
                     defaultValue = null;
+                    showValue = true;
                     idList = [:track_update, :track_info, :track_del];
                     labelList = WatchUi.loadResource(Rez.Strings.course_labels);
-                    valueList = null;
+                    valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
                     break;
                 default:
                     return false;
@@ -179,14 +211,14 @@ module MenuDelegates {
                             var newMenu = new ListMenu(:bc_number, menu.getSelectedLabel(), null,
                                     null, [1,2,5,10,20,50,100], defaultValue, false);
                             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
-                            break;
+                            return true;
                         case :bc_distance:
                             defaultValue = Trace.breadCrumbDist;
                             newMenu = new ListMenu(:bc_distance, menu.getSelectedLabel(), null,
                                     ["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
                                     [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0], defaultValue, false);
                             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
-                            break;
+                            return true;
                     }
                     break;
                 case :bc_distance:
@@ -206,7 +238,7 @@ module MenuDelegates {
                     var newMenu;
                     switch(menu.getSelectedId()) {
                         case :track_update:
-                            newMenu = new ListMenu(:track_update, menu.getSelectedId(), null,
+                            newMenu = new ListMenu(:track_update, menu.getSelectedLabel(), null,
                                     ["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
                                     [1,2,5,10,15,30,60], $.trackViewPeriod, false);
                             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);

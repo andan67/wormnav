@@ -12,7 +12,7 @@ module Transform {
 
     var refScale = 2.0;
     const SCALE_PIXEL = 0.1;
-  
+
     var zoomLevel = null;
     var scaleFactor;
 
@@ -21,7 +21,7 @@ module Transform {
     var last_x_pos;
     var last_y_pos;
 
-    // center of perspective projection (usually defined by track) 
+    // center of perspective projection (usually defined by track)
     var lat_view_center = null;
     var lon_view_center = null;
     var cos_lat_view_center;
@@ -39,7 +39,7 @@ module Transform {
     var heading_smooth=-1.0;
     var cos_heading_smooth;
     var sin_heading_smooth;
-   
+
     var pixelHeight;
     var pixelWidth;
     var pixelWidth2;
@@ -90,6 +90,14 @@ module Transform {
            y_d=0.0;
            xs_center = pixelWidth2;
            ys_center = pixelHeight2;
+        }
+    }
+
+    function getOrientation() {
+        if(northHeading) {
+            return centerMap? 2 : 1;
+        } else {
+            return 0;
         }
     }
 
@@ -148,15 +156,15 @@ module Transform {
         }
 
         var xy = ll_2_xy(lat_pos, lon_pos);
-       
+
         x_pos = xy[0];
         y_pos = xy[1];
-        
+
         // set center in projected (x,y) coordinates
         setViewCenter(lat_pos,lon_pos);
         setHeading();
     }
-    
+
     function xy_2_screen(x, y) {
         var xr = scaleFactor*(x-x_d);
         var yr = scaleFactor*(y-y_d);
@@ -167,7 +175,7 @@ module Transform {
                     ys_center-xr*sin_heading_smooth - yr*cos_heading_smooth];
         }
     }
-    
+
     function ll_2_xy(lat, lon) {
         var ll = lon-lon_view_center;
         var cos_lat = Math.cos(lat);
@@ -209,7 +217,7 @@ module Transform {
 
     function setZoomLevel(l) {
         if(l == -1 && zoomLevel > 0) {
-            zoomLevel -=1; 
+            zoomLevel -=1;
         } else if(l ==-2 && zoomLevel < 24) {
             zoomLevel +=1;
         } else if(l >=0 && l <= 25) {
@@ -217,7 +225,7 @@ module Transform {
         } else {
             zoomLevel = 5;
         }
-                
+
         refScale = refScaleFromLevel(zoomLevel);
         scaleFactor = 0.2*pixelWidth/refScale*EARTH_RADIUS;
         return zoomLevel;
