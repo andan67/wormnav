@@ -14,18 +14,16 @@
     <string id="sm_save">Save</string>
     <string id="sm_disc">Discard</string>
 
+    <string id="bc_labels">Set current pos.|Clear|Number|Distance</string>
+    
+    <string id="ds_labels">Defaults|Screen 1|Screen 2|Screen 3</string>
+    <string id="dfm_labels">Number|Field 1|Field 2|Field 3|Field 4</string>  
+    <string id="num_df"># data fields</string> 
     <string id="data_fields">Data fields</string>
     <string id="field">Field</string>
     <string id="fields">Fields</string>
-
-    <string id="bc_labels">Set current pos.|Clear|Number|Distance</string>
-
     <string id="dm_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|Heart Rate %Max|Avg. Heart Rate|Lap Time|Lap Distance|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Speed|Laps|Elevation|Time of Day|Battery</string>
     <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max.|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|L Lap Pace|L Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
-
-    <string id="ds_labels">Defaults|Screen 1|Screen 2|Screen 3</string>    
-     
-    <string id="num_df"># data fields</string> 
 
     <string id="lap">Lap</string> 
 

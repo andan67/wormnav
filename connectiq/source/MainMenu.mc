@@ -30,7 +30,13 @@ module MenuDelegates {
                                         Application.getApp().method(:getDarkMode) ],
                         :track_update => [["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
                                           [1,2,5,10,15,30,60],
-                                          Application.getApp().method(:getTrackViewPeriod)]
+                                          Application.getApp().method(:getTrackViewPeriod)],
+                        :datascreen_nfields => [null,
+                                                 [0,1,2,3,4],
+                                                 new Lang.Method(Data, :getNumberFields)],
+                        :datascreen_fields => [null,
+                                                 Data.dataFieldMenuLabels,
+                                                 new Lang.Method(Data, :getField)]
                        };
 
     function getValueLabelForItem(id) {
@@ -157,17 +163,19 @@ module MenuDelegates {
                     return false;
             }
             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, showValue);
-            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu, null)), WatchUi.SLIDE_UP);
             return true;
         }
     }
 
     class GenericMenuDelegate extends WatchUi.MenuInputDelegate {
         hidden var menu;
+        hidden var options;
 
-        function initialize(_menu) {
+        function initialize(_menu, _options) {
             MenuInputDelegate.initialize();
             menu = _menu;
+            options = _options;
         }
 
         function onMenuItem(item) {
@@ -210,14 +218,14 @@ module MenuDelegates {
                             var defaultValue = Trace.breadCrumbNumber;
                             var newMenu = new ListMenu(:bc_number, menu.getSelectedLabel(), null,
                                     null, [1,2,5,10,20,50,100], defaultValue, false);
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu, null)), WatchUi.SLIDE_UP);
                             return true;
                         case :bc_distance:
                             defaultValue = Trace.breadCrumbDist;
                             newMenu = new ListMenu(:bc_distance, menu.getSelectedLabel(), null,
                                     ["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
                                     [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0], defaultValue, false);
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu, null)), WatchUi.SLIDE_UP);
                             return true;
                     }
                     break;
@@ -241,7 +249,7 @@ module MenuDelegates {
                             newMenu = new ListMenu(:track_update, menu.getSelectedLabel(), null,
                                     ["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
                                     [1,2,5,10,15,30,60], $.trackViewPeriod, false);
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu, null)), WatchUi.SLIDE_UP);
                             return true;
                         case :track_del:
                             if(track!=null) {
@@ -273,11 +281,19 @@ module MenuDelegates {
                         return true;
                     }
                     // value denotes screen
+                    /*
+                    newMenu = new ListMenu(:screens,  menu.getSelectedLabel(),
+                            [,
+                            WatchUi.loadResource(Rez.Strings.dfm_labels),
+                            new Lang.Method(MenuDelegates, :getValueLabelsForItems), null, false);
+                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new DataFieldsDelegate (newMenu, value - 1)), WatchUi.SLIDE_UP);
+                    */
                     newMenu = new ListMenu(:screens, "# " + WatchUi.loadResource(Rez.Strings.fields),
                             null,
                             ["Off", "1", "2", "3", "4"],
                             [0,1,2,3,4], Data.dataScreens[value - 1].size(), false);
                     WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new DataFieldsDelegate (newMenu, value - 1)), WatchUi.SLIDE_UP);
+
                     return true;
                 default:
                     break;

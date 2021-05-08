@@ -12,7 +12,7 @@ module Data {
     const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.dm_labels);
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
 
-    const dataScreensDefault = [[0,1,4,6],[9,10,11,15],[12,5,14,10]];
+    const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10];
 
     var dataScreens = [];
     var activeDataScreens = [];
@@ -21,6 +21,14 @@ module Data {
 
     function setMaxHeartRate() {
         maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
+    }
+
+    function getNumberFields(_screen) {
+        return dataScreens[5*_screen];
+    }
+
+    function getField(_screen, _idx) {
+        return dataScreens[5*_screen + _idx];
     }
 
     function setDataScreens(_dataScreens) {
