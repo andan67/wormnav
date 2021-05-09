@@ -23,27 +23,43 @@ module Data {
         maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
     }
 
-    function getNumberFields(_screen) {
-        return dataScreens[5*_screen];
-    }
-
     function getField(_screen, _idx) {
         return dataScreens[5*_screen + _idx];
     }
 
+    function setField(_screen, _idx, _field) {
+        dataScreens[5*_screen + _idx] = _field;
+        setActiveDataScreens();
+    }
+
+
+
     function setDataScreens(_dataScreens) {
         dataScreens = [];
-        for(var i = 0; i < _dataScreens.size(); i++) {
-            dataScreens.add(_dataScreens[i]);
+        // check for old format
+        if(_dataScreens[0] instanceof Lang.Array) {
+            // old format
+            for(var i = 0; i < _dataScreens.size(); i++) {
+                dataScreens.add(_dataScreens[i].size());
+                dataScreens.addAll(_dataScreens[i]);
+                for (var j = 0; j < 4 - _dataScreens[i].size(); j++) {
+                    // default
+                    dataScreens.add(0);
+                }
+            }
+        } else {
+            for(var i = 0; i < _dataScreens.size(); i++) {
+                dataScreens.add(_dataScreens[i]);
+            }
         }
         setActiveDataScreens();
     }
 
     function setActiveDataScreens() {
        activeDataScreens = [];
-        for(var i = 0; i < dataScreens.size(); i++) {
-            if(dataScreens[i] != null && dataScreens[i].size() > 0) {
-                activeDataScreens.add(dataScreens[i]);
+        for(var i = 0; i < dataScreens.size(); i += 5) {
+            if(dataScreens[i] > 0) {
+                activeDataScreens.add(dataScreens.slice(i + 1, i + 1 + dataScreens[i]));
             }
         }
     }

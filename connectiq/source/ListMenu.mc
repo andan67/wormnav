@@ -23,13 +23,13 @@ class ListMenu extends Ui.View
     var index;
     var initIndex;
     var id;
-    var showValue = false;
+    var options;
 
     var nextIndex;
 
     var menuHeight = null;
 
-    function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _showValue)
+    function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _options)
     {
         View.initialize ();
         id = _id;
@@ -42,7 +42,7 @@ class ListMenu extends Ui.View
             itemValueList = _itemValueList;
         }
         itemIdList = _itemIdList;
-        showValue = _showValue;
+        options = _options;
 
         if(_itemLabelList instanceof String) {
             itemLabelList = Application.getApp().split(_itemLabelList,'|');
@@ -140,8 +140,8 @@ class ListMenu extends Ui.View
     }
 
     function onShow() {
-        if(valueFunction != null) {
-            itemValueList = valueFunction.invoke(itemIdList);
+        if(options != null && options.get(:showValue) && valueFunction != null) {
+            itemValueList = valueFunction.invoke(itemIdList, options.get(:qualifier));
             //System.println("onShow: " + itemValueList);
             //System.println("onShow: " +  Trace.autolapDistance);
             //System.println("onShow: " +  MenuDelegates.menuItemDict);
@@ -240,7 +240,7 @@ class ListMenu extends Ui.View
         }
         var yL, yV, h;
 
-        if (showValue && highlight && value != null)
+        if (options instanceof Dictionary && options.get(:showValue) && highlight && value != null)
         {
             // Show label and value.
             var val = value.toString ();

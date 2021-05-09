@@ -17,7 +17,7 @@
     <string id="bc_labels">Set current pos.|Clear|Number|Distance</string>
     
     <string id="ds_labels">Defaults|Screen 1|Screen 2|Screen 3</string>
-    <string id="dfm_labels">Number|Field 1|Field 2|Field 3|Field 4</string>  
+    <string id="dfm_labels"># Fields|Field 1|Field 2|Field 3|Field 4</string>  
     <string id="num_df"># data fields</string> 
     <string id="data_fields">Data fields</string>
     <string id="field">Field</string>
