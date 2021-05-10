@@ -36,48 +36,45 @@ module MenuDelegates {
                                                  new Lang.Method(Data, :getField)],
                         :datascreen_fields => [Data.dataFieldMenuLabels,
                                                null,
-                                               new Lang.Method(Data, :getField)]
+                                               new Lang.Method(Data, :getField)],
                        };
 
-    function getValueLabelForItem(id, idx, option) {
-        if(id != null) {
-            var entry = menuItemDict.get(id);
-            if(entry != null) {
-                var labels = entry[0];
-                if(entry[0] instanceof Lang.String) {
-                    labels = Application.getApp().split(entry[0],'|');
-                }
-                var values = entry[1];
-                var i;
-                if(values == null && labels instanceof Lang.Array ) {
-                    values = [];
-                    for(i = 0; i < labels.size(); i++) {
-                        values.add(i);
-                    }
-                }
-                var value = (option == null ? entry[2].invoke() :  entry[2].invoke(option, idx));
-                if(values != null &&  value != null) {
-                    for(i = 0; i < values.size(); i++) {
-                        if(values[i] ==  value) {
-                            break;
-                        }
-                    }
-                    if(labels != null) {
-                        return labels[i];
-                    } else {
-                        return values[i].toString();
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     function getValueLabelsForItems(ids, option) {
         var labels = [];
         for(var i = 0; i < ids.size(); i++) {
-            labels.add(getValueLabelForItem(ids[i], i, option));
-
+            var label = null;
+            if(ids[i] != null) {
+                var entry = menuItemDict.get(ids[i]);
+                if(entry != null) {
+                    var labels = entry[0];
+                    if(entry[0] instanceof Lang.String) {
+                        labels = Application.getApp().split(entry[0],'|');
+                    }
+                    var values = entry[1];
+                    var j;
+                    if(values == null && labels instanceof Lang.Array ) {
+                        values = [];
+                        for(j = 0; j < labels.size(); j++) {
+                            values.add(j);
+                        }
+                    }
+                    var value = (option == null ? entry[2].invoke() :  entry[2].invoke(option, i));
+                    if(values != null &&  value != null) {
+                        for(j = 0; j < values.size(); j++) {
+                            if(values[j] ==  value) {
+                                break;
+                            }
+                        }
+                        if(labels != null) {
+                            label = labels[j];
+                        } else {
+                            label = values[j].toString();
+                        }
+                    }
+                }
+            }
+            labels.add(label);
         }
         return labels;
     }
@@ -99,72 +96,52 @@ module MenuDelegates {
             var idList = null;
             var newMenu;
 
-            switch(menu.getSelectedId()) {
+            var menuItemId = menu.getSelectedId();
 
-                case :delete:
-                    if(track!=null) {
-                        var message = WatchUi.loadResource(Rez.Strings.msg_continue);
-                        var dialog = new WatchUi.Confirmation(message);
-                        WatchUi.pushView(
-                            dialog,
-                            new DeleteConfirmationDelegate(),
-                            WatchUi.SLIDE_IMMEDIATE
-                        );
-                    }
-                    return true;
-                case :orient:
-                    if(Transform.northHeading) {
-                        defaultValue = Transform.centerMap? 2 : 1;
-                    } else {
-                        defaultValue = 0;
-                    }
-                    idList = null;
-                    labelList = WatchUi.loadResource(Rez.Strings.orient_opts);
-                    valueList = null;
-                    break;
-                case :background:
-                    defaultValue = $.isDarkMode;
-                    idList = null;
-                    labelList = WatchUi.loadResource(Rez.Strings.color_opts);
-                    valueList = [true, false];
-                    break;
-                case :autolap:
-                    defaultValue = Trace.autolapDistance;
-                    idList = null;
-                    labelList = ["off","100m","200m","400m","500m","1km","2km","5km"];
-                    valueList = [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0];
-                    break;
-                case :breadcrumbs:
-                    defaultValue = null;
-                    showValue = true;
-                    idList = [:bc_set, :bc_clear, :bc_number, :bc_distance];
-                    labelList = WatchUi.loadResource(Rez.Strings.bc_labels);
-                    valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
-                    break;
-                case :activity:
-                    defaultValue = $.activityType;
-                    idList = null;
-                    labelList = WatchUi.loadResource(Rez.Strings.activities);
-                    valueList = [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING,
-                                        ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING];
-                    break;
-                case :screens:
-                    defaultValue = null;
-                    idList = null;
-                    labelList = WatchUi.loadResource(Rez.Strings.ds_labels);
-                    valueList = null;
-                    break;
-                case :course:
-                    defaultValue = null;
-                    showValue = true;
-                    idList = [:track_update, :track_info, :track_del];
-                    labelList = WatchUi.loadResource(Rez.Strings.course_labels);
-                    valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
-                    break;
-                default:
-                    return false;
+
+            var entry = menuItemDict.get(menuItemId);
+            if(entry != null) {
+                //showValue = true;
+                labelList = entry[0];
+                valueList = entry[1];
+                defaultValue = entry[2].invoke();
+            } else {
+                switch(menuItemId) {
+                    case :delete:
+                        if(track!=null) {
+                            var message = WatchUi.loadResource(Rez.Strings.msg_continue);
+                            var dialog = new WatchUi.Confirmation(message);
+                            WatchUi.pushView(
+                                dialog,
+                                new DeleteConfirmationDelegate(),
+                                WatchUi.SLIDE_IMMEDIATE
+                            );
+                        }
+                        return true;
+                    case :breadcrumbs:
+                        defaultValue = null;
+                        showValue = true;
+                        idList = [:bc_set, :bc_clear, :bc_number, :bc_distance];
+                        labelList = WatchUi.loadResource(Rez.Strings.bc_labels);
+                        valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
+                        break;
+                    case :screens:
+                        defaultValue = null;
+                        idList = null;
+                        labelList = WatchUi.loadResource(Rez.Strings.ds_labels);
+                        valueList = null;
+                        break;
+                    case :course:
+                        defaultValue = null;
+                        idList = [:track_update, :track_info, :track_del];
+                        labelList = WatchUi.loadResource(Rez.Strings.course_labels);
+                        valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
+                        break;
+                    default:
+                        return false;
+                }
             }
-            newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, {:showValue => showValue});
+            newMenu = new ListMenu(menuItemId, menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, {:showValue => showValue});
             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
             return true;
         }
@@ -215,16 +192,10 @@ module MenuDelegates {
                             Trace.reset();
                             break;
                         case :bc_number:
-                            var defaultValue = Trace.breadCrumbNumber;
-                            var newMenu = new ListMenu(:bc_number, menu.getSelectedLabel(), null,
-                                    null, [1,2,5,10,20,50,100], defaultValue, {:showValue => false});
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
-                            return true;
                         case :bc_distance:
-                            defaultValue = Trace.breadCrumbDist;
-                            newMenu = new ListMenu(:bc_distance, menu.getSelectedLabel(), null,
-                                    ["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
-                                    [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0], defaultValue, {:showValue => false});
+                            var entry = menuItemDict.get(menu.getSelectedId());
+                            var newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
+                                    entry[0], entry[1], entry[2].invoke(), {:showValue => false});
                             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
                             return true;
                     }
@@ -246,9 +217,10 @@ module MenuDelegates {
                     var newMenu;
                     switch(menu.getSelectedId()) {
                         case :track_update:
-                            newMenu = new ListMenu(:track_update, menu.getSelectedLabel(), null,
-                                    ["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
-                                    [1,2,5,10,15,30,60], $.trackViewPeriod, {:showValue => false});
+                            var entry = [];
+                            entry = menuItemDict.get(menu.getSelectedId());
+                            newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
+                                    entry[0], entry[1], entry[2].invoke(), {:showValue => false});
                             WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
                             return true;
                         case :track_del:
@@ -315,58 +287,6 @@ module MenuDelegates {
             }
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             return true;
-        }
-    }
-
-    class DataFieldsDelegate extends WatchUi.MenuInputDelegate {
-        hidden var screen;
-        hidden var menu;
-        hidden var fieldIdx = 0;
-        hidden var nFields = 0;
-        hidden var dataFields = [];
-
-        function initialize(_menu, _screen) {
-            MenuInputDelegate.initialize ();
-            screen = _screen;
-            menu = _menu;
-        }
-
-        function onMenuItem(item) {
-            var value =  menu.getSelectedValue();
-            // first call for selecting number of fields;
-            if(nFields == 0) {
-                // get feom selected item
-                nFields = value;
-
-                if(nFields == 0) {
-                    Data.setDataScreen(screen,[]);
-                    Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-                    menu = null;
-                    WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-                    return;
-                }
-            }
-            if(nFields > 0) {
-                var defaultValue = fieldIdx < Data.dataScreens[screen].size()? Data.dataScreens[screen][fieldIdx] : 0;
-                menu = new ListMenu(:fields, WatchUi.loadResource(Rez.Strings.field) + (fieldIdx+1) + "/" + nFields, null, Data.dataFieldMenuLabels, null, defaultValue, false);
-
-                fieldIdx++;
-                // first field, push new view
-                if(fieldIdx == 1) {
-                    WatchUi.pushView(menu, new ListMenuDelegate (menu, self), WatchUi.SLIDE_UP);
-                } else {
-                    dataFields.add(value);
-                    if(fieldIdx <= nFields) {
-                        WatchUi.switchToView(menu, new ListMenuDelegate (menu, self), WatchUi.SLIDE_UP);
-                    } else {
-                        menu = null;
-                        Data.setDataScreen(screen, dataFields);
-                        Application.getApp().setProperty("dataScreens",Data.getDataScreens());
-                        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-                        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-                    }
-                }
-            }
         }
     }
 

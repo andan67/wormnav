@@ -68,13 +68,6 @@ module Data {
         return dataScreens;
     }
 
-    function setDataScreen(i, dataScreen) {
-        if(i < dataScreens.size()) {
-            dataScreens[i] = dataScreen;
-            setActiveDataScreens();
-        }
-    }
-
     function determineActiveDataScreens() {
         activeDataScreens = [];
         for(var i=0; i < dataScreens.size(); i+=1) {
