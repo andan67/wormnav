@@ -27,22 +27,17 @@ class TrackView extends GenericView {
 
     }
 
-
     function drawActivityInfo(dc) {
-        var data;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        if(session.isRecording() && Activity.getActivityInfo()!=null) {
-            activity_values[0] = Data.getDataFieldLabelValue(0)[1];
-            activity_values[1] = Data.getDataFieldLabelValue(1)[1];
-        }
         var y = 0.5*dc.getFontAscent(fontsize);
-        dc.drawText(Transform.pixelWidth2, topPadding + y, fontsize, activity_values[0], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(Transform.pixelWidth2, topPadding + 3*y, fontsize, activity_values[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        for(var i = 0; i < Data.getField(3, 0); i++) {
+            dc.drawText(Transform.pixelWidth2, topPadding + (1+2*i)*y, fontsize, Data.getDataFieldLabelValue(Data.getField(3, i+1))[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        }
+
     }
 
-
     function drawTrack(dc) {
-       
+
         var scaleFactor = Transform.scaleFactor;
         var x_d = Transform.x_d;
         var y_d = Transform.y_d;
@@ -52,10 +47,8 @@ class TrackView extends GenericView {
         var sin_heading_smooth = 0.0;
         if( !Transform.northHeading && !Transform.centerMap && !Transform.isTrackCentered) {
             cos_heading_smooth = Transform.cos_heading_smooth;
-            sin_heading_smooth = Transform.sin_heading_smooth;    
+            sin_heading_smooth = Transform.sin_heading_smooth;
         }
-
-
 
         var xy_pos1;
         var xy_pos2;
@@ -72,25 +65,25 @@ class TrackView extends GenericView {
             dc.setPenWidth(2);
 
             xya = $.track.xyArray;
-                
+
             for(var i = -2; i < xya.size() - 3; i += 2 ) {
                 if(i >= 0) {
                     x1 = x2;
-                    y1 = y2;    
+                    y1 = y2;
                 }
                 xr = scaleFactor*(xya[i+2] - x_d);
                 yr = scaleFactor*(xya[i+3] - y_d);
                 x2 = xs_center + xr*cos_heading_smooth - yr*sin_heading_smooth;
                 y2 = ys_center - xr*sin_heading_smooth - yr*cos_heading_smooth;
                 if(i >= 0) {
-                    dc.drawLine(x1,y1,x2,y2); 
+                    dc.drawLine(x1,y1,x2,y2);
                 }
             }
         }
 
         if(Trace.pos_nelements > 0) {
             dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
-            xya = Trace.xy; 
+            xya = Trace.xy;
             for(var i=0; i < Trace.pos_nelements; i += 1) {
                 var j = (Trace.pos_start_index + i) % Trace.breadCrumbNumber;
                 xr = scaleFactor*(xya[2*j] - x_d);

@@ -167,6 +167,6 @@ class LapView extends WatchUi.View {
         dc.clear();
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.drawText(dc.getWidth()/2, dc.getFontHeight(Graphics.FONT_LARGE), Graphics.FONT_LARGE, "Lap " + Trace.lapCounter, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTime(Trace.lapTime.toLong()), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - dc.getFontHeight(Graphics.FONT_NUMBER_MEDIUM)/2, Graphics.FONT_NUMBER_HOT, Data.msToTime(Trace.lapTime.toLong(), true), Graphics.TEXT_JUSTIFY_CENTER);
     }
 }

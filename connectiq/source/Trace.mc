@@ -29,19 +29,6 @@ module Trace {
     var lastPositionTime = 0;
     var positionDistance = 0.0;
 
-    function getAutolapDistance() {
-        return autolapDistance;
-    }
-
-    function getBreadCrumbNumber() {
-        return breadCrumbNumber;
-    }
-
-    function getBreadCrumbDist() {
-        return breadCrumbDist;
-    }
-
-
     function reset() {
         xy = new [2 * breadCrumbNumber];
         pos_nelements = 0;

@@ -12,7 +12,7 @@ module Data {
     const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.dm_labels);
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
 
-    const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10];
+    const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10,2,0,1,4,6];
 
     var dataScreens = [];
     var activeDataScreens = [];
@@ -32,8 +32,6 @@ module Data {
         setActiveDataScreens();
     }
 
-
-
     function setDataScreens(_dataScreens) {
         dataScreens = [];
         // check for old format
@@ -47,6 +45,10 @@ module Data {
                     dataScreens.add(0);
                 }
             }
+            // for track screen
+            for(var i = 15; i < 20; i++) {
+                dataScreens.add(dataScreensDefault[i]);
+            }
         } else {
             for(var i = 0; i < _dataScreens.size(); i++) {
                 dataScreens.add(_dataScreens[i]);
@@ -57,15 +59,11 @@ module Data {
 
     function setActiveDataScreens() {
        activeDataScreens = [];
-        for(var i = 0; i < dataScreens.size(); i += 5) {
+        for(var i = 0; i < 15; i += 5) {
             if(dataScreens[i] > 0) {
                 activeDataScreens.add(dataScreens.slice(i + 1, i + 1 + dataScreens[i]));
             }
         }
-    }
-
-    function getDataScreens() {
-        return dataScreens;
     }
 
     function determineActiveDataScreens() {
@@ -83,7 +81,7 @@ module Data {
         switch(i) {
             case 0: // TIMER
                 data = Activity.getActivityInfo().timerTime;
-                dataValue = data != null? Data.msToTime(data) : "--";
+                dataValue = data != null? Data.msToTime(data, false) : "--";
                 break;
             case 1: // DISTANCE
                 data = Activity.getActivityInfo().elapsedDistance;
@@ -116,7 +114,7 @@ module Data {
                 dataValue = Activity.getActivityInfo().averageHeartRate;
                 break;
             case 9: // LAP_TIMER
-                dataValue = Trace.autolapDistance > 0 ? Data.msToTime(Trace.lapTime.toLong()) : null;
+                dataValue = Trace.autolapDistance > 0 ? Data.msToTime(Trace.lapTime.toLong(), false) : null;
                 break;
             case 10: // LAP_DISTANCE
                 dataValue = Trace.autolapDistance > 0 ? (0.001*Data.Trace.lapDistance).format("%.2f") : null;
@@ -161,12 +159,19 @@ module Data {
         return [dataFieldLabels[i], dataValue];
     }
 
-    function msToTime(ms) {
+    function msToTime(ms, withDecimals) {
+        var decimals = (ms % 1000) / 100;
         var seconds = (ms / 1000) % 60;
         var minutes = (ms / 60000) % 60;
         var hours = ms / 3600000;
 
-        return Lang.format("$1$:$2$:$3$", [hours, minutes.format("%02d"), seconds.format("%02d")]);
+        if (!withDecimals || hours > 0){
+            return Lang.format("$1$:$2$:$3$", [hours, minutes.format("%02d"), seconds.format("%02d")]);
+        }
+        else{
+            return Lang.format("$1$:$2$.$3$", [minutes.format("%02d"), seconds.format("%02d"), decimals.format("%1d")]);
+        }
+
     }
 
     function convertSpeedToPace(speed) {

@@ -10,7 +10,7 @@ using Trace;
 module MenuDelegates {
 
 
-    function getMenuItem(id, idx, option) {
+    function getMenuItem(id, idx, options){
         switch(id) {
             case :autolap:
                 return [["off","100m","200m","400m","500m","1km","2km","5km"],
@@ -39,18 +39,20 @@ module MenuDelegates {
                         [1,2,5,10,15,30,60],
                         $.trackViewPeriod];
             case :datascreen_nfields:
-                return [null, [0,1,2,3,4], Data.getField(option, 0)];
+                return [null, [0,1,2,3,4], Data.getField(options[0], idx)];
             case :datascreen_field:
-                return [Data.dataFieldMenuLabels, null, Data.getField(option, idx)];
+                return [Data.dataFieldMenuLabels, null, Data.getField(options[0], idx)];
+            default:
+                return null;
         }
     }
 
-    function getValueLabelsForItems(ids, option) {
+    function getValueLabelsForItems(ids, options) {
         var labels = [];
         for(var i = 0; i < ids.size(); i++) {
             var label = null;
             if(ids[i] != null) {
-                var entry = getMenuItem(ids[i], i, option);
+                var entry = getMenuItem(ids[i], i, options);
                 if(entry != null) {
                     var labels = entry[0];
                     if(entry[0] instanceof Lang.String) {
@@ -103,7 +105,6 @@ module MenuDelegates {
 
             var menuItemId = menu.getSelectedId();
 
-
             var entry = getMenuItem(menuItemId, 0, null);
             if(entry != null) {
                 //showValue = true;
@@ -128,7 +129,6 @@ module MenuDelegates {
                         showValue = true;
                         idList = [:bc_set, :bc_clear, :bc_number, :bc_distance];
                         labelList = WatchUi.loadResource(Rez.Strings.bc_labels);
-                        valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
                         break;
                     case :screens:
                         defaultValue = null;
@@ -138,21 +138,21 @@ module MenuDelegates {
                         break;
                     case :course:
                         defaultValue = null;
+                        showValue = true;
                         idList = [:track_update, :track_info, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
-                        valueList = new Lang.Method(MenuDelegates, :getValueLabelsForItems);
                         break;
                     default:
                         return false;
                 }
             }
-            newMenu = new ListMenu(menuItemId, menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, {:showValue => showValue});
-            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+            newMenu = new ListMenu(menuItemId, menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, showValue, null);
+            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
             return true;
         }
     }
 
-    class GenericMenuDelegate extends WatchUi.MenuInputDelegate {
+    class SubMenuDelegate extends WatchUi.MenuInputDelegate {
         hidden var menu;
 
         function initialize(_menu) {
@@ -200,8 +200,8 @@ module MenuDelegates {
                         case :bc_distance:
                             var entry = getMenuItem(menu.getSelectedId(), 0, null);
                             var newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
-                                    entry[0], entry[1], entry[2], {:showValue => false});
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+                                    entry[0], entry[1], entry[2], false, null);
+                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
                             return true;
                     }
                     break;
@@ -225,8 +225,8 @@ module MenuDelegates {
                             var entry = [];
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
-                                    entry[0], entry[1], entry[2], {:showValue => false});
-                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
+                                    entry[0], entry[1], entry[2], false, null);
+                            WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
                             return true;
                         case :track_del:
                             if(track!=null) {
@@ -253,7 +253,7 @@ module MenuDelegates {
                 case :screens:
                     if(value == 0) {
                         Data.setDataScreens(Data.dataScreensDefault);
-                        Application.getApp().setProperty("dataScreens", Data.getDataScreens());
+                        Application.getApp().setProperty("dataScreens", Data.dataScreens);
                         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
                         return true;
                     }
@@ -261,31 +261,25 @@ module MenuDelegates {
                     newMenu = new ListMenu(:dataScreen,  menu.getSelectedLabel(),
                             [:datascreen_nfields, :datascreen_field, :datascreen_field, :datascreen_field, :datascreen_field],
                             WatchUi.loadResource(Rez.Strings.dfm_labels),
-                            new Lang.Method(MenuDelegates, :getValueLabelsForItems), null, {:showValue => true, :qualifier => value-1});
-                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate (newMenu)), WatchUi.SLIDE_UP);
-                    /*
-                    newMenu = new ListMenu(:screens, "# " + WatchUi.loadResource(Rez.Strings.fields),
-                            null,
-                            ["Off", "1", "2", "3", "4"],
-                            [0,1,2,3,4], Data.dataScreens[value - 1].size(), {:showValue => false, :index => value-1 });
-                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new DataFieldsDelegate (newMenu, value - 1)), WatchUi.SLIDE_UP);
-                    */
+                            null, null, true, [value-1]);
+                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate (newMenu)), WatchUi.SLIDE_UP);
                     return true;
                 case :dataScreen:
-                    var defaultValue = Data.getField(menu.options.get(:qualifier), menu.selectedItemIndex());
+                    var defaultValue = Data.getField(menu.options[0], menu.selectedItemIndex());
+                    var newOptions = [menu.options[0], menu.selectedItemIndex()];
                     if(menu.selectedItemIndex() == 0) {
                         newMenu = new ListMenu(:datascreen_nfields,  menu.getSelectedLabel(), null, null, [0,1,2,3,4],
-                            Data.getField(menu.options.get(:qualifier), menu.selectedItemIndex()),  {:showValue => false, :qualifier => [menu.options.get(:qualifier), menu.selectedItemIndex()] });
+                            defaultValue, false, newOptions);
                     } else {
                         newMenu = new ListMenu(:datascreen_fields,  menu.getSelectedLabel(), null, Data.dataFieldMenuLabels, null,
-                            Data.getField(menu.options.get(:qualifier), menu.selectedItemIndex()),  {:showValue => false, :qualifier => [menu.options.get(:qualifier), menu.selectedItemIndex()] });
+                            defaultValue, false, newOptions);
                     }
-                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new GenericMenuDelegate (newMenu)), WatchUi.SLIDE_UP);
+                    WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate (newMenu)), WatchUi.SLIDE_UP);
                     return true;
                 case :datascreen_nfields:
                 case :datascreen_fields:
-                    Data.setField(menu.options.get(:qualifier)[0], menu.options.get(:qualifier)[1], value);
-                    Application.getApp().setProperty("dataScreens",Data.getDataScreens());
+                    Data.setField(menu.options[0], menu.options[1], value);
+                    Application.getApp().setProperty("dataScreens",Data.dataScreens);
                     break;
                 default:
                     break;

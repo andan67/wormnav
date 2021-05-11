@@ -14,33 +14,27 @@ class ListMenu extends Ui.View
     const PAD = 0;
 
     var itemValueList;
-    var valueFunction;
+    var initValue;
+    var showSubMenuValues = false;
     var itemLabelList;
     var itemIdList;
     var menuArray;
     var nItems;
     var title;
     var index;
-    var initIndex;
     var id;
     var options;
 
     var nextIndex;
-
     var menuHeight = null;
 
-    function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _options)
+    function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _showSubMenuValues, _options)
     {
         View.initialize ();
         id = _id;
-
-        if(_itemValueList instanceof Method) {
-            valueFunction = _itemValueList;
-            itemValueList = null;
-        } else {
-            valueFunction = null;
-            itemValueList = _itemValueList;
-        }
+        itemValueList = _itemValueList;
+        initValue = _initValue;
+        showSubMenuValues = _showSubMenuValues;
         itemIdList = _itemIdList;
         options = _options;
 
@@ -60,7 +54,7 @@ class ListMenu extends Ui.View
         }
 
         // add index as default value in case no value list has been provided
-        if(valueFunction == null && itemValueList == null) {
+        if(!showSubMenuValues && itemValueList == null) {
             itemValueList = [];
             for(var i = 0; i < nItems; i++) {
                 itemValueList.add(i);
@@ -76,14 +70,6 @@ class ListMenu extends Ui.View
         }
 
         title = _menuTitle;
-        initIndex = -1;
-
-        if(_initValue != null) {
-            initIndex = getIndexForValue(_initValue);
-            if(initIndex >= nItems ) {
-                initIndex = -1;
-            }
-        }
 
         index = 0;
         nextIndex = 0;
@@ -140,12 +126,8 @@ class ListMenu extends Ui.View
     }
 
     function onShow() {
-        if(options != null && options.get(:showValue) && valueFunction != null) {
-            itemValueList = valueFunction.invoke(itemIdList, options.get(:qualifier));
-            //System.println("onShow: " + itemValueList);
-            //System.println("onShow: " +  Trace.autolapDistance);
-            //System.println("onShow: " +  MenuDelegates.menuItemDict);
-
+        if(showSubMenuValues) {
+            itemValueList = MenuDelegates.getValueLabelsForItems(itemIdList, options);
         }
     }
 
@@ -223,7 +205,9 @@ class ListMenu extends Ui.View
             return;
         }
 
-        if(idx == initIndex) {
+        var value = itemValueList[idx];
+        //if(idx == initIndex) {
+        if(value != null && value == initValue) {
             dc.setColor (Gfx.COLOR_DK_RED, Gfx.COLOR_WHITE);
         } else {
             dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
@@ -231,7 +215,6 @@ class ListMenu extends Ui.View
 
         var width = dc.getWidth ();
         var lab = itemLabelList[idx];
-        var value = itemValueList[idx];
         var font = highlight? SELECTED_LABEL_FONT : LABEL_FONT;
         var labDims = dc.getTextDimensions (lab, font );
         if(labDims[0] > 0.95*width) {
@@ -240,7 +223,7 @@ class ListMenu extends Ui.View
         }
         var yL, yV, h;
 
-        if (options instanceof Dictionary && options.get(:showValue) && highlight && value != null)
+        if (showSubMenuValues && highlight && value != null)
         {
             // Show label and value.
             var val = value.toString ();

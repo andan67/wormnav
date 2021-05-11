@@ -96,7 +96,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         if( $.session != null  &&  $.session.isRecording() == false ) {
             var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:resume, :save, :discard],
-                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null, {:showValue => false});
+                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null, false, null);
 
             WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
 
@@ -151,7 +151,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onMenu() {
-        // System.println("onMenu()");
         // Workaround for issue
         if(isOnPrevPageLastEvent && $.appTimerTicks - onPrevPageTick < 3) {
             // counteract
@@ -161,7 +160,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
                                 WatchUi.loadResource(Rez.Strings.mm_labels),
-                                new Lang.Method(MenuDelegates, :getValueLabelsForItems), null, {:showValue => true});
+                                null, null, true, null);
         WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
         return true;
     }
