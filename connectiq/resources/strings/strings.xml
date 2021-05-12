@@ -3,7 +3,7 @@
     <string id="prompt">Click the menu button</string>
     
     <string id="mm_title">Menu</string>
-    <string id="mm_labels">Map orientation|Breadcrumbs|Auto lap|Activity type|Course|Data screens|Background color</string>
+    <string id="mm_labels">Map orientation|Breadcrumbs|Auto lap|Activity type|Course|Data fields|Background color</string>
     
     <string id="orient_opts">Track up|North up|Centered</string>
     <string id="yesno_opts">Yes|No</string>
@@ -18,10 +18,6 @@
     
     <string id="ds_labels">Defaults|Data screen 1|Data screen 2|Data screen 3|Track screen</string>
     <string id="dfm_labels"># Fields|Field 1|Field 2|Field 3|Field 4</string>  
-    <string id="num_df"># data fields</string> 
-    <string id="data_fields">Data fields</string>
-    <string id="field">Field</string>
-    <string id="fields">Fields</string>
     <string id="dm_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|Heart Rate %Max|Avg. Heart Rate|Lap Time|Lap Distance|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Speed|Laps|Elevation|Time of Day|Battery</string>
     <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max.|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|L Lap Pace|L Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
 

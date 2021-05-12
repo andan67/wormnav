@@ -5,6 +5,9 @@ using Toybox.Graphics as Gfx;
 using Trace;
 using MenuDelegates;
 
+
+// List backed menu based on https://github.com/davebaldwin/Dmenu published under MIT Licence
+
 class ListMenu extends Ui.View
 {
     const TITLE_FONT = Gfx.FONT_SMALL;
@@ -91,12 +94,12 @@ class ListMenu extends Ui.View
         return itemLabelList[index];
     }
 
-     function getIndexForValue(value) {
-        if(itemValueList != null) {
-            for(var i=0; i < itemValueList.size(); i +=1) {
-                if(itemValueList[i]==value) {
-                    return i;
-                }
+    function getIndexForValue(value) {
+       if(itemValueList != null) {
+           for(var i=0; i < itemValueList.size(); i +=1) {
+               if(itemValueList[i]==value) {
+                   return i;
+               }
             }
         }
         return 0;
@@ -138,7 +141,6 @@ class ListMenu extends Ui.View
         menuHeight = height;
         dc.setColor(Gfx.COLOR_WHITE, Gfx.COLOR_BLACK);
         dc.fillRectangle(0, 0, width, height);
-
 
         drawMenu (dc);
 
