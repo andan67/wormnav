@@ -66,15 +66,6 @@ module Data {
         }
     }
 
-    function determineActiveDataScreens() {
-        activeDataScreens = [];
-        for(var i=0; i < dataScreens.size(); i+=1) {
-            if(dataScreens[i] != null && dataScreens[i].size() > 0) {
-                activeDataScreens.add(dataScreens[i]);
-            }
-        }
-    }
-
     function getDataFieldLabelValue(i) {
         var dataValue = null;
         var data = null;
