@@ -16,7 +16,7 @@
 
     <string id="bc_labels">Setze Position|Löschen|Anzahl|Distanz</string>
 
-    <string id="ds_labels">Standard|Datenseite 1|Datenseite 2|Datenseite 3|Track</string>
+    <string id="ds_labels">Standard|Datenseite 1|Datenseite 2|Datenseite 3|Trackseite</string>
     <string id="dfm_labels"># Felder|Feld 1|Feld 2|Feld 3|Feld 4</string>  
     <string id="dm_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø Geschwindigkeit|Herzfrequenz|Herzfreq. %Max.|Ø Herzfrequenz|Rundenzeit|Rundendistanz|Rundennpace|Rundengeschw.|Letze Runde Pace|Letze R. Geschw.|Runden|Höhe|Uhrzeit|Akkustand</string>
     <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist.|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Uhrzeit|Akku</string>
