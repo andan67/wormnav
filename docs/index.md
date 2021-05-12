@@ -182,10 +182,12 @@ For devices with touch screen use following gestures:
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
 Available (sub-) menu items
+
 - **Map orientation** Set orientation/view of course
+
     - **Track up** Up points to track/movement direction
     - **North up** Up points to north direction
-    - **Center** Up points to north direction with track center as view center
+    - **Centered** Up points to north direction with track center as view center
 - **Breadcrumbs**
     - **Set current pos** Set current position as breadcrumb marker
     - **Clear** Clear all breadcrumb markers
@@ -197,7 +199,7 @@ Available (sub-) menu items
     - **Update period** Set update period of track view (larger periods might result in reduced power consumption)
     - **Info:** shows basic track information)
     - **Delete:** delete track)
-- **Data screens:** Set number of screens and data fields, see below
+- **Data fields:** Set data screens and fields, see below
 
 </div>
 {::options parse_block_html="true" /}
@@ -210,7 +212,8 @@ Available (sub-) menu items
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Standard view of map/track when activity has started
+Standard view of map/track when activity has started:
+
 - Elapsed time and distance shown on top
 - Track is shown as red line with north in up-direction
 - Position cursor points into direction of movement 
@@ -229,6 +232,7 @@ Standard view of map/track when activity has started
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
 Track-up view of map/track
+
 - Position cursor has fixed up-orientation  
 - Track and compass are rotated according to actual direction of movement  
 
@@ -244,6 +248,7 @@ Track-up view of map/track
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
 Shows track and current position with center of track as view center
+
 - North is always in up-direction
 - Useful for getting an overview of current position in relation to the track
 - Zoom in/out possible
@@ -259,7 +264,10 @@ Shows track and current position with center of track as view center
 
 {::options parse_block_html="true" /}
 <div style="float: right; width: 50%">
-Maximum number of three data screens can be configured with up to 4 data fields:
+Up to 4 data fields can be configured for each of the three data and the track screen. 
+Data screens with zero number of fields are not displayed.
+Available data fields are:
+
 - Time: total/lap/last lap time in hh:mm:ss
 - Distance: total/lap/last lap distance in km
 - Pace: current/average/lap/last lap pace in mm:ss/km
