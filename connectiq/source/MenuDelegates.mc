@@ -10,7 +10,7 @@ using Trace;
 module MenuDelegates {
 
     function pushSubMenuView(_menu) {
-        WatchUi.pushView(_menu, new ListMenuDelegate (_menu, new SubMenuDelegate(_menu)), WatchUi.SLIDE_UP);
+        WatchUi.pushView(_menu, new ListMenuDelegate (_menu, new SubMenuDelegate(_menu)), WatchUi.SLIDE_IMMEDIATE);
     }
 
     function getMenuItem(id, idx, options){
@@ -100,6 +100,11 @@ module MenuDelegates {
             menu = _menu;
         }
 
+        function onKey(keyEvent) {
+            System.println(keyEvent.getKey());         // e.g. KEY_MENU = 7
+            return true;
+        }
+
         function onMenuItem(item) {
             var defaultValue = null;
             var showValue = false;
@@ -147,7 +152,6 @@ module MenuDelegates {
                 }
             }
             newMenu = new ListMenu(menuItemId, menu.getSelectedLabel(), idList, labelList, valueList, defaultValue, showValue, null);
-            //WatchUi.pushView(newMenu, new ListMenuDelegate (newMenu, new SubMenuDelegate(newMenu)), WatchUi.SLIDE_UP);
             pushSubMenuView(newMenu);
             return true;
         }

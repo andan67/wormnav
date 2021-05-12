@@ -30,16 +30,21 @@ class ListMenu extends Ui.View
 
     var nextIndex;
     var menuHeight = null;
+    var onMenuTicks = -1;
 
     function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _showSubMenuValues, _options)
     {
         View.initialize ();
         id = _id;
+        if(id == :MainMenu) {
+            onMenuTicks = $.appTimerTicks;
+        }
         itemValueList = _itemValueList;
         initValue = _initValue;
         showSubMenuValues = _showSubMenuValues;
         itemIdList = _itemIdList;
         options = _options;
+
 
         if(_itemLabelList instanceof String) {
             itemLabelList = Application.getApp().split(_itemLabelList,'|');
@@ -348,7 +353,10 @@ class ListMenuDelegate extends Ui.BehaviorDelegate
 
     function onPreviousPage ()
     {
-        menu.updateIndex (-1);
+        // wait a bit to because activating the menu by long press might fire this event
+        if($.appTimerTicks - menu.onMenuTicks > 2) {
+            menu.updateIndex (-1);
+        }
         return true;
     }
 

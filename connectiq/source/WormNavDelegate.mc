@@ -36,7 +36,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage
     // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
     var onPrevPageTick = 0;
-    var isOnPrevPageLastEvent = false;
 
     function initialize() {
         BehaviorDelegate.initialize();
@@ -55,7 +54,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onNextPage() {
         //System.println("onNextPage()");
-        isOnPrevPageLastEvent = false;
         switch(mode) {
             case TRACK_MODE:
                 Transform.setZoomLevel(-2);
@@ -83,7 +81,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 break;
         }
         onPrevPageTick = $.appTimerTicks;
-        isOnPrevPageLastEvent = true;
         return true;
     }
 
@@ -92,13 +89,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     function onBack() {
         //System.println("onBack");
         // If active session is stopped asked for discard/save/resume
-        isOnPrevPageLastEvent = false;
         if( $.session != null  &&  $.session.isRecording() == false ) {
             var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:resume, :save, :discard],
                                 WatchUi.loadResource(Rez.Strings.mm_labels), null, null, false, null);
 
-            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
+            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_IMMEDIATE);
 
             WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
             return true;
@@ -147,21 +143,23 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onPreviousMode() {
         //System.println("onPreviousMode()");
+
         return true;
     }
 
     function onMenu() {
-        // Workaround for issue
-        if(isOnPrevPageLastEvent && $.appTimerTicks - onPrevPageTick < 3) {
+        //Workaround for issue
+        if(mode==TRACK_MODE && $.appTimerTicks - onPrevPageTick < 3) {
             // counteract
             onNextPage();
         }
-        isOnPrevPageLastEvent = false;
+
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
                                 WatchUi.loadResource(Rez.Strings.mm_labels),
                                 null, null, true, null);
-        WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_UP);
+        WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_IMMEDIATE);
+
         return true;
     }
 
