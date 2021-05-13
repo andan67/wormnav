@@ -59,15 +59,15 @@ module MenuDelegates {
             if(ids[i] != null) {
                 var entry = getMenuItem(ids[i], i, options);
                 if(entry != null) {
-                    var labels = entry[0];
+                    var mlabels = entry[0];
                     if(entry[0] instanceof Lang.String) {
-                        labels = Application.getApp().split(entry[0],'|');
+                        mlabels = Application.getApp().split(entry[0],'|');
                     }
                     var values = entry[1];
                     var j;
-                    if(values == null && labels instanceof Lang.Array ) {
+                    if(values == null && mlabels instanceof Lang.Array ) {
                         values = [];
-                        for(j = 0; j < labels.size(); j++) {
+                        for(j = 0; j < mlabels.size(); j++) {
                             values.add(j);
                         }
                     }
@@ -78,8 +78,8 @@ module MenuDelegates {
                                 break;
                             }
                         }
-                        if(labels != null) {
-                            label = labels[j];
+                        if(mlabels != null) {
+                            label = mlabels[j];
                         } else {
                             label = values[j].toString();
                         }
