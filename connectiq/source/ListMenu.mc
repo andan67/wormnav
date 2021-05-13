@@ -353,7 +353,7 @@ class ListMenuDelegate extends Ui.BehaviorDelegate
 
     function onPreviousPage ()
     {
-        // wait a bit to because activating the menu by long press might fire this event
+        // wait a bit to avoid that this event is handled in case the menu is activated by a long press of the menu button (this happens on FR235)
         if($.appTimerTicks - menu.onMenuTicks > 2) {
             menu.updateIndex (-1);
         }

@@ -236,7 +236,7 @@ module MenuDelegates {
                             return true;
                         case :track_del:
                             if(track!=null) {
-                                var message = menu.getSelectedId();
+                                var message = WatchUi.loadResource(Rez.Strings.msg_delete_track);
 
                                 var dialog = new WatchUi.Confirmation(message);
                                 WatchUi.pushView(
@@ -296,9 +296,11 @@ module MenuDelegates {
         function onResponse(response) {
             if (response == WatchUi.CONFIRM_NO) {
             } else {
+            System.println("Delete track");
                 $.track=$.track.clean();
-                Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
-                $.track=null;
+                if(Trace.lat_last_pos != null) {
+                    Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
+                }
                 //Trace.reset();
             }
         }
