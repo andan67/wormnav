@@ -61,7 +61,7 @@ class TrackView extends GenericView {
         var xya = null;
 
         if($.track != null) {
-            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT);
             dc.setPenWidth(2);
 
             xya = $.track.xyArray;

@@ -1,6 +1,7 @@
 using Toybox.Math;
 using Toybox.System;
 using Trace;
+using Toybox.Position;
 
 module Transform {
 
@@ -103,20 +104,15 @@ module Transform {
 
     function setHeading() {
         if(last_x_pos != null) {
-            //heading_smooth = (1-SMOOTH_FACTOR)*Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos) + SMOOTH_FACTOR*heading_smooth ;
-            //System.println("Trace.positionDistance: " +Trace.positionDistance);
-            var sf = (1 - Math.pow(Math.E, -0.1*Trace.positionDistance));
-            heading_smooth = heading_smooth + sf*(Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos) - heading_smooth) ;
-            //heading_smooth = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
+            var d2 = 0.5*Trace.positionDistance;
+            var sf = d2/(1.0 + d2);
+            var heading = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
+            // weighted average of angle
+            heading_smooth = Math.atan2(sin_heading_smooth + sf*(Math.sin(heading) - sin_heading_smooth),cos_heading_smooth + sf*(Math.cos(heading) - cos_heading_smooth));
         }
         else {
             heading_smooth = 0.0;
         }
-        /*
-        if(heading_smooth < 0.0) {
-            heading_smooth = 2.0*PI+heading_smooth;
-        }
-        */
         cos_heading_smooth = Math.cos(heading_smooth);
         sin_heading_smooth = Math.sin(heading_smooth);
     }
