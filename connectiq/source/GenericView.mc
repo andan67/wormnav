@@ -30,7 +30,7 @@ class GenericView extends WatchUi.View {
         if(isDarkMode) {
             foregroundColor = Graphics.COLOR_WHITE;
             backgroundColor = Graphics.COLOR_BLACK;
-            trackColor = Graphics.COLOR_RED;
+            trackColor = Graphics.COLOR_LT_GRAY;
         }
         else {
             foregroundColor = Graphics.COLOR_BLACK;

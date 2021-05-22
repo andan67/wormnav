@@ -19,15 +19,53 @@ class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 
     function onResponse(response) {
         if (response == WatchUi.CONFIRM_NO) {
-            //System.println("Cancel");
-            //return true;
+            return false;
         } else {
-            //System.println("Confirm");
-              System.exit();
-              return true;
+            if($.session != null) {
+                $.session.discard();
+            }
+            System.exit();
+            return true;
+        }
+    }
+}
+
+class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
+
+    function initialize() {
+        MenuInputDelegate.initialize();
+    }
+
+    function onMenuItem(item) {
+        if (item == :resume) {
+            //session.start();
+            return true;
+        } else if (item == :save) {
+            session.save();
+            System.exit();
+            return true;
+        } else {
+            //session.discard();
+            //System.exit();
+
+            //ASK_USER:
+            //var message = "Exit App?";
+            var message = WatchUi.loadResource(Rez.Strings.msg_discard);
+
+            var dialog = new WatchUi.Confirmation(message);
+            WatchUi.pushView(
+                        dialog,
+                        new ExitConfirmationDelegate(),
+                        WatchUi.SLIDE_IMMEDIATE
+                    );
+
+            return true;
+
+            return true;
         }
         return false;
     }
+
 }
 
 class WormNavDelegate extends WatchUi.BehaviorDelegate {
@@ -90,12 +128,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         //System.println("onBack");
         // If active session is stopped asked for discard/save/resume
         if( $.session != null  &&  $.session.isRecording() == false ) {
-            var menu = new ListMenu(:SaveMenu, WatchUi.loadResource(Rez.Strings.mm_title),
-                                [:resume, :save, :discard],
-                                WatchUi.loadResource(Rez.Strings.mm_labels), null, null, false, null);
-
-            WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_IMMEDIATE);
-
             WatchUi.pushView(new Rez.Menus.SaveMenu(), new SaveMenuDelegate(), WatchUi.SLIDE_UP);
             return true;
         }
@@ -118,15 +150,15 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             return true;
 
         }
-        if(mode==TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
-            if(dataView==null) {
+        if(mode == TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
+            if(dataView == null) {
                 dataView = new DataView(Data.activeDataScreens[dataPage]);
             }
-            mode=DATA_MODE;
+            mode = DATA_MODE;
             WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
-        else if(mode==DATA_MODE) {
-            mode=TRACK_MODE;
+        else if(mode == DATA_MODE) {
+            mode = TRACK_MODE;
             WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return true;

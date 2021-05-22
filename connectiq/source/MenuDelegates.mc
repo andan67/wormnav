@@ -184,7 +184,7 @@ module MenuDelegates {
                     break;
                 case :background:
                     $.isDarkMode = value;
-                    Application.getApp().setProperty("darkMode", $.isDarkMode);
+                    Application.getApp().setProperty("isDarkMode", $.isDarkMode);
                     if($.trackView != null) {
                         trackView.setDarkMode($.isDarkMode);
                     }
