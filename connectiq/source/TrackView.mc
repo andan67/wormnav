@@ -98,9 +98,10 @@ class TrackView extends GenericView {
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
-        var sf = 2*cursorSizePixel;
+        var sinHead =Transform.sin_heading_smooth;
+        var cosHead =Transform.cos_heading_smooth;
 
-        var heading;
+        //var heading;
         var dx1;
         var dy1;
         var dx2;
@@ -109,32 +110,30 @@ class TrackView extends GenericView {
         var dy3;
 
         if(Transform.northHeading || Transform.centerMap) {
-            heading = Transform.heading_smooth;
-            dx1 = cursorSizePixel*Transform.sin_heading_smooth;
-            dy1 =-cursorSizePixel*Transform.cos_heading_smooth;
-        }
-        else {
-            heading = 0;
-            dx1 =0;
+            dx1 =  cursorSizePixel * sinHead;
+            dy1 = -cursorSizePixel * cosHead;
+            dx2 =  cursorSizePixel * (cosHead - 1.577352 * sinHead);
+            dy2 =  cursorSizePixel * (sinHead + 1.577352 * cosHead);
+        } else {
+            dx1 = 0.0;
             dy1 = -cursorSizePixel;
+            dx2 = cursorSizePixel;
+            dy2 = 1.577352 * cursorSizePixel;
         }
-
-        dx2 =  sf*Math.sin(heading+Transform.ANGLE_R);
-        dy2 = -sf*Math.cos(heading+Transform.ANGLE_R);
-        dx3 =  sf*Math.sin(heading+Transform.ANGLE_L);
-        dy3 = -sf*Math.cos(heading+Transform.ANGLE_L);
+        dx3 = -3.154704 * dx1 - dx2;
+        dy3 = -3.154704 * dy1 - dy2;
 
         var xy_pos = Transform.xy_2_screen(Transform.x_pos, Transform.y_pos);
 
         dc.setPenWidth(3);
-        var x1 = xy_pos[0]+dx1;
-        var y1 = xy_pos[1]+dy1;
-        var x2 = xy_pos[0]+dx2;
-        var y2 = xy_pos[1]+dy2;
-        var x3 = xy_pos[0]-dx1;
-        var y3 = xy_pos[1]-dy1;
-        var x4 = xy_pos[0]+dx3;
-        var y4 = xy_pos[1]+dy3;
+        var x1 = xy_pos[0] + dx1;
+        var y1 = xy_pos[1] + dy1;
+        var x2 = xy_pos[0] + dx2;
+        var y2 = xy_pos[1] + dy2;
+        var x3 = xy_pos[0] - dx1;
+        var y3 = xy_pos[1] - dy1;
+        var x4 = xy_pos[0] + dx3;
+        var y4 = xy_pos[1] + dy3;
 
         dc.drawLine(x1,y1,x2,y2);
         dc.drawLine(x2,y2,x3,y3);
@@ -152,10 +151,10 @@ class TrackView extends GenericView {
             dy2 = - Transform.compass_size;
             dy3 = 0.0;
         } else {
-            dx1 = -0.5*Transform.compass_size*Transform.cos_heading_smooth;
-            dy1 = +0.5*Transform.compass_size*Transform.sin_heading_smooth;
-            dx2 = -Transform.compass_size*Transform.sin_heading_smooth;
-            dy2 = -Transform.compass_size*Transform.cos_heading_smooth;
+            dx1 = -0.5 * Transform.compass_size * cosHead;
+            dy1 = +0.5 * Transform.compass_size*sinHead;
+            dx2 = -Transform.compass_size * sinHead;
+            dy2 = -Transform.compass_size * cosHead;
             dx3 =  -dx1;
             dy3 =  -dy1;
         }

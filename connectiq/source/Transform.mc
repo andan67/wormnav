@@ -8,8 +8,6 @@ module Transform {
     const EARTH_RADIUS = 6371000.0;
     const PI = 3.1415927;
     const PI2_3 = 0.6666667*PI;
-    const ANGLE_R =0.5*PI+Math.atan2(3.0, 2.0);
-    const ANGLE_L =1.5*PI-Math.atan2(3.0, 2.0);
 
     var refScale = 2.0;
     const SCALE_PIXEL = 0.1;
@@ -30,16 +28,15 @@ module Transform {
 
     var xs_center;
     var ys_center;
-    var isTrackCentered;
+    var isTrackCentered = true;
 
     var x_d;
     var y_d;
 
-    var northHeading=true;
-    var centerMap=false;
-    var heading_smooth=-1.0;
-    var cos_heading_smooth;
-    var sin_heading_smooth;
+    var northHeading = true;
+    var centerMap = false;
+    var cos_heading_smooth = 1.0;
+    var sin_heading_smooth = 0.0;
 
     var pixelHeight;
     var pixelWidth;
@@ -106,19 +103,24 @@ module Transform {
         if(last_x_pos != null) {
             var d2 = 0.5*Trace.positionDistance;
             var sf = d2/(1.0 + d2);
-            var heading = Math.atan2(x_pos-last_x_pos, y_pos-last_y_pos);
-            // weighted average of angle
-            heading_smooth = Math.atan2(sin_heading_smooth + sf*(Math.sin(heading) - sin_heading_smooth),cos_heading_smooth + sf*(Math.cos(heading) - cos_heading_smooth));
+            var dx = x_pos-last_x_pos;
+            var dy = y_pos-last_y_pos;
+            d2 = Math.sqrt(dx*dx + dy*dy);
+            if(d2 > 1.0e-12) {
+                var dxs = (1.0-sf)*sin_heading_smooth +  sf/d2*dx;
+                var dys = (1.0-sf)*cos_heading_smooth +  sf/d2*dy;
+                d2 = Math.sqrt(dxs*dxs + dys*dys);
+                sin_heading_smooth = dxs/d2;
+                cos_heading_smooth = dys/d2;
+            }
+            else {
+                sin_heading_smooth = 0.0;
+                cos_heading_smooth = 1.0;
+            }
         }
-        else {
-            heading_smooth = 0.0;
-        }
-        cos_heading_smooth = Math.cos(heading_smooth);
-        sin_heading_smooth = Math.sin(heading_smooth);
     }
 
     function resetHeading() {
-        heading_smooth = 0.0;
         cos_heading_smooth = 1.0;
         sin_heading_smooth = 0.0;
     }
@@ -218,8 +220,6 @@ module Transform {
             zoomLevel +=1;
         } else if(l >=0 && l <= 25) {
             zoomLevel = l;
-        } else {
-            zoomLevel = 5;
         }
 
         refScale = refScaleFromLevel(zoomLevel);
