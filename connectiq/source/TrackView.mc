@@ -31,7 +31,11 @@ class TrackView extends GenericView {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         var y = 0.5*dc.getFontAscent(fontsize);
         for(var i = 0; i < Data.getField(3, 0); i++) {
-            dc.drawText(Transform.pixelWidth2, topPadding + (1+2*i)*y, fontsize, Data.getDataFieldLabelValue(Data.getField(3, i+1))[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            // index of data field
+            var j = Data.getField(3, i+1);
+            dc.drawText(Transform.pixelWidth2, topPadding + (1+2*i)*y, fontsize,
+                //Data.dataFieldSLabels[j] +": "+
+                Data.getDataFieldLabelValue(j)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
 
     }

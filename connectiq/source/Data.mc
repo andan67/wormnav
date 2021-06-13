@@ -9,8 +9,9 @@ using Toybox.WatchUi;
 using Toybox.Application;
 
 module Data {
-    const dataFieldMenuLabels =  WatchUi.loadResource(Rez.Strings.dm_labels);
+    const dataFieldMenuLabels =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.dm_labels),'|');
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
+    //const dataFieldSLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_slabels),'|');
 
     const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10,2,0,1,4,6];
 

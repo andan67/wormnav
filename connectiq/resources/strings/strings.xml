@@ -20,6 +20,7 @@
     <string id="dfm_labels"># Fields|Field 1|Field 2|Field 3|Field 4</string>  
     <string id="dm_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|Heart Rate %Max|Avg. Heart Rate|Lap Time|Lap Distance|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Speed|Laps|Elevation|Time of Day|Battery</string>
     <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max.|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|L Lap Pace|L Lap Spd.|Laps|Elevation|Time of Day|Battery</string>
+    <string id="df_slabels">T|D|P|S|AP|AS|HR|HR%|AHR|LT|LD|LP|LS|LLP|LLS|L|E|TD|B</string>
 
     <string id="lap">Lap</string> 
 

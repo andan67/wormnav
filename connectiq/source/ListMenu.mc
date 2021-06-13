@@ -150,11 +150,14 @@ class ListMenu extends Ui.View
         drawMenu (dc);
 
         // Draw the decorations.
-        var h3 = height / 3;
+        // adjusted heights (active item 42% of height)
+        var h31 = 0.29 * height;
+        var h32 = height - h31;
+
         dc.setColor(Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
         dc.setPenWidth (2);
-        dc.drawLine (0, h3, width, h3);
-        dc.drawLine (0, h3 * 2, width, h3 * 2);
+        dc.drawLine (0, h31, width, h31);
+        dc.drawLine (0, h32, width, h32);
 
         drawArrows (dc);
     }
@@ -181,21 +184,24 @@ class ListMenu extends Ui.View
     function drawTitle (dc, y)
     {
         var width = dc.getWidth ();
-        var h3 = dc.getHeight () / 3;
+        var height =  dc.getHeight ();
+        var h3 = height / 3;
 
         // Check if any of the title is visible.,
         if (y < -h3)
         {
             return;
         }
+        var h31 = 0.29 * height;
+        var h32 = height - h31;
 
         dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
-        dc.fillRectangle (0, y, width, h3);
+        dc.fillRectangle (0, y, width, h31);
 
         if (title != null)
         {
             var dims = dc.getTextDimensions (title, TITLE_FONT);
-            var h = (h3 - dims[1]) / 2;
+            var h = (h31 - dims[1]) / 2;
             dc.setColor (Gfx.COLOR_WHITE, Gfx.COLOR_BLACK);
             dc.drawText (width / 2, y + h, TITLE_FONT, title, Gfx.TEXT_JUSTIFY_CENTER);
         }
@@ -204,7 +210,8 @@ class ListMenu extends Ui.View
     // highlight is the selected menu item that can optionally show a value.
     function drawItem (dc, idx, y, highlight)
     {
-        var h3 = dc.getHeight () / 3;
+        var height =  dc.getHeight ();
+        var h3 = height / 3;
 
         // Cannot see item if it doesn't exist or will not be visible.
         if (idx < 0 || idx >= nItems || y > dc.getHeight () || y < -h3)
@@ -224,11 +231,12 @@ class ListMenu extends Ui.View
         var lab = itemLabelList[idx];
         var font = highlight? SELECTED_LABEL_FONT : LABEL_FONT;
         var labDims = dc.getTextDimensions (lab, font );
-        if(labDims[0] > 0.95*width) {
+        if(labDims[0] > 0.95 * width) {
             font = LABEL_FONT;
             labDims = dc.getTextDimensions (lab, font );
         }
         var yL, yV, h;
+
 
         if (showSubMenuValues && highlight && value != null)
         {
@@ -325,12 +333,12 @@ class ListMenuDelegate extends Ui.BehaviorDelegate
         {
             if (menu.menuHeight != null)
             {
-                var h3 = menu.menuHeight  / 3;
-                if (c[1] > h3*2)
+                var h = menu.menuHeight;
+                if (c[1] > h * 0.71)
                 {
                     return onNextPage();
                 }
-                else if (c[1] < h3)
+                else if (c[1] < h * 0.29)
                 {
                     return onPreviousPage();
                 }

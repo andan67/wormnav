@@ -199,7 +199,11 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
                 if($.session==null) {
-                    $.session = ActivityRecording.createSession({:name => "WormNavActivity", :sport => $.activityType});
+                    var sname = "WormNavActivity";
+                    if($.track != null && $.track.name != null) {
+                        sname = $.track.name.substring(0, $.track.name.length() < 16 ? $.track.name.length() : 15);
+                    }
+                    $.session = ActivityRecording.createSession({:name => sname, :sport => $.activityType});
                 }
                 $.session.start();
                 $.sessionEvent = 1;
