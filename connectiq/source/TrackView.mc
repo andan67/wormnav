@@ -9,7 +9,8 @@ class TrackView extends GenericView {
     var isNewTrack=false;
     var activity_values;
     var fontsize = Graphics.FONT_MEDIUM;
-    var fontsizeNumber = Graphics.FONT_NUMBER_MILD;
+    //var fontsizeNumber = Graphics.FONT_NUMBER_MILD;
+    var fontsizeNumber = Graphics.FONT_LARGE;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
