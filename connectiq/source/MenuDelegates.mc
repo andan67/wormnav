@@ -41,6 +41,10 @@ module MenuDelegates {
                 return [["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
                         [1,2,5,10,15,30,60],
                         $.trackViewPeriod];
+            case :track_large_font:
+                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
+                        [true, false],
+                        $.trackViewLargeFont];
             case :data_field:
                 if(idx == 0) {
                     return  [null, [0,1,2,3,4], Data.getField(options[0], idx)];
@@ -144,7 +148,7 @@ module MenuDelegates {
                         break;
                     case :course:
                         showValue = true;
-                        idList = [:track_update, :track_info, :track_del];
+                        idList = [:track_update, :track_large_font, :track_info, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -234,6 +238,12 @@ module MenuDelegates {
                                     entry[0], entry[1], entry[2], false, null);
                             pushSubMenuView(newMenu);
                             return true;
+                        case :track_large_font:
+                            entry = getMenuItem(menu.getSelectedId(), 0, null);
+                            newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
+                                    entry[0], entry[1], entry[2], false, null);
+                            pushSubMenuView(newMenu);
+                            return true;
                         case :track_del:
                             if(track!=null) {
                                 var message = WatchUi.loadResource(Rez.Strings.msg_delete_track);
@@ -255,6 +265,10 @@ module MenuDelegates {
                 case :track_update:
                     $.trackViewPeriod = value;
                     Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
+                    break;
+                case :track_large_font:
+                    $.trackViewLargeFont = value;
+                    Application.getApp().setProperty("trackViewLargeFont", $.trackViewLargeFont);
                     break;
                 case :screens:
                     if(value == 0) {

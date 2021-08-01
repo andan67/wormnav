@@ -9,6 +9,7 @@ class TrackView extends GenericView {
     var isNewTrack=false;
     var activity_values;
     var fontsize = Graphics.FONT_MEDIUM;
+    var fontsizeNumber = Graphics.FONT_NUMBER_MILD;
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
@@ -29,11 +30,13 @@ class TrackView extends GenericView {
 
     function drawActivityInfo(dc) {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        var y = 0.5*dc.getFontAscent(fontsize);
+        var actualFontsize = $.trackViewLargeFont ? fontsizeNumber : fontsize;
+        var y = 0.5*dc.getFontAscent(actualFontsize);
         for(var i = 0; i < Data.getField(3, 0); i++) {
             // index of data field
             var j = Data.getField(3, i+1);
-            dc.drawText(Transform.pixelWidth2, topPadding + (1+2*i)*y, fontsize,
+            dc.drawText(Transform.pixelWidth2, topPadding + (1+2*i)*y,
+                actualFontsize,
                 //Data.dataFieldSLabels[j] +": "+
                 Data.getDataFieldLabelValue(j)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
         }
