@@ -5,7 +5,7 @@ using Toybox.Attention as Att;
 using Toybox.ActivityRecording;
 using Toybox.Sensor;
 
-using Trace;
+using Track;
 using Data;
 
 var messageReceived = false;
@@ -74,23 +74,23 @@ class WormNavApp extends Application.AppBase {
         }
 
         if(Application.getApp().getProperty("northHeading")!=null) {
-            Transform.northHeading=Application.getApp().getProperty("northHeading");
+            Track.northHeading=Application.getApp().getProperty("northHeading");
         }
 
         if(Application.getApp().getProperty("centerMap")!=null) {
-            Transform.centerMap=Application.getApp().getProperty("centerMap");
+            Track.centerMap=Application.getApp().getProperty("centerMap");
         }
 
         if(Application.getApp().getProperty("autolapDistance")!=null) {
-            Trace.autolapDistance = Application.getApp().getProperty("autolapDistance");
+            Track.autolapDistance = Application.getApp().getProperty("autolapDistance");
         }
 
         if(Application.getApp().getProperty("breadCrumbNumber")!=null) {
-            Trace.breadCrumbNumber = Application.getApp().getProperty("breadCrumbNumber");
+            Track.breadCrumbNumber = Application.getApp().getProperty("breadCrumbNumber");
         }
 
         if(Application.getApp().getProperty("breadCrumbDist")!=null) {
-            Trace.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
+            Track.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
 
         if(Application.getApp().getProperty("dataScreens")!=null) {
@@ -120,6 +120,12 @@ class WormNavApp extends Application.AppBase {
         // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
+    }
+
+
+    function onPosition(info) {
+        // Delegates callback to module function
+        Track.onPosition(info);
     }
 
     // onStop() is called when your application is exiting
@@ -160,10 +166,6 @@ class WormNavApp extends Application.AppBase {
         }
     }
 
-    function onPosition(info) {
-        Trace.newLatLonPosition(info.position.toRadians()[0].toFloat(),info.position.toRadians()[1].toFloat());
-    }
-
     // handles screen updates
     function onTimer() {
         appTimerTicks += 1;
@@ -179,7 +181,7 @@ class WormNavApp extends Application.AppBase {
             }
         }
 
-        if(lapViewTicker == 0 && Trace.isAutolap(false)) {
+        if(lapViewTicker == 0 && Track.isAutolap(false)) {
             // auto lap detected
             lapViewTicker = 1;
         }

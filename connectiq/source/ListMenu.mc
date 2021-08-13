@@ -2,7 +2,6 @@ using Toybox.WatchUi as Ui;
 using Toybox.System as Sys;
 using Toybox.Graphics as Gfx;
 
-using Trace;
 using MenuDelegates;
 
 

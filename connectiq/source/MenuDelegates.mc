@@ -5,7 +5,7 @@ using Toybox.Lang;
 using Toybox.ActivityRecording;
 using Toybox.Application;
 
-using Trace;
+using Track;
 
 module MenuDelegates {
 
@@ -18,17 +18,17 @@ module MenuDelegates {
             case :autolap:
                 return [["off","100m","200m","400m","500m","1km","2km","5km"],
                         [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0],
-                        Trace.autolapDistance];
+                        Track.autolapDistance];
             case :bc_number:
-                return [null, [1,2,5,10,20,50,100], Trace.breadCrumbNumber];
+                return [null, [1,2,5,10,20,50,100], Track.breadCrumbNumber];
             case :bc_distance:
                 return [["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
                         [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0],
-                        Trace.breadCrumbDist];
+                        Track.breadCrumbDist];
             case :orient:
                 return [WatchUi.loadResource(Rez.Strings.orient_opts),
                         null,
-                        Transform.getOrientation()];
+                        Track.getOrientation()];
             case :activity:
                 return [WatchUi.loadResource(Rez.Strings.activities),
                         [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING,
@@ -177,14 +177,14 @@ module MenuDelegates {
             switch(menu.id) {
                 case :orient:
                     if(value == 0) {
-                        Transform.northHeading = false;
-                        Transform.centerMap = false;
+                        Track.northHeading = false;
+                        Track.centerMap = false;
                     } else {
-                        Transform.northHeading = true;
-                        Transform.centerMap = (value == 2);
+                        Track.northHeading = true;
+                        Track.centerMap = (value == 2);
                     }
-                    Application.getApp().setProperty("northHeading", Transform.northHeading);
-                    Application.getApp().setProperty("centerMap", Transform.centerMap);
+                    Application.getApp().setProperty("northHeading", Track.northHeading);
+                    Application.getApp().setProperty("centerMap", Track.centerMap);
                     break;
                 case :background:
                     $.isDarkMode = value;
@@ -197,16 +197,16 @@ module MenuDelegates {
                     }
                     break;
                 case :autolap:
-                    Trace.setAutolapDistance(value);
+                    Track.setAutolapDistance(value);
                     Application.getApp().setProperty("autolapDistance",value);
                     break;
                 case :breadcrumbs:
                     switch(menu.getSelectedId()) {
                         case :bc_set:
-                            Trace.putBreadcrumbLastPosition();
+                            Track.putBreadcrumbLastPosition();
                             break;
                         case :bc_clear:
-                            Trace.reset();
+                            Track.reset();
                             break;
                         case :bc_number:
                         case :bc_distance:
@@ -218,12 +218,12 @@ module MenuDelegates {
                     }
                     break;
                 case :bc_distance:
-                    Trace.breadCrumbDist = value;
-                    Application.getApp().setProperty("breadCrumbDist", Trace.breadCrumbDist);
+                    Track.breadCrumbDist = value;
+                    Application.getApp().setProperty("breadCrumbDist", Track.breadCrumbDist);
                     break;
                 case :bc_number:
-                    Trace.setBreadCrumbNumber(value);
-                    Application.getApp().setProperty("breadCrumbNumber", Trace.breadCrumbNumber);
+                    Track.setBreadCrumbNumber(value);
+                    Application.getApp().setProperty("breadCrumbNumber", Track.breadCrumbNumber);
                     break;
                 case :activity:
                     $.activityType = value;
@@ -312,10 +312,6 @@ module MenuDelegates {
             } else {
             System.println("Delete track");
                 $.track=$.track.clean();
-                if(Trace.lat_last_pos != null) {
-                    Transform.setViewCenter(Trace.lat_last_pos,Trace.lon_last_pos);
-                }
-                //Trace.reset();
             }
         }
     }
