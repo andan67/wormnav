@@ -1,5 +1,4 @@
 using Toybox.WatchUi;
-using Transform;
 using MenuDelegates;
 using Toybox.Lang;
 
@@ -94,7 +93,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         //System.println("onNextPage()");
         switch(mode) {
             case TRACK_MODE:
-                Transform.setZoomLevel(-2);
+                $.trackView.setZoomLevel(-2);
                 updateView();
                 break;
             case DATA_MODE:
@@ -110,7 +109,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         //System.println("onPreviousPage()");
         switch(mode) {
             case TRACK_MODE:
-                Transform.setZoomLevel(-1);
+                $.trackView.setZoomLevel(-1);
                 updateView();
                 $.trackViewCounter = 0;
                 break;
@@ -155,11 +154,11 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 dataView = new DataView(Data.activeDataScreens[dataPage]);
             }
             mode = DATA_MODE;
-            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         else if(mode == DATA_MODE) {
             mode = TRACK_MODE;
-            WatchUi.switchToView(trackView, self, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return true;
     }
@@ -234,7 +233,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
             }
             dataView.setDataFields(Data.activeDataScreens[dataPage]);
-            WatchUi.switchToView(dataView, self, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return;
     }

@@ -7,6 +7,7 @@ using Toybox.Sensor;
 using Toybox.UserProfile;
 using Toybox.WatchUi;
 using Toybox.Application;
+using Track;
 
 module Data {
     const dataFieldMenuLabels =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.dm_labels),'|');
@@ -106,29 +107,29 @@ module Data {
                 dataValue = Activity.getActivityInfo().averageHeartRate;
                 break;
             case 9: // LAP_TIMER
-                dataValue = Trace.autolapDistance > 0 ? Data.msToTime(Trace.lapTime.toLong(), false) : null;
+                dataValue = Track.autolapDistance > 0 ? Data.msToTime(Track.lapTime.toLong(), false) : null;
                 break;
             case 10: // LAP_DISTANCE
-                dataValue = Trace.autolapDistance > 0 ? (0.001*Data.Trace.lapDistance).format("%.2f") : null;
+                dataValue = Track.autolapDistance > 0 ? (0.001*Data.Track.lapDistance).format("%.2f") : null;
                 break;
             case 11: // LAP_PACE
-                dataValue = (Trace.autolapDistance > 0 && Trace.lapTime > 0) ?
-                    Data.convertSpeedToPace(1000*Trace.lapDistance/Trace.lapTime) : null;
+                dataValue = (Track.autolapDistance > 0 && Track.lapTime > 0) ?
+                    Data.convertSpeedToPace(1000*Track.lapDistance/Track.lapTime) : null;
                 break;
             case 12: // LAP_SPEED
-                dataValue = (Trace.autolapDistance > 0  && Trace.lapTime > 0) ?
-                    (3600*Trace.lapDistance/Trace.lapTime).format("%.2f") : null;
+                dataValue = (Track.autolapDistance > 0  && Track.lapTime > 0) ?
+                    (3600*Track.lapDistance/Track.lapTime).format("%.2f") : null;
                 break;
             case 13: // LAST_LAP_PACE
-                dataValue = (Trace.autolapDistance > 0 && Trace.lapTimeP > 0) ?
-                    Data.convertSpeedToPace(1000*Trace.lapDistanceP/Trace.lapTimeP) : null;
+                dataValue = (Track.autolapDistance > 0 && Track.lapTimeP > 0) ?
+                    Data.convertSpeedToPace(1000*Track.lapDistanceP/Track.lapTimeP) : null;
                 break;
             case 14: // LAST_LAP_SPEED
-                dataValue = (Trace.autolapDistance > 0  && Trace.lapTime > 0) ?
-                    (3600*Trace.lapDistance/Trace.lapTime).format("%.2f") : null;
+                dataValue = (Track.autolapDistance > 0  && Track.lapTime > 0) ?
+                    (3600*Track.lapDistance/Track.lapTime).format("%.2f") : null;
                 break;
             case 15: // LAP
-                dataValue = Trace.autolapDistance > 0 ? Trace.lapCounter : null;
+                dataValue = Track.autolapDistance > 0 ? Track.lapCounter : null;
                 break;
             case 16: // ALTITUDE
                 data = Activity.getActivityInfo().altitude;

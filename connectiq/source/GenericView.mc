@@ -11,18 +11,24 @@ class GenericView extends WatchUi.View {
     }
 
     function drawStartStop(dc) {
-         if($.sessionEvent == 1) {
-            // display activity started symbol
+
+        var pixelwidth2 = 0.5 * dc.getWidth();
+        var pixelHeight2 = 0.5 * dc.getHeight();
+        var pixelMin = dc.getWidth() < dc.getHeight() ? dc.getHeight() : dc.getHeight();
+
+
+        if($.sessionEvent == 1) {
+        // display activity started symbol
             dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
             dc.fillPolygon([
-                [Transform.pixelWidth2 - 0.12*Transform.pixelMin,Transform.pixelHeight2 - 0.21*Transform.pixelMin ],
-                [Transform.pixelWidth2 - 0.12*Transform.pixelMin,Transform.pixelHeight2 + 0.21*Transform.pixelMin ],
-                [Transform.pixelWidth2 + 0.24*Transform.pixelMin,Transform.pixelHeight2 ]]);
+                [pixelWidth2 - 0.12 * pixelMin, pixelHeight2 - 0.21 * pixelMin ],
+                [pixelWidth2 - 0.12 * pixelMin, pixelHeight2 + 0.21 * pixelMin ],
+                [pixelWidth2 + 0.24 * pixelMin, pixelHeight2 ]]);
         } else if($.sessionEvent == 2) {
             // display activity stopped symbol
             dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(Transform.pixelWidth2 - 0.21*Transform.pixelMin,
-                Transform.pixelHeight2 - 0.21*Transform.pixelMin, 0.42*Transform.pixelMin, 0.42*Transform.pixelMin);
+            dc.fillRectangle(pixelWidth2 - 0.21 * pixelMin,
+                pixelHeight2 - 0.21 * pixelMin, 0.42 * pixelMin, 0.42 * pixelMin);
         }
     }
 
