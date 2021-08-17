@@ -164,16 +164,19 @@ class TrackView extends GenericView {
                     if(findNearestPoint) {
                         xs = xt2 - xt1;
                         ys = yt2 - yt1;
-                        ds = xs * xs + ys * ys;
-                        if(ds > 1.0e-12) {
-                            s = (xs * (xp - xt1) + ys * (yp - yt1)) / ds;
-                            if(s < 0.0) {
-                                s = 0.0;
-                            } else if(s > 1.0) {
-                                s = 1.0;
-                            }
-                        } else {
+                        s = (xs * (xp - xt1) + ys * (yp - yt1));
+                        if(s < 0.0) {
                             s = 0.0;
+                        } else {
+                            ds = xs * xs + ys * ys;
+                            if(ds < 1.0e-12) {
+                                s = 0.0;
+                            }
+                            else if(s > ds) {
+                                s = 1.0;
+                            } else {
+                                s /= ds;
+                            }
                         }
                         dx = xp - (xt1 + s * xs);
                         dy = yp - (yt1 + s * ys);
@@ -190,6 +193,8 @@ class TrackView extends GenericView {
 
         // draw nearest point on track
         if(findNearestPoint && nearestPointIndex >= 0) {
+            //System.println("nearestPointIndex: " + nearestPointIndex);
+            //System.println("nearestPointLambda: " + nearestPointLambda);
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
             x1 = xya[nearestPointIndex] + nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
             y1 = xya[nearestPointIndex + 1] + nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
