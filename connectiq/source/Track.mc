@@ -34,8 +34,6 @@ module Track {
     var latLast;
     var lonLast;
 
-    var isTrackCentered = true;
-
     // used for calculation of heading
     var northHeading = true;
     var centerMap = false;
@@ -57,7 +55,12 @@ module Track {
     var positionTime = 0;
     var lastPositionTime = 0;
     var positionDistance = 0.0;
+    var onPositionCalled = false;
 
+    var findNearestPoint = true;
+    var nearestPointIndex = -1;
+    var nearestPointDistance = EARTH_RADIUS;
+    var nearestPointLambda = 0.0;
 
     function reset() {
         bxy = new [2 * breadCrumbNumber];
@@ -69,6 +72,9 @@ module Track {
         positionTime = 0;
         lastPositionTime = 0;
         positionDistance = 0.0;
+
+        nearestPointIndex = -1;
+        nearestPointDistance = EARTH_RADIUS;
     }
 
     function setBreadCrumbNumber(number) {
@@ -90,7 +96,7 @@ module Track {
             pos_nelements += 1;
         }
         else {
-            i = 2*pos_start_index;
+            i = 2 * pos_start_index;
             pos_start_index = (pos_start_index +1) % breadCrumbNumber;
         }
         bxy[i] = x;
@@ -112,7 +118,7 @@ module Track {
         //var lon = info.position.toRadians()[1].toFloat();
         var lat = info.position.toRadians()[0];
         var lon = info.position.toRadians()[1];
-        isTrackCentered = false;
+        onPositionCalled = true;
         setPosition(lat, lon);
     }
 
@@ -130,17 +136,73 @@ module Track {
         // Hereafter, only (x,y) coordinates should be used
         var _xy = latLon2xy(lat, lon);
 
-        // store last xy coordinates for heading
-        if(xPos != null) {
+        // store last xy coordinates for heading and breadcrumb distance for gps positions
+        if(xPos != null && onPositionCalled) {
             xLastPos = xPos;
             yLastPos = yPos;
-            // last position exists, so calculated distance
-            // positionDistance = Math.sqrt( xyDist2(xLastPos, yLastPos, _xy[0], _xy[1]) );
-            // cumDistance += positionDistance;
         }
 
         xPos = _xy[0];
         yPos = _xy[1];
+
+        // find nearest point on track for given gps position
+        if(onPositionCalled && findNearestPoint && $.track != null) {
+            var d2 = EARTH_RADIUS * EARTH_RADIUS;
+            var dxy2 = 0.0;
+            var xya = $.track.xyArray;
+            var dx = 0.0;
+            var dy = 0.0;
+
+            var xs = 0.0;
+            var ys = 0.0;
+            var ds = 0.0;
+            var s = 0.0;
+            /*
+            for(var i = 0; i < xya.size(); i += 2) {
+                dx = xPos - xya[i];
+                dy = yPos - xya[i+1];
+                dxy2 = dx*dx + dy*dy;
+                if(dxy2 < d2) {
+                    nearestPointIndex = i;
+                    d2 = dxy2;
+                }
+            }
+            if(nearestPointIndex >= 0) {
+                nearestPointDistance = EARTH_RADIUS * Math.sqrt(d2);
+            }
+            */
+            for(var i = 0; i < xya.size() - 3; i += 2) {
+                xs = xya[i + 2] - xya[i];
+                ys = xya[i + 3] - xya[i + 1];
+                ds = xs * xs + ys * ys;
+                if(ds > 1.0e-12) {
+                    s = (xs * (xPos - xya[i]) + ys * (yPos - xya[i + 1])) / ds;
+                    if(s < 0.0) {
+                        s = 0.0;
+                    } else if(s > 1.0) {
+                        s = 1.0;
+                    }
+                } else {
+                    s = 0.0;
+                }
+
+                dx = xPos - (xya[i] + s * xs);
+                dy = yPos - (xya[i+1] + s * ys);
+                dxy2 = dx*dx + dy*dy;
+                if(dxy2 < d2) {
+                    nearestPointIndex = i;
+                    nearestPointLambda = s;
+                    d2 = dxy2;
+                }
+            }
+            if(nearestPointIndex >= 0) {
+                nearestPointDistance = EARTH_RADIUS * Math.sqrt(d2);
+            }
+            //System.println("nearestPointIndex: " + nearestPointIndex);
+            //System.println("nearestPointDistance: " + nearestPointDistance);
+            //System.println("nearestPointLambda: " + nearestPointLambda);
+
+        }
 
         // determine distance and smoothed heading
         if(xLastPos != null) {
@@ -150,32 +212,21 @@ module Track {
 
             // Dimensional distance between current and last point
             var d = Math.sqrt(d2);
+            // distance in m
             positionDistance = EARTH_RADIUS * d;
-            var positionDistance2 = latLongDist(lat,lon,latLast,lonLast);
+            //var positionDistance2 = latLongDist(lat,lon,latLast,lonLast);
             // cummulative distance used for breadcrumbs
             cumDistance += positionDistance;
-            System.println("xLastPos : " + xLastPos.format("%.10f"));
-            System.println("xPos : " + xPos.format("%.10f"));
-            System.println("yLastPos : " + yLastPos.format("%.10f"));
-            System.println("yPos : " + yPos.format("%.10f"));
-            System.println("latLast : " + latLast.format("%.10f"));
-            System.println("lonLast : " + lonLast.format("%.10f"));
-            System.println("lat : " + lat.format("%.10f"));
-            System.println("lon : " + lon.format("%.10f"));
-
-            System.println("positionDistance : " + positionDistance);
-            System.println("positionDistance2: " + positionDistance2);
-            System.println("positionDistanced: " + (positionDistance2 - positionDistance));
-            System.println("cumDistance: " + cumDistance);
 
             // mixing factor to smooth heading
-            if (d > 1.0e-10) {
+            if (positionDistance > 0.01) {
                 var sf = positionDistance / (2.0 + positionDistance);
                 var dxs = (1.0 - sf) * sin_heading_smooth +  sf/d * dx;
                 var dys = (1.0 - sf) * cos_heading_smooth +  sf/d * dy;
-                d2 = Math.sqrt(dxs*dxs + dys*dys);
-                sin_heading_smooth = dxs/d2;
-                cos_heading_smooth = dys/d2;
+                // normalized vector
+                sf = 1.0 / Math.sqrt(dxs*dxs + dys*dys);
+                sin_heading_smooth = dxs * sf;
+                cos_heading_smooth = dys * sf;
              }
              else {
                 sin_heading_smooth = 0.0;
@@ -184,9 +235,12 @@ module Track {
         }
 
         // add (x,y) coordinate to breadcrumb array if cumaltive distance is reached
-        if( (cumDistance >= breadCrumbDist) && (breadCrumbDist > 0) ) {
+        if( cumDistance >= breadCrumbDist && breadCrumbDist > 0 && onPositionCalled ) {
             putBreadcrumbPosition(xPos, yPos);
-            cumDistance -= breadCrumbDist;
+            // reset cumulative distance by larger value of either breadcrumd distance or distance from previous position
+            cumDistance -= breadCrumbDist > positionDistance ? breadCrumbDist : positionDistance;
+            //System.println("putBreadcrumbPosition: ");
+            //System.println("cumDistance: " + cumDistance);
         }
 
         latLast = lat;
@@ -205,7 +259,7 @@ module Track {
         lon_view_center=$.track.lon_center;
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
-        isTrackCentered = true;
+        onPositionCalled = false;
         reset();
         resetHeading();
         setPosition(lat_view_center, lon_view_center);
@@ -263,20 +317,8 @@ module Track {
     function latLon2xy(lat, lon) {
         var ll = lon - lon_view_center;
         var cos_lat = Math.cos(lat);
-        System.println("lon_view_center: " + lon_view_center.format("%.10f"));
-        System.println("lat_view_center: " + lat_view_center.format("%.10f"));
-        System.println("cos_lat_view_center: " + cos_lat_view_center.format("%.10f"));
-        System.println("sin_lat_view_center: " + sin_lat_view_center.format("%.10f"));
-        System.println("lat: " + lat.format("%.10f"));
-        System.println("lon: " + lon.format("%.10f"));
-        System.println("cos_lat: " + cos_lat.format("%.10f"));
-        System.println("ll: " + ll.format("%.10f"));
-        System.println("Math.cos(ll): " + Math.cos(ll).format("%.10f"));
-        System.println("Math.sin(ll): " + Math.sin(ll).format("%.10f"));
         var x = cos_lat * Math.sin(ll);
         var y = cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cos_lat * Math.cos(ll);
-        System.println("x: " + x.format("%.10f"));
-        System.println("y: " + y.format("%.10f"));
 
         //return [cos_lat * Math.sin(ll), cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cos_lat * Math.cos(ll)];
         return [x.toFloat(), y.toFloat()];
@@ -292,8 +334,8 @@ module Track {
         var a = Math.sin(0.5*dphi)*Math.sin(0.5*dphi) +
             Math.cos(lat1)*Math.cos(lat2) *
             Math.sin(0.5*dlambda)*Math.sin(0.5*dlambda);
-        //return EARTH_RADIUS * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
-        return EARTH_RADIUS * 2.0 * Math.asin(Math.sqrt(a));
+        return EARTH_RADIUS * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
+        //return EARTH_RADIUS * 2.0 * Math.asin(Math.sqrt(a));
     }
 
 }
