@@ -1,5 +1,6 @@
 <strings>
     <string id="AppName">WormNav</string>
+    <string id="AppVersion">1.6.0</string>
     <string id="prompt">Click the menu button</string>
     
     <string id="mm_title">Menu</string>

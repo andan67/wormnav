@@ -119,6 +119,7 @@ class TrackView extends GenericView {
         var xr = 0.0;
         var yr = 0.0;
         var xya = null;
+        var nearestPointIndex = Track.nearestPointIndex;
 
         if($.track != null) {
             dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT);
@@ -131,14 +132,28 @@ class TrackView extends GenericView {
                     x1 = x2;
                     y1 = y2;
                 }
-                xr = scaleFactor * (xya[i+2] - xc);
-                yr = scaleFactor * (xya[i+3] - yc);
+                xr = scaleFactor * (xya[i + 2] - xc);
+                yr = scaleFactor * (xya[i + 3] - yc);
                 x2 = xs_center + xr * cos_heading_smooth - yr * sin_heading_smooth;
                 y2 = ys_center - xr * sin_heading_smooth - yr * cos_heading_smooth;
                 if(i >= 0) {
                     dc.drawLine(x1, y1, x2, y2);
                 }
+                /*
+                if(i + 2 == nearestPointIndex) {
+                    dc.fillCircle(x2, y2, 4);
+                }
+                */
             }
+        }
+
+        // draw nearest point on track
+        if(Track.findNearestPoint && nearestPointIndex > 0) {
+            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+            x1 = xya[nearestPointIndex] + Track.nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
+            y1 = xya[nearestPointIndex + 1] + Track.nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
+            var xy_pos = xy_2_screen(x1, y1);
+            dc.fillCircle(xy_pos[0], xy_pos[1], 4);
         }
 
         // draw breadcrumbs
@@ -231,6 +246,7 @@ class TrackView extends GenericView {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         points[1] = [compass_x + dx2, compass_y + dy2 - bottomPadding];
         dc.fillPolygon(points);
+
     }
 
     function initialize() {
@@ -255,7 +271,7 @@ class TrackView extends GenericView {
 
         var xr = scaleFactor * (x - xc);
         var yr = scaleFactor * (y - yc);
-        if(Track.northHeading || Track.centerMap || Track.isTrackCentered) {
+        if(Track.northHeading || Track.centerMap || !Track.onPositionCalled) {
             return [xs_center + xr, ys_center - yr];
         } else {
             return [xs_center + xr * Track.cos_heading_smooth - yr * Track.sin_heading_smooth,
@@ -281,8 +297,8 @@ class TrackView extends GenericView {
         //System.println("onShow()");
         View.onShow();
         // inital zoom level when no track is loaded
-        if($.track == null && Track.zoomLevel == null) {
-            Track.setZoomLevel(5);
+        if($.track == null && zoomLevel == null) {
+            setZoomLevel(5);
         }
     }
 
