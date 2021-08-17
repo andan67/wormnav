@@ -12,7 +12,7 @@ class GenericView extends WatchUi.View {
 
     function drawStartStop(dc) {
 
-        var pixelwidth2 = 0.5 * dc.getWidth();
+        var pixelWidth2 = 0.5 * dc.getWidth();
         var pixelHeight2 = 0.5 * dc.getHeight();
         var pixelMin = dc.getWidth() < dc.getHeight() ? dc.getHeight() : dc.getHeight();
 

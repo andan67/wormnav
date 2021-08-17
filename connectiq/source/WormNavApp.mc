@@ -111,6 +111,10 @@ class WormNavApp extends Application.AppBase {
             trackViewLargeFont = Application.getApp().getProperty("trackViewLargeFont");
         }
 
+        if(Application.getApp().getProperty("trackNearestPoint")!=null) {
+            Track.findNearestPoint = Application.getApp().getProperty("trackNearestPoint");
+        }
+
         if(Application.getApp().getProperty("isDarkMode")!=null) {
             isDarkMode = Application.getApp().getProperty("isDarkMode");
         }
