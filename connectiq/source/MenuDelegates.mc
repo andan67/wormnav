@@ -45,6 +45,10 @@ module MenuDelegates {
                 return [WatchUi.loadResource(Rez.Strings.yesno_opts),
                         [true, false],
                         $.trackViewLargeFont];
+            case :track_nearest_point:
+                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
+                        [true, false],
+                        Track.findNearestPoint];
             case :data_field:
                 if(idx == 0) {
                     return  [null, [0,1,2,3,4], Data.getField(options[0], idx)];
@@ -148,7 +152,7 @@ module MenuDelegates {
                         break;
                     case :course:
                         showValue = true;
-                        idList = [:track_update, :track_large_font, :track_info, :track_del];
+                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_info, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -233,12 +237,8 @@ module MenuDelegates {
                 case :course:
                     switch(menu.getSelectedId()) {
                         case :track_update:
-                            entry = getMenuItem(menu.getSelectedId(), 0, null);
-                            newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
-                                    entry[0], entry[1], entry[2], false, null);
-                            pushSubMenuView(newMenu);
-                            return true;
                         case :track_large_font:
+                        case :track_nearest_point:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
                                     entry[0], entry[1], entry[2], false, null);
@@ -269,6 +269,10 @@ module MenuDelegates {
                 case :track_large_font:
                     $.trackViewLargeFont = value;
                     Application.getApp().setProperty("trackViewLargeFont", $.trackViewLargeFont);
+                    break;
+                case :track_nearest_point:
+                    Track.findNearestPoint = value;
+                    Application.getApp().setProperty("trackNearestPoint", Track.findNearestPoint);
                     break;
                 case :screens:
                     if(value == 0) {
