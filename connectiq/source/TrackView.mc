@@ -119,7 +119,24 @@ class TrackView extends GenericView {
         var xr = 0.0;
         var yr = 0.0;
         var xya = null;
-        var nearestPointIndex = Track.nearestPointIndex;
+
+        var d2 = Track.EARTH_RADIUS * Track.EARTH_RADIUS;
+        var dxy2 = 0.0;
+        var xp = Track.xPos;
+        var yp = Track.yPos;
+        var nearestPointIndex = -1;
+        var nearestPointLambda = 0.0;
+        var findNearestPoint = Track.onPositionCalled && Track.findNearestPoint;
+        var dx = 0.0;
+        var dy = 0.0;
+        var xt1 = 0.0;
+        var yt1 = 0.0;
+        var xt2 = 0.0;
+        var yt2 = 0.0;
+        var xs = 0.0;
+        var ys = 0.0;
+        var ds = 0.0;
+        var s = 0.0;
 
         if($.track != null) {
             dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT);
@@ -131,27 +148,51 @@ class TrackView extends GenericView {
                 if(i >= 0) {
                     x1 = x2;
                     y1 = y2;
+                    xt1 = xt2;
+                    yt1 = yt2;
                 }
-                xr = scaleFactor * (xya[i + 2] - xc);
-                yr = scaleFactor * (xya[i + 3] - yc);
+                xt2 = xya[i + 2];
+                yt2 = xya[i + 3];
+                xr = scaleFactor * (xt2 - xc);
+                yr = scaleFactor * (yt2 - yc);
                 x2 = xs_center + xr * cos_heading_smooth - yr * sin_heading_smooth;
                 y2 = ys_center - xr * sin_heading_smooth - yr * cos_heading_smooth;
+
                 if(i >= 0) {
                     dc.drawLine(x1, y1, x2, y2);
+
+                    if(findNearestPoint) {
+                        xs = xt2 - xt1;
+                        ys = yt2 - yt1;
+                        ds = xs * xs + ys * ys;
+                        if(ds > 1.0e-12) {
+                            s = (xs * (xp - xt1) + ys * (yp - yt1)) / ds;
+                            if(s < 0.0) {
+                                s = 0.0;
+                            } else if(s > 1.0) {
+                                s = 1.0;
+                            }
+                        } else {
+                            s = 0.0;
+                        }
+                        dx = xp - (xt1 + s * xs);
+                        dy = yp - (yt1 + s * ys);
+                        dxy2 = dx * dx + dy * dy;
+                        if(dxy2 < d2) {
+                            nearestPointIndex = i;
+                            nearestPointLambda = s;
+                            d2 = dxy2;
+                        }
+                    }
                 }
-                /*
-                if(i + 2 == nearestPointIndex) {
-                    dc.fillCircle(x2, y2, 4);
-                }
-                */
             }
         }
 
         // draw nearest point on track
-        if(Track.findNearestPoint && nearestPointIndex > 0) {
+        if(findNearestPoint && nearestPointIndex >= 0) {
             dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-            x1 = xya[nearestPointIndex] + Track.nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
-            y1 = xya[nearestPointIndex + 1] + Track.nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
+            x1 = xya[nearestPointIndex] + nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
+            y1 = xya[nearestPointIndex + 1] + nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
             var xy_pos = xy_2_screen(x1, y1);
             dc.fillCircle(xy_pos[0], xy_pos[1], 4);
         }
@@ -297,7 +338,7 @@ class TrackView extends GenericView {
         //System.println("onShow()");
         View.onShow();
         // inital zoom level when no track is loaded
-        if($.track == null && zoomLevel == null) {
+        if(zoomLevel == null && $.track == null) {
             setZoomLevel(5);
         }
     }
@@ -313,7 +354,7 @@ class TrackView extends GenericView {
             isNewTrack = false;
             Track.reset();
             Track.newTrack();
-            calcZoomToFitLevel();
+            setZoomLevel(null);
         }
 
         drawTrack(dc);
@@ -331,26 +372,24 @@ class TrackView extends GenericView {
 
     }
 
-    function calcZoomToFitLevel() {
-        zoomLevel = 0;
-        for(zoomLevel= 0; zoomLevel < 25; zoomLevel+=1 ) {
-            if(pixelMin / (0.2 * pixelWidth)* SCALES[zoomLevel] * 0.95 > $.track.diagonal) {
-                break;
+    function setZoomLevel(l) {
+        if(l == null) {
+            // fit to track size
+            zoomLevel = 0;
+            for(zoomLevel= 0; zoomLevel < SCALES.size(); zoomLevel += 1 ) {
+                if(pixelMin / (0.2 * pixelWidth)* SCALES[zoomLevel] * 0.95 > $.track.diagonal) {
+                    break;
+                }
+            }
+        } else {
+            if(l == -1 && zoomLevel > 0) {
+                zoomLevel -=1;
+            } else if(l == -2 && zoomLevel < SCALES.size() - 1) {
+                zoomLevel += 1;
+            } else if(l >=0 && l <= SCALES.size()) {
+                zoomLevel = l;
             }
         }
-        scaleFactor = 0.2 * pixelWidth * Track.EARTH_RADIUS / SCALES[zoomLevel];
-        return;
-    }
-
-    function setZoomLevel(l) {
-        if(l == -1 && zoomLevel > 0) {
-            zoomLevel -=1;
-        } else if(l == -2 && zoomLevel < 24) {
-            zoomLevel += 1;
-        } else if(l >=0 && l <= 25) {
-            zoomLevel = l;
-        }
-
         refScale = SCALES[zoomLevel];
         scaleFactor = 0.2 * pixelWidth / refScale * Track.EARTH_RADIUS;
         return zoomLevel;

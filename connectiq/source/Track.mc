@@ -146,7 +146,7 @@ module Track {
         yPos = _xy[1];
 
         // find nearest point on track for given gps position
-        if(onPositionCalled && findNearestPoint && $.track != null) {
+        if(false && onPositionCalled && findNearestPoint && $.track != null) {
             var d2 = EARTH_RADIUS * EARTH_RADIUS;
             var dxy2 = 0.0;
             var xya = $.track.xyArray;
