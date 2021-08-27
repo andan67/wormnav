@@ -165,15 +165,20 @@ class TrackView extends GenericView {
                         xs = xt2 - xt1;
                         ys = yt2 - yt1;
                         s = (xs * (xp - xt1) + ys * (yp - yt1));
-                        if(s < 0.0) {
+                        if(s <= 0.0) {
                             s = 0.0;
                         } else {
                             ds = xs * xs + ys * ys;
                             if(ds < 1.0e-12) {
                                 s = 0.0;
                             }
-                            else if(s > ds) {
-                                s = 1.0;
+                            else if(s >= ds) {
+                                if(i == xya.size() - 4) {
+                                    s = 1.0;
+                                } else {
+
+                                    continue;
+                                }
                             } else {
                                 s /= ds;
                             }
