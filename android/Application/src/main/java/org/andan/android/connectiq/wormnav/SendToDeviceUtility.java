@@ -47,7 +47,7 @@ public class SendToDeviceUtility {
     }
 
 
-    public static float[][] generateTrackPointsAndBoundingBox(List<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
+    public static float[][]generateTrackPointsAndBoundingBox(List<GeoPoint> geoPoints, int maxPathWpt, double maxPathError) {
 
         if(geoPoints == null) return null;
         double routeLength = -1.;
@@ -72,6 +72,10 @@ public class SendToDeviceUtility {
         double lonCenter = Math.toRadians(boundingBox.getCenter().getLongitude());
 
         float[] trackPointsToSend = new float[geoPoints.size() * 2];
+        float[] elevationPointsToSend = new float[geoPoints.size()];
+        float[] elevationStats = {10000.0f, -10000.0f, 0.f, 0.f};
+        boolean hasElevation = true;
+
         for (int j = 0; j < geoPoints.size(); j++) {
             GeoPoint geoPoint = geoPoints.get(j);
             xyPoint xy = transform(Math.toRadians(geoPoint.getLatitude()),
@@ -79,6 +83,23 @@ public class SendToDeviceUtility {
                     latCenter, lonCenter);
             trackPointsToSend[2 * j] = (float) xy.x;
             trackPointsToSend[2 * j + 1] = (float) xy.y;
+            if(hasElevation) {
+                try {
+                    elevationPointsToSend[j] = (float) geoPoint.getAltitude();
+                    // minimum
+                    elevationStats[0] = Math.min( elevationStats[0], elevationPointsToSend[j]);
+                    // maximum
+                    elevationStats[1] = Math.max( elevationStats[1], elevationPointsToSend[j]);
+                    if(j > 0) {
+                        // up
+                        elevationStats[2] += Math.max(elevationPointsToSend[j] - elevationPointsToSend[j - 1], 0.f);
+                        // down
+                        elevationStats[3] += Math.min(elevationPointsToSend[j] - elevationPointsToSend[j - 1], 0.f);
+                    }
+                } catch (Exception e) {
+                    hasElevation = false;
+                }
+            }
         }
 
         float[] track_boundingBox = new float[8];
@@ -98,8 +119,11 @@ public class SendToDeviceUtility {
         track_boundingBox[6] = (float) boundingBox.getDiagonalLengthInMeters();
         track_boundingBox[7] = (float) routeLength;
 
-        return new float[][] {track_boundingBox, trackPointsToSend};
-
+        if(hasElevation) {
+            return new float[][] {track_boundingBox, trackPointsToSend, elevationStats, elevationPointsToSend};
+        } else {
+            return new float[][]{track_boundingBox, trackPointsToSend, null, null};
+        }
     }
 
     /**

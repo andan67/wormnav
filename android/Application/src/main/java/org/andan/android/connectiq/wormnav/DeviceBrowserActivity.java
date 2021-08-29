@@ -456,6 +456,24 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         for (int i = 0; i < mTrackPoints.length; i++)
                             dataAsList.add(mTrackPoints[i]);
                         message.add(dataAsList);
+                        // add elevations if present
+                        if(trackData[2] != null && trackData[3] != null) {
+                            // convert elevations (measured in m) to shorts to keep additional size of message as small as possible
+
+                            // min elevation
+                            message.add((short)Math.round(trackData[2][0]));
+                            // max elevation
+                            message.add((short)Math.round(trackData[2][1]));
+                            // elevation up
+                            message.add((short)Math.round(trackData[2][2]));
+                            // elevation down
+                            message.add((short)Math.round(trackData[2][3]));
+                            dataAsList = new ArrayList();
+                            // elevations at each track point
+                            for (int i = 0; i < mTrackNumberOfPoints; i++)
+                                dataAsList.add((short)Math.round(trackData[3][i]));
+                            message.add(dataAsList);
+                        }
 
                         Bundle messageBundle = new Bundle();
                         messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);
