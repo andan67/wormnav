@@ -1,13 +1,7 @@
 using Toybox.WatchUi;
 using MenuDelegates;
 using Toybox.Lang;
-
-var eventText;
-const TRACK_MODE = 0;
-const DATA_MODE = 1;
-
-var mode;
-var dataPage = 0;
+using Track;
 
 class ExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
 
@@ -44,11 +38,7 @@ class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
             System.exit();
             return true;
         } else {
-            //session.discard();
-            //System.exit();
 
-            //ASK_USER:
-            //var message = "Exit App?";
             var message = WatchUi.loadResource(Rez.Strings.msg_discard);
 
             var dialog = new WatchUi.Confirmation(message);
@@ -57,8 +47,6 @@ class SaveMenuDelegate extends WatchUi.MenuInputDelegate {
                         new ExitConfirmationDelegate(),
                         WatchUi.SLIDE_IMMEDIATE
                     );
-
-            return true;
 
             return true;
         }
@@ -73,6 +61,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage
     // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
     var onPrevPageTick = 0;
+    var lastPage = 1;
 
     function initialize() {
         BehaviorDelegate.initialize();
@@ -91,14 +80,11 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onNextPage() {
         //System.println("onNextPage()");
-        switch(mode) {
-            case TRACK_MODE:
-                $.trackView.setZoomLevel(-2);
-                updateView();
-                break;
-            case DATA_MODE:
-                dataPageChange(1);
-                break;
+        if($.page == -1) {
+            $.trackView.setZoomLevel(-2);
+            updateView();
+        } else {
+            dataPageChange(1);
         }
         return true;
     }
@@ -107,17 +93,12 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // @return [Boolean] true if handled, false otherwise
     function onPreviousPage() {
         //System.println("onPreviousPage()");
-        switch(mode) {
-            case TRACK_MODE:
-                $.trackView.setZoomLevel(-1);
-                updateView();
-                $.trackViewCounter = 0;
-                break;
-            case DATA_MODE:
-                dataPageChange(-1);
-                break;
+        if($.page == -1) {
+            $.trackView.setZoomLevel(-1);
+            updateView();
+        } else {
+            dataPageChange(-1);
         }
-        onPrevPageTick = $.appTimerTicks;
         return true;
     }
 
@@ -133,10 +114,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
         // If there is no session exit;
         if ($.session == null || $.session.isRecording() == false) {
-            //System.exit();
-
-            //ASK_USER:
-            //var message = "Exit App?";
             var message = WatchUi.loadResource(Rez.Strings.msg_exit_app);
 
             var dialog = new WatchUi.Confirmation(message);
@@ -149,38 +126,41 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             return true;
 
         }
-        if(mode == TRACK_MODE && Data.activeDataScreens.size() > 0 ) {
-            if(dataView == null) {
-                dataView = new DataView(Data.activeDataScreens[dataPage]);
+
+        if($.page == -1) {
+            // track view -> swtich to data view (page > 0) or elevation plot (page == 0)
+            if(lastPage == 0 && Track.hasElevation()) {
+                $.page = 0;
+                $.trackView.elevationPlot = true;
+                WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
+            } else if(Data.activeDataScreens.size() > 0 ) {
+                if(lastPage == 0) {
+                    // elevation plot disabled
+                    $.page = 1;
+                } else {
+                    $.page = lastPage;
+                }
+                if(dataView == null) {
+                    dataView = new DataView(Data.activeDataScreens[$.page - 1]);
+                } else {
+                    $.dataView.setDataFields(Data.activeDataScreens[$.page - 1]);
+                }
+                WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
             }
-            mode = DATA_MODE;
-            WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
         }
-        else if(mode == DATA_MODE) {
-            mode = TRACK_MODE;
+        else {
+            lastPage = $.page;
+            $.page = -1;
+            // switch to track view
+            $.trackView.elevationPlot = false;
             WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return true;
     }
 
-    // When a next mode behavior occurs, onNextMode() is called.
-    // @return [Boolean] true if handled, false otherwise
-    function onNextMode() {
-        //System.println("onNextMode()");
-        return true;
-    }
-
-    // When a previous mode behavior occurs, onPreviousMode() is called.
-    // @return [Boolean] true if handled, false otherwise
-    function onPreviousMode() {
-        //System.println("onPreviousMode()");
-
-        return true;
-    }
-
     function onMenu() {
         //Workaround for issue
-        if(mode==TRACK_MODE && $.appTimerTicks - onPrevPageTick < 3) {
+        if($.page == -1 && $.appTimerTicks - onPrevPageTick < 3) {
             // counteract
             onNextPage();
         }
@@ -197,7 +177,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     private function startStopActivity() {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
-                if($.session==null) {
+                if($.session == null) {
                     var sname = "WormNavActivity";
                     if($.track != null && $.track.name != null) {
                         sname = $.track.name.substring(0, $.track.name.length() < 16 ? $.track.name.length() : 15);
@@ -224,24 +204,36 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     }
 
     private function dataPageChange(n) {
-        if(Data.activeDataScreens.size() == 0) {
-            // this might happen when data screen settings have been changed
+        if(Data.activeDataScreens.size() == 0 && !$.trackView.elevationPlot) {
+            // this might happen settings have been changed
             onBack();
         } else {
-            dataPage = (dataPage + n) % Data.activeDataScreens.size();
-            if(dataPage<0) {
-                dataPage = (Data.activeDataScreens.size()-1) % Data.activeDataScreens.size();
+            $.page += n;
+            if($.page > Data.activeDataScreens.size()) {
+                $.page = Track.hasElevation()? 0 : 1;
+            } else if($.page == 0 && !Track.hasElevation() || $.page < 0 && Track.hasElevation() ) {
+                $.page = Data.activeDataScreens.size();
             }
-            dataView.setDataFields(Data.activeDataScreens[dataPage]);
-            WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
+            System.println("page: " + $.page);
+            if($.page > 0) {
+                if(dataView == null) {
+                    dataView = new DataView(Data.activeDataScreens[$.page - 1]);
+                } else {
+                    $.dataView.setDataFields(Data.activeDataScreens[$.page - 1]);
+                }
+                WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
+            } else {
+                $.trackView.elevationPlot = true;
+                WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
+            }
         }
         return;
     }
 
     private function updateView() {
-        if(mode == TRACK_MODE) {
+        if($.page <= 0) {
             $.trackViewCounter = 0;
-        } else if (mode == DATA_MODE) {
+        } else {
             $.dataViewCounter = 0;
         }
         WatchUi.requestUpdate();

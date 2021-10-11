@@ -67,8 +67,8 @@ module Track {
         pos_nelements = 0;
         pos_start_index = 0;
         cumDistance = breadCrumbDist;
-        xLastPos=null;
-        yLastPos=null;
+        xLastPos = null;
+        yLastPos = null;
         positionTime = 0;
         lastPositionTime = 0;
         positionDistance = 0.0;
@@ -254,7 +254,7 @@ module Track {
     }
 
     function newTrack() {
-        System.println("newTrack()");
+        //System.println("newTrack()");
         lat_view_center=$.track.lat_center;
         lon_view_center=$.track.lon_center;
         cos_lat_view_center = Math.cos(lat_view_center);
@@ -263,6 +263,10 @@ module Track {
         reset();
         resetHeading();
         setPosition(lat_view_center, lon_view_center);
+    }
+
+    function hasElevation() {
+        return $.trackElevationPlot && $.track != null && $.track.eleArray != null;
     }
 
     function setAutolapDistance(distance) {

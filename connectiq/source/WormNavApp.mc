@@ -25,6 +25,7 @@ var activityType = ActivityRecording.SPORT_RUNNING;
 
 var trackViewPeriod = 1;
 var trackViewLargeFont = false;
+var trackElevationPlot = false;
 var dataViewPeriod = 1;
 var lapViewPeriod = 10;
 var trackViewCounter = 0;
@@ -32,6 +33,12 @@ var dataViewCounter = 0;
 var appTimerTicks = 0;
 
 var isDarkMode = false;
+
+
+// page == -1 -> track view with track
+// page == 0 -> track view with elevation plot
+// page >= 1 -> data view with sceen #page
+var page = 0;
 
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
@@ -60,17 +67,15 @@ class WormNavApp extends Application.AppBase {
 
         Data.setMaxHeartRate();
 
-        // start page is map
-        mode=TRACK_MODE;
-        var data= Application.getApp().getProperty("trackData");
+
+        var data = Application.getApp().getProperty("trackData");
 
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
         if(data!=null) {
-            //System.println("load data from property store");
+            System.println("load data from property store");
             track = new TrackModel(data);
-            //System.println("Created track from property store!");
         }
 
         if(Application.getApp().getProperty("northHeading")!=null) {
@@ -115,6 +120,10 @@ class WormNavApp extends Application.AppBase {
             Track.findNearestPoint = Application.getApp().getProperty("trackNearestPoint");
         }
 
+        if(Application.getApp().getProperty("trackElevationPlot")!=null) {
+            trackElevationPlot = Application.getApp().getProperty("trackElevationPlot");
+        }
+
         if(Application.getApp().getProperty("isDarkMode")!=null) {
             isDarkMode = Application.getApp().getProperty("isDarkMode");
         }
@@ -156,7 +165,7 @@ class WormNavApp extends Application.AppBase {
     function onPhone(msg) {
         System.println("onPhone(msg)");
         messageReceived = true;
-        mode=TRACK_MODE;
+        page = 0;
         track = new TrackModel(msg.data);
         try {
             Application.getApp().setProperty("trackData", msg.data);
@@ -213,13 +222,15 @@ class WormNavApp extends Application.AppBase {
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if($.mode == TRACK_MODE)  {
+        else if(page < 0)  {
+            // track view active
             if(trackViewCounter %  trackViewPeriod == 0) {
                 WatchUi.requestUpdate();
             }
             trackViewCounter += 1;
         }
-        else if($.mode == DATA_MODE) {
+        else {
+            // data view active
             if(dataViewCounter %  dataViewPeriod == 0) {
                 WatchUi.requestUpdate();
             }

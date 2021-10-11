@@ -37,6 +37,12 @@ module MenuDelegates {
             case :background:
                 return [WatchUi.loadResource(Rez.Strings.color_opts),
                         [true, false], $.isDarkMode];
+            case :data_field:
+                if(idx == 0) {
+                    return  [null, [0,1,2,3,4], Data.getField(options[0], idx)];
+                } else {
+                    return [Data.dataFieldMenuLabels, null, Data.getField(options[0], idx)];
+                }
             case :track_update:
                 return [["1s", "2s", "5s", "10s", "15s", "30s", "60s"],
                         [1,2,5,10,15,30,60],
@@ -49,14 +55,10 @@ module MenuDelegates {
                 return [WatchUi.loadResource(Rez.Strings.yesno_opts),
                         [true, false],
                         Track.findNearestPoint];
-            case :data_field:
-                if(idx == 0) {
-                    return  [null, [0,1,2,3,4], Data.getField(options[0], idx)];
-                } else {
-                    return [Data.dataFieldMenuLabels, null, Data.getField(options[0], idx)];
-                }
-            default:
-                return null;
+            case :track_elevation_plot:
+                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
+                        [true, false],
+                        $.trackElevationPlot];
         }
     }
 
@@ -152,7 +154,7 @@ module MenuDelegates {
                         break;
                     case :course:
                         showValue = true;
-                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_info, :track_del];
+                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_elevation_plot,:track_info, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -239,6 +241,7 @@ module MenuDelegates {
                         case :track_update:
                         case :track_large_font:
                         case :track_nearest_point:
+                        case :track_elevation_plot:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
                                     entry[0], entry[1], entry[2], false, null);
@@ -273,6 +276,10 @@ module MenuDelegates {
                 case :track_nearest_point:
                     Track.findNearestPoint = value;
                     Application.getApp().setProperty("trackNearestPoint", Track.findNearestPoint);
+                    break;
+                case :track_elevation_plot:
+                    $.trackElevationPlot = value;
+                    Application.getApp().setProperty("trackElevationPlot", $.trackElevationPlot);
                     break;
                 case :screens:
                     if(value == 0) {
@@ -314,8 +321,8 @@ module MenuDelegates {
         function onResponse(response) {
             if (response == WatchUi.CONFIRM_NO) {
             } else {
-            System.println("Delete track");
-                $.track=$.track.clean();
+            //System.println("Delete track");
+                $.track=null;
             }
         }
     }
