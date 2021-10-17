@@ -52,6 +52,13 @@ module Track {
     var lapPace = "";
     var isAutoLapActive = false;
 
+    // used for elevation plot
+    var ele = 0.0;
+    var eleMin = null;
+    var eleMax = null;
+    var eleMinTrack = null;
+    var eleMaxTrack = null;
+
     var positionTime = 0;
     var lastPositionTime = 0;
     var positionDistance = 0.0;
@@ -72,6 +79,11 @@ module Track {
         positionTime = 0;
         lastPositionTime = 0;
         positionDistance = 0.0;
+
+        eleMin = null;
+        eleMax = null;
+        eleMinTrack = null;
+        eleMaxTrack = null;
 
         nearestPointIndex = -1;
         nearestPointDistance = EARTH_RADIUS;
@@ -116,10 +128,8 @@ module Track {
         // Hereafter, only (x,y) coordinates should be used
         //var lat = info.position.toRadians()[0].toFloat();
         //var lon = info.position.toRadians()[1].toFloat();
-        var lat = info.position.toRadians()[0];
-        var lon = info.position.toRadians()[1];
         onPositionCalled = true;
-        setPosition(lat, lon);
+        setPosition(info.position.toRadians()[0], info.position.toRadians()[1]);
     }
 
     function setPosition(lat, lon) {
@@ -267,6 +277,28 @@ module Track {
 
     function hasElevation() {
         return $.trackElevationPlot && $.track != null && $.track.eleArray != null;
+    }
+
+    function setElevation(e) {
+        if (e != null) {
+            ele = e;
+            if(eleMax == null || e > eleMax) {
+                eleMax = e;
+                if($.track.eleMax != null && e > $.track.eleMax) {
+                    eleMaxTrack = e;
+                } else {
+                    eleMaxTrack = eleMax;
+                }
+            }
+            if(eleMin == null || e < eleMin) {
+                eleMin = e;
+                if($.track.eleMin != null && e < $.track.eleMin) {
+                    eleMinTrack = e;
+                } else {
+                    eleMinTrack = eleMin;
+                }
+            }
+        }
     }
 
     function setAutolapDistance(distance) {

@@ -68,7 +68,6 @@ class TrackView extends GenericView {
                     scale_x2, scale_y1 - bottomPadding);
         dc.drawText(pixelWidth2, scale_y2 - dc.getFontHeight(fontsize) - bottomPadding,
             fontsize , formattedScale(), Graphics.TEXT_JUSTIFY_CENTER);
-
     }
 
     function drawActivityInfo(dc) {
@@ -120,6 +119,7 @@ class TrackView extends GenericView {
         var yr = 0.0;
         var xya = null;
         var ele = null;
+        var eleAct = null;
 
         var d2 = Track.EARTH_RADIUS * Track.EARTH_RADIUS;
         var dxy2 = 0.0;
@@ -165,8 +165,11 @@ class TrackView extends GenericView {
                     x2 = xs_center + xr * cos_heading_smooth - yr * sin_heading_smooth;
                     y2 = ys_center - xr * sin_heading_smooth - yr * cos_heading_smooth;
                 } else {
+                    eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
+                    Track.setElevation(eleAct);
+                    scaleEleY = (Track.eleMaxTrack - Track.eleMinTrack) > 1 ? 0.8 * eleHeight / (Track.eleMaxTrack - Track.eleMinTrack) : 0.0;
                     xr = scaleEleX * dss;
-                    yr = scaleEleY * (ele[(i + 2) / 2] - $.track.eleMin);
+                    yr = scaleEleY * (ele[(i + 2) / 2] - Track.eleMinTrack);
                     x2 = ele_x1 + xr;
                     y2 = ele_y2 - yr;
                 }
@@ -226,15 +229,26 @@ class TrackView extends GenericView {
         }
 
         if(elevationPlot) {
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
             dc.drawLine(ele_x1, ele_y2, ele_x2, ele_y2);
-            dc.drawLine(ele_x1 + 0.25 * eleWidth, ele_y2, ele_x1 + 0.25 * eleWidth, ele_y2 + 0.02 * eleHeight );
-            dc.drawLine(ele_x1 + 0.50 * eleWidth, ele_y2, ele_x1 + 0.50 * eleWidth, ele_y2 + 0.02 * eleHeight );
-            dc.drawLine(ele_x1 + 0.75 * eleWidth, ele_y2, ele_x1 + 0.75 * eleWidth, ele_y2 + 0.02 * eleHeight );
+            dc.drawLine(ele_x2, ele_y2, ele_x2, ele_y1);
+            //dc.drawLine(ele_x2, ele_y1, ele_x1, ele_y1);
+            dc.drawLine(ele_x1, ele_y1, ele_x1, ele_y2);
+            for(var w = 0.25; w <= 0.75; w += 0.25) {
+                dc.drawLine(ele_x1 + w * eleWidth, ele_y2, ele_x1 + w * eleWidth, ele_y2 + 0.04 * eleWidth );
+                dc.drawLine(ele_x1 , ele_y2 - w * eleHeight, ele_x1 - 0.04 * eleWidth, ele_y2 - w * eleHeight );
+                dc.drawLine(ele_x2 , ele_y2 - w * eleHeight, ele_x2 + 0.04 * eleWidth, ele_y2 - w * eleHeight );   
+            }
+            dc.drawLine(ele_x1 + 0.25 * eleWidth, ele_y2, ele_x1 + 0.25 * eleWidth, ele_y2 + 0.05 * eleHeight );
+            dc.drawLine(ele_x1 + 0.50 * eleWidth, ele_y2, ele_x1 + 0.50 * eleWidth, ele_y2 + 0.05 * eleHeight );
+            dc.drawLine(ele_x1 + 0.75 * eleWidth, ele_y2, ele_x1 + 0.75 * eleWidth, ele_y2 + 0.05 * eleHeight );
 
+            dc.drawText(pixelWidth - ele_x1, ele_y2, fontsize, $.track.eleMin.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(pixelWidth - ele_x1, ele_y1, fontsize, $.track.eleMax.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
 
             dc.drawText(pixelWidth2, ele_y2, fontsize , $.track.xyLengthString, Graphics.TEXT_JUSTIFY_CENTER);
+
         }
 
         // draw nearest point on track
@@ -249,14 +263,18 @@ class TrackView extends GenericView {
                 dc.fillCircle(xy_pos[0], xy_pos[1], 4);
             } else {
                 xr = scaleEleX * dssn;
-                yr = scaleEleY * (ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]) - $.track.eleMin);
+                var eleTrack = ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]);                
+                yr = scaleEleY * (eleAct - Track.eleMinTrack);
                 x2 = ele_x1 + xr;
                 y2 = ele_y2 - yr;
+                dc.drawText(x2, ele_y1 + dc.getFontHeight(fontsize), fontsize , eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT);                
                 dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-                //dc.drawLine(x2, ele_y2, x2, y2);
-                dc.drawLine(x2, y2, x2 + eleWidth/32, y2 - eleHeight/32);
-                dc.drawLine(x2 + eleWidth/32, y2 - eleHeight/32, x2 - eleWidth/32, y2 - eleHeight/32);
-                dc.drawLine(x2 - eleWidth/32, y2 - eleHeight/32, x2, y2);
+                dc.drawLine(x2, ele_y2, x2, ele_y1);
+                dc.drawText(x2, ele_y1, fontsize , eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT);
+
+                // dc.drawLine(x2, y2, x2 + eleWidth/24, y2 - eleHeight/24);
+                // dc.drawLine(x2 + eleWidth/24, y2 - eleHeight/24, x2 - eleWidth/24, y2 - eleHeight/24);
+                // dc.drawLine(x2 - eleWidth/24, y2 - eleHeight/24, x2, y2);                
             }
         }
 
@@ -402,11 +420,12 @@ class TrackView extends GenericView {
         cursorSizePixel = pixelWidth * SCALE_PIXEL * 0.5;
 
         // box for elevation plot
-        eleWidth = 0.8 * pixelWidth - 4;
-        eleHeight = pixelWidth < pixelHeight ? eleWidth -4: 0.6 * pixelWidth - 4;
-        ele_x1 = pixelWidth2 - 0.5 * eleWidth;
+        eleWidth = 0.6 * pixelWidth;
+        eleHeight = 0.4 * pixelWidth;
+        ele_x1 = pixelWidth2 -0.7 * eleWidth ;
+        System.println(ele_x1);
         ele_y1 = pixelHeight2 - 0.5 * eleHeight;
-        ele_x2 = pixelWidth2 + 0.5 * eleWidth;
+        ele_x2 = ele_x1 + eleWidth;
         ele_y2 = pixelHeight2 + 0.5 * eleHeight;
 
         if($.device.equals("vivoactive")) {
@@ -441,9 +460,7 @@ class TrackView extends GenericView {
             setZoomLevel(null);
             if($.track != null && $.track.eleArray != null) {
                 scaleEleX = eleWidth / $.track.xyLength;
-                scaleEleY = ($.track.eleMax -  $.track.eleMin) > 1 ? 0.6 * eleHeight / ($.track.eleMax -  $.track.eleMin) : 0.0;
-                System.println("scaleEleX: " + scaleEleX);
-                System.println("scaleEleY: " + scaleEleY);
+                scaleEleY = ($.track.eleMax -  $.track.eleMin) > 1 ? 0.8 * eleHeight / ($.track.eleMax -  $.track.eleMin) : 0.0;
             }
         }
 

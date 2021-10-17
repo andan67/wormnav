@@ -39,6 +39,8 @@ class TrackModel {
         xyLength = 0.0;
         var dx;
         var dy;
+        eleMin = null;
+        eleMax = null;
 
 
         if(data.size() > 5) {
