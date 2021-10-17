@@ -27,6 +27,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <queries>
+    <!-- Specific apps you interact with, eg: -->
+        <package android:name="com.garmin.android.apps.connectmobile" />
+    </queries>
     <!-- All intent-filters for config actions must include the categories
         com.google.android.wearable.watchface.category.COMPANION_CONFIGURATION and
         android.intent.category.DEFAULT. -->

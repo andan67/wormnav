@@ -354,13 +354,10 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
     private void displaySendToDeviceDialog() {
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
         final View trackSendToDeviceLayout = inflater.inflate(R.layout.send_to_device_dialog, null);
-
-
         TextView textView;
 
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_name_value);
@@ -368,7 +365,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_length_value);
         textView.setText(String.format("%.3f", mTrackLength / 1000));
-
 
         final EditText maxWptEditText = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxPoints);
         final EditText maxError = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxError);
@@ -436,8 +432,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         logEntry.setOptimized(maxPathWpt > 0);
                         logEntry.setTrackLengthSent(mTrackLength);
                         //Log.d(TAG, "mTrackLength:" + mTrackLength);
-
-
                         mTrackNumberOfPoints = mTrackPoints.length / 2;
                         logEntry.setNoTrackPointsSent(mTrackNumberOfPoints);
 
@@ -457,21 +451,12 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                             dataAsList.add(mTrackPoints[i]);
                         message.add(dataAsList);
                         // add elevations if present
-                        if(trackData[2] != null && trackData[3] != null) {
-                            // convert elevations (measured in m) to shorts to keep additional size of message as small as possible
-
-                            // min elevation
-                            message.add((short)Math.round(trackData[2][0]));
-                            // max elevation
-                            message.add((short)Math.round(trackData[2][1]));
-                            // elevation up
-                            message.add((short)Math.round(trackData[2][2]));
-                            // elevation down
-                            message.add((short)Math.round(trackData[2][3]));
+                        if(trackData[2] != null) {
                             dataAsList = new ArrayList();
                             // elevations at each track point
-                            for (int i = 0; i < mTrackNumberOfPoints; i++)
-                                dataAsList.add((short)Math.round(trackData[3][i]));
+                            for (int i = 0; i < mTrackNumberOfPoints; i++) {
+                                dataAsList.add(trackData[2][i]);
+                            }
                             message.add(dataAsList);
                         }
 
