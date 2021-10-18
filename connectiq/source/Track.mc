@@ -128,7 +128,7 @@ module Track {
         // Hereafter, only (x,y) coordinates should be used
         //var lat = info.position.toRadians()[0].toFloat();
         //var lon = info.position.toRadians()[1].toFloat();
-        onPositionCalled = true;
+        onPositionCalled = true;        
         setPosition(info.position.toRadians()[0], info.position.toRadians()[1]);
     }
 
@@ -287,7 +287,7 @@ module Track {
                 if($.track.eleMax != null && e > $.track.eleMax) {
                     eleMaxTrack = e;
                 } else {
-                    eleMaxTrack = eleMax;
+                    eleMaxTrack = $.track.eleMax;
                 }
             }
             if(eleMin == null || e < eleMin) {
@@ -295,7 +295,7 @@ module Track {
                 if($.track.eleMin != null && e < $.track.eleMin) {
                     eleMinTrack = e;
                 } else {
-                    eleMinTrack = eleMin;
+                    eleMinTrack = $.track.eleMin;
                 }
             }
         }
@@ -372,6 +372,16 @@ module Track {
             Math.sin(0.5*dlambda)*Math.sin(0.5*dlambda);
         return EARTH_RADIUS * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
         //return EARTH_RADIUS * 2.0 * Math.asin(Math.sqrt(a));
+    }
+
+    function formatLength(l) {
+        var w = 3;
+        if(l >= 10.0 && l < 100.0) {
+            w = 2;
+        } else if(l >= 100.0) {
+            w = 1;
+        }
+        return l.format("%." + w + "f") + " km";     
     }
 
 }
