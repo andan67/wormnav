@@ -98,18 +98,6 @@ class TrackModel {
             xyLength += Math.sqrt(dx * dx + dy * dy);
         }
         var ls = 6371.0 * xyLength;
-        var w = 3;
-        if(ls >= 10.0 && ls < 100) {
-            w = 2;
-        } else if(ls >= 100) {
-            w = 1;
-        }
-
-        xyLengthString = ls.format("%." + w + "f") + " km";
-        System.println("length: " + length);
-        System.println("xyLength: " + xyLength);
-        System.println("xyLength scale: " + 6371000.0 * xyLength);
-        System.println("xyLength formatted: " + xyLengthString);
-
+        xyLengthString = Track.formatLength(ls);      
     }
 }
