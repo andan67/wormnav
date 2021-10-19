@@ -1,8 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingLeft="20dp">
 
 
         <TextView
@@ -10,7 +11,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:inputType="text"
             android:text="@string/dialog_send_to_device_track_name" />
 
         <TextView
@@ -18,9 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="20dp"
-            android:textColor="#999999"
-            android:textSize="18sp" />
+            android:paddingBottom="0dp"
+            android:textColor="@color/dark_grey"
+            android:textSize="16sp"
+            tools:text="Friedberg Laufen" />
 
         <TextView
             android:id="@+id/dialog_send_to_device_track_length_title"
@@ -34,13 +35,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="20dp"
-            android:textColor="#999999"
-            android:textSize="18sp" />
+            android:paddingBottom="0dp"
+            android:textColor="@color/dark_grey"
+            android:textSize="15sp"
+            tools:text="16.725" />
 
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/invertRoute"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:minHeight="36dp"
+                    android:text="@string/invert_route" />
+
+                <CheckBox
+                    android:id="@+id/sendElevationData"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:minHeight="36dp"
+                    android:text="@string/send_elevation" />
 
                 <CheckBox
                     android:id="@+id/reduceTrackCheckbox"
@@ -50,6 +74,7 @@
                     android:layout_marginRight="1dp"
                     android:layout_weight="1"
                     android:checked="false"
+                    android:minHeight="36dp"
                     android:text="@string/track_reduce" />
 
                 <TableRow
@@ -67,7 +92,7 @@
                             android:inputType="number|numberSigned"
                             android:maxLength="5"
                             android:paddingLeft="10dp"
-                            android:text="123" />
+                            tools:text="123" />
 
                         <TextView
                             android:id="@+id/reduceMaxPointsLabel"

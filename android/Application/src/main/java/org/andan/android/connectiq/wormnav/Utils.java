@@ -711,6 +711,8 @@ public class Utils extends AppCompatActivity {
         Data.loadFromRepositoryOnStart = preferences.getBoolean("loadFromRepositoryOnStart", true);
         Data.saveIntoRepositoryOnExit = preferences.getBoolean("saveIntoRepositoryOnExit", true);
 
+        Data.useDefaultSendElevationData = preferences.getBoolean("useDefaultSendElevationData", false);
+
         Data.useDefaultOptimization = preferences.getBoolean("useDefaultOptimization", false);
         Data.defaultMaxPathWpt = preferences.getInt("defaultMaxPathWpt", 0);
         Data.defaultMaxPathError = (double) preferences.getFloat("defaultMaxPathError",10.f);
@@ -735,6 +737,8 @@ public class Utils extends AppCompatActivity {
         editor.putBoolean("loadFromRepositoryOnStart", Data.loadFromRepositoryOnStart);
         editor.putString("lastImportedExportedUri", Data.lastImportedExportedUri.toString());
         editor.putString("lastLoadedSavedUri", Data.lastLoadedSavedUri.toString());
+
+        editor.putBoolean("useDefaultSendElevationData", Data.useDefaultSendElevationData);
 
         editor.putBoolean("useDefaultOptimization", Data.useDefaultOptimization);
         editor.putInt("defaultMaxPathWpt", Data.defaultMaxPathWpt);

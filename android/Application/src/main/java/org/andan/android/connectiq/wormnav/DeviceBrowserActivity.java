@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.FloatProperty;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -259,19 +260,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
             case R.id.load_devices:
                 Log.d(TAG, "onOptionsItemSelected");
                 loadDevices();
-                /*
-                try {
-                    mConnectIQ.unregisterAllForEvents();
-                    mConnectIQ.shutdown(this);
-                    mConnectIQ = ConnectIQ.getInstance(this, IQConnectType.TETHERED);
-                    // Initialize the SDK
-                    mConnectIQ.initialize(this, true, mListener);
-
-                } catch (InvalidStateException e) {
-                    // This is usually because the SDK was already shut down
-                    // so no worries.
-                }
-                */
                 break;
             case R.id.show_log_entries:
 
@@ -308,8 +296,9 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         // -1 because of header
         if (position > 0 && mSdkReady) {
             mDevice = mAdapter.getItem(position - 1);
-
-            displaySendToDeviceDialog();
+            if(mDevice.getStatus() == IQDeviceStatus.CONNECTED ) {
+                displaySendToDeviceDialog();
+            }
         }
     }
 
@@ -366,10 +355,14 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         textView = (TextView) trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_track_length_value);
         textView.setText(String.format("%.3f", mTrackLength / 1000));
 
-        final EditText maxWptEditText = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxPoints);
-        final EditText maxError = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxError);
+        final CheckBox invertCourseCheckBox = trackSendToDeviceLayout.findViewById(R.id.invertRoute);
+
+        final CheckBox sendElevationDataCheckBox = trackSendToDeviceLayout.findViewById(R.id.sendElevationData);
+        sendElevationDataCheckBox.setChecked(Data.useDefaultSendElevationData);
 
         final CheckBox reduceCheckBox = trackSendToDeviceLayout.findViewById(R.id.reduceTrackCheckbox);
+        final EditText maxWptEditText = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxPoints);
+        final EditText maxError = trackSendToDeviceLayout.findViewById(R.id.dialog_send_to_device_reduceMaxError);
 
         if (Data.useDefaultOptimization) {
             maxPathWpt = Data.defaultMaxPathWpt;
@@ -417,48 +410,16 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                                 maxPathError = Double.valueOf(maxError.getText().toString());
                             }
                         }
-                        float[][] trackData = SendToDeviceUtility.generateTrackPointsAndBoundingBox(mGeoPoints, maxPathWpt, maxPathError);
-                        mTrackBoundingBox = trackData[0];
-                        mTrackPoints = trackData[1];
-
+                        List<Object> message = SendToDeviceUtility.generateMessageForDevice(mGeoPoints, mTrackLength, mTrackName, maxPathWpt, maxPathError,
+                                invertCourseCheckBox.isChecked(), sendElevationDataCheckBox.isChecked());
                         final TransmissionLogEntry logEntry = new TransmissionLogEntry();
                         logEntry.setTrackName(mTrackName);
                         logEntry.setTrackLengthOriginal(mTrackLength);
                         logEntry.setNoTrackPointsOriginal(mGeoPoints.size());
 
-                        // Dirty hack: last element of mTrackBoundingBox contains possibly reduced track lenght!
-                        //Log.d(TAG, "mTrackLength:" + mTrackLength);
-                        mTrackLength = mTrackBoundingBox[mTrackBoundingBox.length - 1] >= 0. ? mTrackBoundingBox[mTrackBoundingBox.length - 1] : mTrackLength;
                         logEntry.setOptimized(maxPathWpt > 0);
-                        logEntry.setTrackLengthSent(mTrackLength);
-                        //Log.d(TAG, "mTrackLength:" + mTrackLength);
-                        mTrackNumberOfPoints = mTrackPoints.length / 2;
-                        logEntry.setNoTrackPointsSent(mTrackNumberOfPoints);
-
-                        List<Object> message = new ArrayList<>();
-                        // Create lists from arrays
-                        List<Object> dataAsList = new ArrayList<>();
-                        // Dirty hack: last element of mTrackBoundingBox contains possibly reduced track lenght!
-
-                        for (int i = 0; i < mTrackBoundingBox.length - 1; i++)
-                            dataAsList.add(mTrackBoundingBox[i]);
-                        message.add(dataAsList);
-                        message.add(mTrackName);
-                        message.add(mTrackLength);
-                        message.add(mTrackNumberOfPoints);
-                        dataAsList = new ArrayList();
-                        for (int i = 0; i < mTrackPoints.length; i++)
-                            dataAsList.add(mTrackPoints[i]);
-                        message.add(dataAsList);
-                        // add elevations if present
-                        if(trackData[2] != null) {
-                            dataAsList = new ArrayList();
-                            // elevations at each track point
-                            for (int i = 0; i < mTrackNumberOfPoints; i++) {
-                                dataAsList.add(trackData[2][i]);
-                            }
-                            message.add(dataAsList);
-                        }
+                        logEntry.setTrackLengthSent((float)message.get(2));
+                        logEntry.setNoTrackPointsSent((int)message.get(3));
 
                         Bundle messageBundle = new Bundle();
                         messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);

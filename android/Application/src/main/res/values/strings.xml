@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="about_app" translatable="false">©2020 andan67</string>
+    <string name="about_app" translatable="false">©2021 andan67</string>
     <string name="about_to_delete_route">You\'re about to delete the route</string>
     <string name="about_to_delete_track">You\'re about to delete the track</string>
 
@@ -126,7 +126,7 @@
     <string name="dialog_selected">Selected</string>
     <string name="dialog_set_lat_lon">Add</string>
     <string name="dialog_types_of_types">(%1$d of %2$d)</string>
-    <string name="dialog_send_to_device_title">Send track/route to Garmin device</string>
+    <string name="dialog_send_to_device_title">Send course to Garmin device</string>
     <string name="dialog_send_to_device_apply">Send</string>
 
     <string name="drawer_close">Close navigation drawer</string>
@@ -323,6 +323,8 @@
 
     <string name="track_edit_prompt">Select a track</string>
     <string name="track_reduce">Optimization</string>
+    <string name="invert_route">Invert course</string>
+    <string name="send_elevation">Send elevation data</string>
 
     <string name="tracks_clear_all">Clear all tracks</string>
     <string name="tracks_cleared">Tracks cleared</string>
@@ -399,6 +401,7 @@
     <string name="run_with_simulator">Run with simulator</string>
     <string name="load_last_open_file">Open last loaded/saved file on start</string>
     <string name="default_track_reduce">Default optimization</string>
+    <string name="default_send_elevation_data">Default send elevation data</string>
 
     <string name="settings_load_from_repository">Load data on start</string>
     <string name="settings_save_into_repository">Save data on exit</string>
