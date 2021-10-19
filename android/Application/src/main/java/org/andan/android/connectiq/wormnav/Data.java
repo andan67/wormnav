@@ -70,6 +70,8 @@ final class Data {
     static File applicationFilesDir;
     static final String applicationRepositoryFilename = "wormnav.gpx";
 
+    static boolean useDefaultSendElevationData = false;
+
     static boolean useDefaultOptimization = false;
     static int defaultMaxPathWpt = 0;
     static double defaultMaxPathError = 10d;

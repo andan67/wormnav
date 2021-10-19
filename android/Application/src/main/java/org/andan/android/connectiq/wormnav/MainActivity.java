@@ -556,19 +556,27 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
             }
         });
 
-        final CheckBox defaultReduceTrackCheckbox = (CheckBox) layout.findViewById(R.id.defaultReduceTrackCheckbox);
+        final CheckBox defaultSendElevationDataCheckbox = (CheckBox) layout.findViewById(R.id.defaultSendElevationDataCheckBox);
+        defaultSendElevationDataCheckbox.setChecked(Data.useDefaultSendElevationData);
+        defaultSendElevationDataCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d(TAG, "useDefaultElevationData:" + isChecked);
+                Data.useDefaultOptimization = isChecked;
+                Data.useDefaultSendElevationData = isChecked;
+            }
+        });
 
+        final CheckBox defaultReduceTrackCheckbox = (CheckBox) layout.findViewById(R.id.defaultReduceTrackCheckbox);
         final EditText maxWptEditText = layout.findViewById(R.id.default_reduceMaxPoints);
         maxWptEditText.setText(String.valueOf(Data.defaultMaxPathWpt));
 
         final EditText maxError = layout.findViewById(R.id.default_reduceMaxError);
         maxError.setText(String.valueOf(Data.defaultMaxPathError));
 
-
         defaultReduceTrackCheckbox.setChecked(Data.useDefaultOptimization);
         maxWptEditText.setEnabled(Data.useDefaultOptimization);
         maxError.setEnabled(Data.useDefaultOptimization);
-
 
         defaultReduceTrackCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
