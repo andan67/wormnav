@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b88258b2-2a14-47c2-9d4b-bd050c38e50a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/android/Application/src/main/java/org/andan/android/connectiq/wormnav/DeviceBrowserActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/Application/src/main/java/org/andan/android/connectiq/wormnav/DeviceBrowserActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/Application/src/main/java/org/andan/android/connectiq/wormnav/SendToDeviceUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/Application/src/main/java/org/andan/android/connectiq/wormnav/SendToDeviceUtility.java" afterDir="false" />
-    </list>
+    <list default="true" id="b88258b2-2a14-47c2-9d4b-bd050c38e50a" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

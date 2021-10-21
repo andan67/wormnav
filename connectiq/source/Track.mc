@@ -51,11 +51,12 @@ module Track {
     var isAutoLapActive = false;
 
     // used for elevation plot
-    var ele = 0.0;
+    var ele = null;
     var eleMin = null;
     var eleMax = null;
     var eleMinTrack = null;
     var eleMaxTrack = null;
+    var eleTrack = null;
 
     var positionTime = 0;
     var lastPositionTime = 0;
@@ -66,7 +67,7 @@ module Track {
     var nearestPointIndex = -1;
     var nearestPointDistance = EARTH_RADIUS;
     var nearestPointLambda = 0.0;
-
+    
     function resetPosition() {    
         xLastPos = null;
         yLastPos = null;
@@ -81,6 +82,7 @@ module Track {
         eleMax = null;
         eleMinTrack = null;
         eleMaxTrack = null;
+        eleTrack = null;
 
         nearestPointIndex = -1;
         nearestPointDistance = EARTH_RADIUS;
@@ -132,6 +134,16 @@ module Track {
         //var lon = info.position.toRadians()[1].toFloat();
         onPositionCalled = true;        
         setPosition(info.position.toRadians()[0], info.position.toRadians()[1]);
+        if(hasElevation) {
+            //ToDo: It seems there is a problem with getting correct altitude values in the simulator
+            // Thus simulate good enough values from the track elevation data
+            // get elevevation from activity info as this should be the better value from either gps or barometer
+            
+            var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
+            //var eleAct = eleTrack == null ? 0.5 * ($.track.eleMax - $.track.eleMin ) :
+            //    eleTrack + (Math.rand() % 20 -10);
+            setElevation(eleAct);
+        }    
     }
 
     function setPosition(lat, lon) {
@@ -219,17 +231,17 @@ module Track {
     function setElevation(e) {
         if (e != null) {
             ele = e;
-            if(eleMax == null || e > eleMax) {
+            if(eleMax != null && e > eleMax) {
                 eleMax = e;
-                if($.track.eleMax != null && e > $.track.eleMax) {
+                if($.track != null && $.track.eleMax != null && e > $.track.eleMax) {
                     eleMaxTrack = e;
                 } else {
                     eleMaxTrack = $.track.eleMax;
                 }
             }
-            if(eleMin == null || e < eleMin) {
+            if(eleMin != null && e < eleMin) {
                 eleMin = e;
-                if($.track.eleMin != null && e < $.track.eleMin) {
+                if($.track != null && $.track.eleMin != null && e < $.track.eleMin) {
                     eleMinTrack = e;
                 } else {
                     eleMinTrack = $.track.eleMin;

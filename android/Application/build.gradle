@@ -68,9 +68,9 @@ android {
     }
 
     // Load keystore
-    //def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
+    def keystorePropertiesFile = rootProject.file("/home/andan/keystores/keystore.properties");
     // if(keystorePropertiesFile == null
-    def keystorePropertiesFile = file("C:/Users/Andreas/develop/keystores/keystore.properties");
+    //def keystorePropertiesFile = file("C:/Users/Andreas/develop/keystores/keystore.properties");
     def keystoreProperties = new Properties()
     try {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))

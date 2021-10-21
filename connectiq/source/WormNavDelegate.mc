@@ -60,7 +60,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage
     // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
-    var onPrevPageTick = 0;
+    //var onPrevPageTick = 0;
+    
     var lastPage = 1;
 
     function initialize() {
@@ -160,10 +161,10 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
     function onMenu() {
         //Workaround for issue
-        if($.page == -1 && $.appTimerTicks - onPrevPageTick < 3) {
-            // counteract
-            onNextPage();
-        }
+        // if($.page == -1 && $.appTimerTicks - onPrevPageTick < 3) {
+        //     // counteract
+        //     onNextPage();
+        // }
 
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:info, :orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
