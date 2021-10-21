@@ -4,6 +4,7 @@ class GenericView extends WatchUi.View {
     var foregroundColor = Graphics.COLOR_BLACK;
     var backgroundColor = Graphics.COLOR_WHITE;
     var trackColor = Graphics.COLOR_RED;
+    var cursorColor =  Graphics.COLOR_DK_BLUE;
 
     function initialize() {
         View.initialize();
@@ -36,12 +37,14 @@ class GenericView extends WatchUi.View {
         if(isDarkMode) {
             foregroundColor = Graphics.COLOR_WHITE;
             backgroundColor = Graphics.COLOR_BLACK;
-            trackColor = Graphics.COLOR_LT_GRAY;
+            trackColor = Graphics.COLOR_RED;
+            cursorColor =  Graphics.COLOR_BLUE;
         }
         else {
             foregroundColor = Graphics.COLOR_BLACK;
             backgroundColor = Graphics.COLOR_WHITE;
             trackColor = Graphics.COLOR_RED;
+            cursorColor =  Graphics.COLOR_DK_BLUE;
         }
     }
 }

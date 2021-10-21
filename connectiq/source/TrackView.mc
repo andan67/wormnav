@@ -25,49 +25,52 @@ class TrackView extends GenericView {
     var xs_center;
     var ys_center;
 
-    var scale_x1;
-    var scale_y1;
-    var scale_x2;
-    var scale_y2;
-    var compass_x;
-    var compass_y;
-    var compass_size;
+    var x1Scale;
+    var y1Scale;
+    var x2Scale;
+    var y2Scale;
+    var xCompass;
+    var yCompass;
+    var sizeCompass;
 
     var eleWidth;
     var eleHeight;
-    var ele_x1;
-    var ele_y1;
-    var ele_x2;
-    var ele_y2;
+    var x1Ele;
+    var y1Ele;
+    var x2Ele;
+    var y2Ele;
     var eleTrack;
     var scaleEleX;
     var scaleEleY;
 
-    var cursorSizePixel;
+    // position data
+    var sinTransform = 0.0;
+    var cosTransform = 1.0;
+    var xCenter = 0.0;
+    var yCenter = 0.0;
+
+    var sizeCursor;
     var posCursor;
     var isNewTrack = false;
-    var activity_values;
     var fontsize = Graphics.FONT_MEDIUM;
-
-    var elevationPlot = false;
-
-    //var fontsizeNumber = Graphics.FONT_NUMBER_MILD;
     var fontsizeNumber = Graphics.FONT_LARGE;
+   
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
+    var showElevationPlot = false;
 
     function drawScale(dc) {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
-        dc.drawLine(scale_x1, scale_y1 - bottomPadding,
-                    scale_x1, scale_y2 - bottomPadding);
-        dc.drawLine(scale_x1, scale_y2 - bottomPadding,
-                    scale_x2, scale_y2 - bottomPadding);
-        dc.drawLine(scale_x2, scale_y2 - bottomPadding,
-                    scale_x2, scale_y1 - bottomPadding);
-        dc.drawText(pixelWidth2, scale_y2 - dc.getFontHeight(fontsize) - bottomPadding,
+        dc.drawLine(x1Scale, y1Scale - bottomPadding,
+                    x1Scale, y2Scale - bottomPadding);
+        dc.drawLine(x1Scale, y2Scale - bottomPadding,
+                    x2Scale, y2Scale - bottomPadding);
+        dc.drawLine(x2Scale, y2Scale - bottomPadding,
+                    x2Scale, y1Scale - bottomPadding);
+        dc.drawText(pixelWidth2, y2Scale - dc.getFontHeight(fontsize) - bottomPadding,
             fontsize , formattedScale(), Graphics.TEXT_JUSTIFY_CENTER);
     }
 
@@ -82,7 +85,7 @@ class TrackView extends GenericView {
         var i;
         for(i = 0; i < Data.getField(3, 0); i++) {
             // index of data field
-            var j = Data.getField(3, i+1);
+            var j = Data.getField(3, i + 1);
             dc.drawText(pixelWidth2, topPadding + (1 + 2 * i) * y,
                 actualFontsize,
                 //Data.dataFieldSLabels[j] +": "+
@@ -92,23 +95,10 @@ class TrackView extends GenericView {
 
     function drawTrack(dc) {
 
-        // center of screen in x,y coordinates
-        var xc = Track.xPos;
-        var yc = Track.yPos;
-        if(Track.centerMap) {
-            // center of map is defined by (0,0) by construction
-            xc = 0.0;
-            yc = 0.0;
-        }
-
         xs_center = pixelWidth2;
         ys_center = pixelHeight2;
-        var cos_heading_smooth = 1.0;
-        var sin_heading_smooth = 0.0;
 
         if( !Track.northHeading && !Track.centerMap) {
-            cos_heading_smooth = Track.cos_heading_smooth;
-            sin_heading_smooth = Track.sin_heading_smooth;
             ys_center = pixelHeight3;
         }
 
@@ -159,158 +149,141 @@ class TrackView extends GenericView {
                 xt2 = xya[i + 2];
                 yt2 = xya[i + 3];
 
-                if(!elevationPlot) {
-                    xr = scaleFactor * (xt2 - xc);
-                    yr = scaleFactor * (yt2 - yc);
-                    x2 = xs_center + xr * cos_heading_smooth - yr * sin_heading_smooth;
-                    y2 = ys_center - xr * sin_heading_smooth - yr * cos_heading_smooth;
+                if(!showElevationPlot) {
+                    xr = scaleFactor * (xt2 - xCenter);
+                    yr = scaleFactor * (yt2 - yCenter);
+                    x2 = xs_center + xr * cosTransform - yr * sinTransform;
+                    y2 = ys_center - xr * sinTransform - yr * cosTransform;
                 } else {                    
                     xr = scaleEleX * dss;
                     yr = scaleEleY * (ele[(i + 2) / 2] - Track.eleMinTrack);
-                    x2 = ele_x1 + xr;
-                    y2 = ele_y2 - yr;
+                    x2 = x1Ele + xr;
+                    y2 = y2Ele - yr;
                 }
 
                 if(i >= 0) {
                     dc.drawLine(x1, y1, x2, y2);
 
-                    /*
-                    if(!elevationPlot) {
-                        dc.drawLine(x1, y1, x2, y2);
-                    } else {
-                        dc.fillPolygon([[x1, y1], [x2, y2], [x2, ele_y2], [x1, ele_y2]]);
-                    }
-                    */
-
-                    if(findNearestPoint || elevationPlot) {
+                    if(findNearestPoint || showElevationPlot) {
                         xs = xt2 - xt1;
                         ys = yt2 - yt1;
                         ds2 = xs * xs + ys * ys;
-                        if(elevationPlot) {
+                        if(showElevationPlot) {
                             ds = Math.sqrt(ds2);
                             dss += ds;
                         }
-
-                        if(findNearestPoint) {
-                            s = (xs * (xp - xt1) + ys * (yp - yt1));
-                            if(s <= 0.0) {
+                        s = (xs * (xp - xt1) + ys * (yp - yt1));
+                        if(s <= 0.0) {
+                            s = 0.0;
+                        } else {
+                            //ds2 = xs * xs + ys * ys;
+                            if(ds2 < 1.0e-12) {
                                 s = 0.0;
-                            } else {
-                                //ds2 = xs * xs + ys * ys;
-                                if(ds2 < 1.0e-12) {
-                                    s = 0.0;
-                                }
-                                else if(s >= ds2) {
-                                    if(i == xya.size() - 4) {
-                                        s = 1.0;
-                                    } else {
-                                        continue;
-                                    }
+                            }
+                            else if(s >= ds2) {
+                                if(i == xya.size() - 4) {
+                                    s = 1.0;
                                 } else {
-                                    s /= ds2;
+                                    continue;
                                 }
+                            } else {
+                                s /= ds2;
                             }
-                            dx = xp - (xt1 + s * xs);
-                            dy = yp - (yt1 + s * ys);
-                            dxy2 = dx * dx + dy * dy;
-                            if(dxy2 < d2) {
-                                nearestPointIndex = i;
-                                nearestPointLambda = s;
-                                dssn = dss + s * ds;
-                                d2 = dxy2;
-                            }
-                       }
+                        }
+                        dx = xp - (xt1 + s * xs);
+                        dy = yp - (yt1 + s * ys);
+                        dxy2 = dx * dx + dy * dy;
+                        if(dxy2 < d2) {
+                            nearestPointIndex = i;
+                            nearestPointLambda = s;
+                            dssn = dss + s * ds;
+                            d2 = dxy2;
+                        }
                     }
                 }
             }
         }
 
-        if(elevationPlot) {
+        if(showElevationPlot) {
             dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-            dc.drawLine(ele_x1, ele_y2, ele_x2, ele_y2);
-            dc.drawLine(ele_x2, ele_y2, ele_x2, ele_y1);
-            //dc.drawLine(ele_x2, ele_y1, ele_x1, ele_y1);
-            dc.drawLine(ele_x1, ele_y1, ele_x1, ele_y2);
+            
+            // draw axes
+            dc.drawLine(x1Ele, y2Ele, x2Ele, y2Ele);
+            dc.drawLine(x2Ele, y2Ele, x2Ele, y1Ele);
+            dc.drawLine(x1Ele, y1Ele, x1Ele, y2Ele);
+            
+            // draw axes' tick marks
             for(var w = 0.25; w <= 0.75; w += 0.25) {
-                dc.drawLine(ele_x1 + w * eleWidth, ele_y2, ele_x1 + w * eleWidth, ele_y2 + 0.04 * eleWidth );
-                dc.drawLine(ele_x1 , ele_y2 - w * eleHeight, ele_x1 - 0.04 * eleWidth, ele_y2 - w * eleHeight );
-                dc.drawLine(ele_x2 , ele_y2 - w * eleHeight, ele_x2 + 0.04 * eleWidth, ele_y2 - w * eleHeight );   
+                dc.drawLine(x1Ele + w * eleWidth, y2Ele, x1Ele + w * eleWidth, y2Ele + 0.04 * eleWidth );
+                dc.drawLine(x1Ele , y2Ele - w * eleHeight, x1Ele - 0.04 * eleWidth, y2Ele - w * eleHeight );
+                dc.drawLine(x2Ele , y2Ele - w * eleHeight, x2Ele + 0.04 * eleWidth, y2Ele - w * eleHeight );   
             }
-            dc.drawLine(ele_x1 + 0.25 * eleWidth, ele_y2, ele_x1 + 0.25 * eleWidth, ele_y2 + 0.05 * eleHeight );
-            dc.drawLine(ele_x1 + 0.50 * eleWidth, ele_y2, ele_x1 + 0.50 * eleWidth, ele_y2 + 0.05 * eleHeight );
-            dc.drawLine(ele_x1 + 0.75 * eleWidth, ele_y2, ele_x1 + 0.75 * eleWidth, ele_y2 + 0.05 * eleHeight );
-
-            //dc.drawText(pixelWidth - ele_x1, ele_y2, fontsize, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-            //dc.drawText(pixelWidth - ele_x1, ele_y1, fontsize, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(0.97 * ele_x2, 1.08 * ele_y2, fontsize, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(0.97 * ele_x2, 0.92 * ele_y1, fontsize, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-
-            dc.drawText(pixelWidth2, 1.12 * ele_y2, fontsize , $.track.xyLengthString, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+            
+            // draw min/max elevation values 
+            var ed = 0.1 * (pixelWidth2 - x1Ele);
+            dc.drawText(x2Ele - ed,  y2Ele + 1.5 * ed, fontsize, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(x2Ele - ed,  y1Ele - 1.5 * ed, fontsize, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+            
+            // draw length
+            dc.drawText(pixelWidth2, 1.12 * y2Ele, fontsize , $.track.xyLengthLabel, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
         }
 
         // draw nearest point on track
-        if(findNearestPoint && nearestPointIndex >= 0) {
-            //System.println("nearestPointIndex: " + nearestPointIndex);
-            //System.println("nearestPointLambda: " + nearestPointLambda);
-            if(!elevationPlot) {
-                dc.setColor(Graphics.COLOR_DK_BLUE, Graphics.COLOR_TRANSPARENT);
-                x1 = xya[nearestPointIndex] + nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
-                y1 = xya[nearestPointIndex + 1] + nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
-                var xy_pos = xy_2_screen(x1, y1);
-                dc.fillCircle(xy_pos[0], xy_pos[1], 4);
-            } else {
-                xr = scaleEleX * dssn;
-                eleTrack = ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]);                
-                yr = scaleEleY * (Track.ele - Track.eleMinTrack);
-                x2 = ele_x1 + xr;
-                y2 = ele_y2 - yr;
-                //dc.drawText(x2, ele_y1 + dc.getFontHeight(fontsize), fontsize , eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT);                
-                //dc.setColor(Graphics.COLOR_DK_BLUE, Graphics.COLOR_TRANSPARENT);
-                dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT );
-                dc.drawText(1.03 * ele_x1, 1.08 * ele_y2, fontsize, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-                dc.setColor(Graphics.COLOR_DK_BLUE, backgroundColor);
-                dc.drawText(1.03 * ele_x1, 0.92 * ele_y1, fontsize, Track.ele.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-                dc.drawLine(x2, ele_y2, x2, ele_y1);
-                //dc.drawText(x2, ele_y1, fontsize , Track.ele.format("%d"), Graphics.TEXT_JUSTIFY_LEFT);
-                var ed = 0.04 * eleWidth;
-                //dc.drawText(x2, y2 - ed - dc.getFontHeight(fontsize), fontsize , Track.ele.format("%d"), Graphics.TEXT_JUSTIFY_CENTER);
-                //dc.drawCircle(x2, y2, 4);
-                //dc.drawLine(ele_x1, y2, ele_x2, y2);
-                //dc.drawLine(x2 -ed, y2, x2 + ed, y2);
-                dc.drawLine(x2, y2, x2 - 0.7 * ed, y2 - ed);
-                //dc.drawLine(x2 + ed, y2 - ed, x2 - ed, y2 - ed);
-                dc.drawLine(x2, y2, x2 + 0.7 * ed, y2 - ed);
-                dc.drawText(pixelWidth2, 1.12 * ele_y2 + 0.8 * dc.getFontHeight(fontsize), fontsize , Track.formatLength(6371.0 * ($.track.xyLength - dssn)), 
-                    Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);         
-            }
+        if(showElevationPlot && findNearestPoint && nearestPointIndex >= 0) {           
+            // if(!showElevationPlot) {
+            //     dc.setColor(cursorColor, Graphics.COLOR_TRANSPARENT);
+            //     x1 = xya[nearestPointIndex] + nearestPointLambda * (xya[nearestPointIndex + 2] -  xya[nearestPointIndex]);
+            //     y1 = xya[nearestPointIndex + 1] + nearestPointLambda * (xya[nearestPointIndex + 3] -  xya[nearestPointIndex + 1]);
+            //     var xy_pos = xy2Screen(x1, y1);
+            //     dc.fillCircle(xy_pos[0], xy_pos[1], 4);
+            // } else {
+            xr = scaleEleX * dssn;
+            yr = scaleEleY * (Track.ele - Track.eleMinTrack);
+            x2 = x1Ele + xr;
+            y2 = y2Ele - yr;
+
+            var ed = 0.1 * (pixelWidth2 - x1Ele);
+            
+            // draw elevation from nearest point on track
+            dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT );
+            eleTrack = ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]);  
+            dc.drawText(x1Ele + ed,  y2Ele + 1.5 * ed, fontsize, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            
+            // draw actual elevation
+            dc.setColor(cursorColor, backgroundColor);
+            dc.drawText(x1Ele + ed,  y1Ele - 1.5 * ed, fontsize, Track.ele.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawLine(x2, y2Ele, x2, y1Ele);
+            
+            // draw small horizontal line at actual elevation
+            dc.drawLine(x2 - 2, y2, x2 + 2, y2);
+
+            // draw distance to end of course
+            dc.drawText(pixelWidth2, 1.12 * y2Ele + 0.8 * dc.getFontHeight(fontsize), fontsize , Track.formatLength($.track.xyLength - dssn), 
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);         
+            //}
         }
 
         // draw breadcrumbs
-        if(!elevationPlot && Track.pos_nelements > 0) {
+        if(!showElevationPlot && Track.pos_nelements > 0) {
             dc.setColor(Graphics.COLOR_DK_GREEN, Graphics.COLOR_TRANSPARENT);
             // (x,y) coordinates of recorded breadcrumb points
             xya = Track.bxy;
             for(var i = 0; i < Track.pos_nelements; i += 1) {
                 var j = (Track.pos_start_index + i) % Track.breadCrumbNumber;
-                xr = scaleFactor * (xya[2 * j] - xc);
-                yr = scaleFactor * (xya[2 * j + 1] - yc);
-                dc.fillCircle(xs_center + xr * cos_heading_smooth - yr * sin_heading_smooth,
-                              ys_center - xr * sin_heading_smooth - yr * cos_heading_smooth, 4);
+                xr = scaleFactor * (xya[2 * j] - xCenter);
+                yr = scaleFactor * (xya[2 * j + 1] - yCenter);
+                dc.fillCircle(xs_center + xr * cosTransform - yr * sinTransform,
+                              ys_center - xr * sinTransform - yr * cosTransform, 4);
             }
         }
     }
 
     function drawPositionArrowAndCompass(dc) {
 
-        dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(cursorColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
-        var sinHead =Track.sin_heading_smooth;
-        var cosHead =Track.cos_heading_smooth;
-
-        //var heading;
         var dx1;
         var dy1;
         var dx2;
@@ -318,21 +291,21 @@ class TrackView extends GenericView {
         var dx3;
         var dy3;
 
+        var _sin = 0.0;
+        var _cos = 1.0;
+
         if(Track.northHeading || Track.centerMap) {
-            dx1 =  cursorSizePixel * sinHead;
-            dy1 = -cursorSizePixel * cosHead;
-            dx2 =  cursorSizePixel * (cosHead - 1.577352 * sinHead);
-            dy2 =  cursorSizePixel * (sinHead + 1.577352 * cosHead);
-        } else {
-            dx1 = 0.0;
-            dy1 = -cursorSizePixel;
-            dx2 = cursorSizePixel;
-            dy2 = 1.577352 * cursorSizePixel;
-        }
+            _sin =  Track.sin_heading_smooth;
+            _cos =  Track.cos_heading_smooth;
+        } 
+        dx1 =  sizeCursor * _sin;
+        dy1 = -sizeCursor * _cos;
+        dx2 = -dy1 - 1.577352 * dx1;
+        dy2 =  dx1 - 1.577352 * dy1;            
         dx3 = -3.154704 * dx1 - dx2;
         dy3 = -3.154704 * dy1 - dy2;
 
-        var xy_pos = xy_2_screen(Track.xPos, Track.yPos);
+        var xy_pos = xy2Screen(Track.xPos, Track.yPos);
 
         dc.setPenWidth(3);
         var x1 = xy_pos[0] + dx1;
@@ -344,38 +317,30 @@ class TrackView extends GenericView {
         var x4 = xy_pos[0] + dx3;
         var y4 = xy_pos[1] + dy3;
 
-        dc.drawLine(x1,y1,x2,y2);
-        dc.drawLine(x2,y2,x3,y3);
-        dc.drawLine(x3,y3,x4,y4);
-        dc.drawLine(x4,y4,x1,y1);
+        dc.drawLine(x1, y1, x2, y2);
+        dc.drawLine(x2, y2, x3, y3);
+        dc.drawLine(x3, y3, x4, y4);
+        dc.drawLine(x4, y4, x1, y1);
 
         dc.setColor(backgroundColor, backgroundColor);
-        dc.fillCircle(compass_x, compass_y, compass_size);
+        dc.fillCircle(xCompass, yCompass, sizeCompass);
 
-        if(Track.northHeading || Track.centerMap) {
-            dx1 = - 0.5 * compass_size;
-            dx2 = 0.0;
-            dx3 = -dx1;
-            dy1 = 0.0;
-            dy2 = - compass_size;
-            dy3 = 0.0;
-        } else {
-            dx1 = - 0.5 * compass_size * cosHead;
-            dy1 = + 0.5 * compass_size * sinHead;
-            dx2 = - compass_size * sinHead;
-            dy2 = - compass_size * cosHead;
-            dx3 = - dx1;
-            dy3 = - dy1;
-        }
+        dx1 = - 0.5 * sizeCompass * cosTransform;
+        dy1 = + 0.5 * sizeCompass * sinTransform;
+        dx2 = - sizeCompass * sinTransform;
+        dy2 = - sizeCompass * cosTransform;
+        dx3 = - dx1;
+        dy3 = - dy1;
+        
 
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
-        var points = [[compass_x + dx1, compass_y + dy1 - bottomPadding],
-                      [compass_x - dx2, compass_y - dy2 - bottomPadding],
-                      [compass_x + dx3, compass_y + dy3 - bottomPadding]];
+        var points = [[xCompass + dx1, yCompass + dy1 - bottomPadding],
+                      [xCompass - dx2, yCompass - dy2 - bottomPadding],
+                      [xCompass + dx3, yCompass + dy3 - bottomPadding]];
         dc.fillPolygon(points);
 
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        points[1] = [compass_x + dx2, compass_y + dy2 - bottomPadding];
+        points[1] = [xCompass + dx2, yCompass + dy2 - bottomPadding];
         dc.fillPolygon(points);
 
     }
@@ -385,29 +350,15 @@ class TrackView extends GenericView {
         if($.device.equals("vivoactive")) {
             fontsize=Graphics.FONT_XTINY;
         }
-        Track.reset();
-        activity_values = new[2];
-        setDarkMode($.isDarkMode);
+        Track.resetPosition();
+        Track.resetBreadCrumbs(null);
     }
 
-    function xy_2_screen(x, y) {
-        // center of screen in x,y coordinates
-        var xc = Track.xPos;
-        var yc = Track.yPos;
-        if(Track.centerMap) {
-            // center of map is defined by (0,0) by construction
-            xc = 0.0;
-            yc = 0.0;
-        }
-
-        var xr = scaleFactor * (x - xc);
-        var yr = scaleFactor * (y - yc);
-        if(Track.northHeading || Track.centerMap || !Track.onPositionCalled) {
-            return [xs_center + xr, ys_center - yr];
-        } else {
-            return [xs_center + xr * Track.cos_heading_smooth - yr * Track.sin_heading_smooth,
-                    ys_center - xr * Track.sin_heading_smooth - yr * Track.cos_heading_smooth];
-        }
+    function xy2Screen(x, y) {      
+        var xr = scaleFactor * (x - xCenter);
+        var yr = scaleFactor * (y - yCenter);
+        return [xs_center + xr * cosTransform - yr * sinTransform,
+                ys_center - xr * sinTransform - yr * cosTransform];    
     }
 
     // Load your resources here
@@ -419,22 +370,28 @@ class TrackView extends GenericView {
         pixelHeight2 = 0.5 * pixelHeight;
         pixelHeight3 = 0.6666667 * pixelHeight;
         pixelMin = pixelWidth < pixelHeight ? pixelWidth : pixelHeight;
-        scale_x1 = pixelWidth * (0.5 - SCALE_PIXEL);
-        scale_y1 = (1.0 - 0.45 * SCALE_PIXEL) * pixelHeight;
-        scale_y2 = (1.0 - 0.2 * SCALE_PIXEL) * pixelHeight;
-        scale_x2 = pixelWidth * (0.5 + SCALE_PIXEL);
-        compass_size = 0.25 * (scale_x2 - scale_x1);
-        compass_x = scale_x2 + 2 * compass_size;
-        compass_y = scale_y2 - compass_size;
-        cursorSizePixel = pixelWidth * SCALE_PIXEL * 0.5;
+        
+        // coordinates for drawing the scale
+        x1Scale = pixelWidth * (0.5 - SCALE_PIXEL);
+        y1Scale = (1.0 - 0.45 * SCALE_PIXEL) * pixelHeight;
+        x2Scale = pixelWidth * (0.5 + SCALE_PIXEL);
+        y2Scale = (1.0 - 0.2 * SCALE_PIXEL) * pixelHeight;
+        
+        // size and coordinates for the compass
+        sizeCompass = 0.25 * (x2Scale - x1Scale);
+        xCompass = x2Scale + 2 * sizeCompass;
+        yCompass = y2Scale - sizeCompass;
+
+        // size of position cursor
+        sizeCursor = pixelWidth * SCALE_PIXEL * 0.5;
 
         // box for elevation plot
         eleWidth = 0.8 * pixelWidth;
         eleHeight = 0.4 * pixelWidth;
-        ele_x1 = pixelWidth2 -0.5 * eleWidth ;
-        ele_y1 = pixelHeight2 - 0.5 * eleHeight;
-        ele_x2 = ele_x1 + eleWidth;
-        ele_y2 = pixelHeight2 + 0.5 * eleHeight;
+        x1Ele = pixelWidth2 -0.5 * eleWidth ;
+        y1Ele = pixelHeight2 - 0.5 * eleHeight;
+        x2Ele = x1Ele + eleWidth;
+        y2Ele = pixelHeight2 + 0.5 * eleHeight;
 
         if($.device.equals("vivoactive")) {
             topPadding = 0.5 * dc.getFontAscent(fontsize);
@@ -463,7 +420,7 @@ class TrackView extends GenericView {
 
         if(isNewTrack && $.track != null) {
             isNewTrack = false;
-            Track.reset();
+            Track.resetPosition();
             Track.newTrack();
             setZoomLevel(null);
             if($.track != null && $.track.eleArray != null) {
@@ -472,7 +429,24 @@ class TrackView extends GenericView {
             }
         }
 
-        if(elevationPlot) {            
+        if(Track.northHeading || Track.centerMap || !Track.onPositionCalled) {
+            sinTransform = 0.0;
+            cosTransform = 1.0;
+        } else {
+            sinTransform = Track.sin_heading_smooth;
+            cosTransform = Track.cos_heading_smooth;          
+        }
+
+        if(Track.centerMap) {
+            // the x,y cooridnate origin is the center of the map by construction
+            xCenter = 0.0;
+            yCenter = 0.0;    
+        } else {
+            xCenter = Track.xPos;
+            yCenter = Track.yPos;
+        }
+
+        if(showElevationPlot) {            
             //ToDo: It seems there is a problem with getting correct altitude values in the simulator
             // Thus simulate good enough values from the track elevation data
             //var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
@@ -485,7 +459,7 @@ class TrackView extends GenericView {
 
         drawTrack(dc);
 
-        if(Track.xPos != null && !elevationPlot) {
+        if(Track.xPos != null && !showElevationPlot) {
             drawPositionArrowAndCompass(dc);
         }
 
@@ -493,7 +467,7 @@ class TrackView extends GenericView {
             drawActivityInfo(dc);
         }
 
-        if(!elevationPlot) {
+        if(!showElevationPlot) {
             drawScale(dc);
         }
 

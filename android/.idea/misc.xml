@@ -5,6 +5,16 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Andreas/develop/StudioProjects/wormnav/android/Application/src/main/res/layout/dialog_settings_main.xml" value="0.5" />
+        <entry key="..\:/Users/Andreas/develop/StudioProjects/wormnav/android/Application/src/main/res/layout/send_to_device_dialog.xml" value="0.4041666666666667" />
+        <entry key="..\:/Users/Andreas/develop/StudioProjects/wormnav/android/Application/src/main/res/menu/menu_device_browser.xml" value="0.4041666666666667" />
+        <entry key="..\:/Users/Andreas/develop/StudioProjects/wormnav/android/Application/src/main/res/menu/menu_main.xml" value="0.4041666666666667" />
+      </map>
+    </option>
+  </component>
   <component name="MarkdownNavigator.ProfileManager" plain-text-search-scope="Project Files" />
   <component name="MarkdownProjectSettings">
     <PreviewSettings splitEditorLayout="SPLIT" splitEditorPreview="PREVIEW" useGrayscaleRendering="false" zoomFactor="1.0" maxImageWidth="0" synchronizePreviewPosition="true" highlightPreviewType="NONE" highlightFadeOut="5" highlightOnTyping="true" synchronizeSourcePosition="true" verticallyAlignSourceAndPreviewSyncPosition="true" showSearchHighlightsInPreview="false" showSelectionInPreview="true" lastLayoutSetsDefault="false">

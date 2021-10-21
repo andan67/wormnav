@@ -12,7 +12,6 @@ using Track;
 module Data {
     const dataFieldMenuLabels =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.dm_labels),'|');
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
-    //const dataFieldSLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_slabels),'|');
 
     const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10,2,0,1,4,6];
 
@@ -135,14 +134,22 @@ module Data {
                 data = Activity.getActivityInfo().altitude;
                 dataValue = data != null ? data.format("%.0f") : null;
                 break;
-            case 17: // CLOCK_TIME
+            case 17: // TOTAL_ASCENT
+                data = Activity.getActivityInfo().totalAscent;
+                dataValue = data != null ? data.format("%.0f") : null;
+                break;
+            case 18: // TOTAL_DESCENT
+                data = Activity.getActivityInfo().totalDescent;
+                dataValue = data != null ? data.format("%.0f") : null;
+                break;    
+            case 19: // CLOCK_TIME
                 data = Sys.getClockTime();
                 dataValue =  data != null ?
                     data.hour.format("%02d") + ":" +
                     data.min.format("%02d") + ":" +
                     data.sec.format("%02d"): null;
                 break;
-            case 18: // BATTERY
+            case 20: // BATTERY
                 data = Sys.getSystemStats().battery;
                 dataValue = data != null ? data.format("%.1f") + "%" : null;
                 break;

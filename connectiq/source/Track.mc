@@ -13,12 +13,10 @@ module Track {
     // used for breadcrumbs
     var bxy;
     var breadCrumbNumber = 10;
+    var breadCrumbDist = 100.0;
     var pos_start_index;
     var pos_nelements;
     var cumDistance;
-    var cumDistance2;
-
-    var breadCrumbDist = 100.0;
 
     // center of perspective projection (defined by track if exists)
     var lat_view_center = null;
@@ -69,16 +67,15 @@ module Track {
     var nearestPointDistance = EARTH_RADIUS;
     var nearestPointLambda = 0.0;
 
-    function reset() {
-        bxy = new [2 * breadCrumbNumber];
-        pos_nelements = 0;
-        pos_start_index = 0;
-        cumDistance = breadCrumbDist;
+    function resetPosition() {    
         xLastPos = null;
         yLastPos = null;
         positionTime = 0;
         lastPositionTime = 0;
         positionDistance = 0.0;
+
+        cos_heading_smooth = 1.0;
+        sin_heading_smooth = 0.0;
 
         eleMin = null;
         eleMax = null;
@@ -89,9 +86,14 @@ module Track {
         nearestPointDistance = EARTH_RADIUS;
     }
 
-    function setBreadCrumbNumber(number) {
-        breadCrumbNumber = number;
-        reset();
+    function resetBreadCrumbs(number) {
+        if(number != null) {
+            breadCrumbNumber = number;
+        }
+        bxy = new [2 * breadCrumbNumber];
+        pos_nelements = 0;
+        pos_start_index = 0;
+        cumDistance = breadCrumbDist;
     }
 
     function putBreadcrumbLastPosition() {
@@ -109,7 +111,7 @@ module Track {
         }
         else {
             i = 2 * pos_start_index;
-            pos_start_index = (pos_start_index +1) % breadCrumbNumber;
+            pos_start_index = (pos_start_index + 1) % breadCrumbNumber;
         }
         bxy[i] = x;
         bxy[i + 1] = y;
@@ -155,70 +157,11 @@ module Track {
         xPos = _xy[0];
         yPos = _xy[1];
 
-        // find nearest point on track for given gps position
-        if(false && onPositionCalled && findNearestPoint && $.track != null) {
-            var d2 = EARTH_RADIUS * EARTH_RADIUS;
-            var dxy2 = 0.0;
-            var xya = $.track.xyArray;
-            var dx = 0.0;
-            var dy = 0.0;
-
-            var xs = 0.0;
-            var ys = 0.0;
-            var ds = 0.0;
-            var s = 0.0;
-            /*
-            for(var i = 0; i < xya.size(); i += 2) {
-                dx = xPos - xya[i];
-                dy = yPos - xya[i+1];
-                dxy2 = dx*dx + dy*dy;
-                if(dxy2 < d2) {
-                    nearestPointIndex = i;
-                    d2 = dxy2;
-                }
-            }
-            if(nearestPointIndex >= 0) {
-                nearestPointDistance = EARTH_RADIUS * Math.sqrt(d2);
-            }
-            */
-            for(var i = 0; i < xya.size() - 3; i += 2) {
-                xs = xya[i + 2] - xya[i];
-                ys = xya[i + 3] - xya[i + 1];
-                ds = xs * xs + ys * ys;
-                if(ds > 1.0e-12) {
-                    s = (xs * (xPos - xya[i]) + ys * (yPos - xya[i + 1])) / ds;
-                    if(s < 0.0) {
-                        s = 0.0;
-                    } else if(s > 1.0) {
-                        s = 1.0;
-                    }
-                } else {
-                    s = 0.0;
-                }
-
-                dx = xPos - (xya[i] + s * xs);
-                dy = yPos - (xya[i+1] + s * ys);
-                dxy2 = dx*dx + dy*dy;
-                if(dxy2 < d2) {
-                    nearestPointIndex = i;
-                    nearestPointLambda = s;
-                    d2 = dxy2;
-                }
-            }
-            if(nearestPointIndex >= 0) {
-                nearestPointDistance = EARTH_RADIUS * Math.sqrt(d2);
-            }
-            //System.println("nearestPointIndex: " + nearestPointIndex);
-            //System.println("nearestPointDistance: " + nearestPointDistance);
-            //System.println("nearestPointLambda: " + nearestPointLambda);
-
-        }
-
         // determine distance and smoothed heading
         if(xLastPos != null) {
             var dx = xPos - xLastPos;
             var dy = yPos - yLastPos;
-            var d2 = dx*dx + dy*dy;
+            var d2 = dx * dx + dy * dy;
 
             // Dimensional distance between current and last point
             var d = Math.sqrt(d2);
@@ -234,7 +177,7 @@ module Track {
                 var dxs = (1.0 - sf) * sin_heading_smooth +  sf/d * dx;
                 var dys = (1.0 - sf) * cos_heading_smooth +  sf/d * dy;
                 // normalized vector
-                sf = 1.0 / Math.sqrt(dxs*dxs + dys*dys);
+                sf = 1.0 / Math.sqrt(dxs * dxs + dys * dys);
                 sin_heading_smooth = dxs * sf;
                 cos_heading_smooth = dys * sf;
              }
@@ -258,20 +201,14 @@ module Track {
 
     }
 
-    function resetHeading() {
-        cos_heading_smooth = 1.0;
-        sin_heading_smooth = 0.0;
-    }
-
     function newTrack() {
-        //System.println("newTrack()");
-        lat_view_center=$.track.lat_center;
-        lon_view_center=$.track.lon_center;
+        lat_view_center=$.track.latCenter;
+        lon_view_center=$.track.lonCenter;
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
         onPositionCalled = false;
-        reset();
-        resetHeading();
+        resetPosition();
+        resetBreadCrumbs(null);
         setPosition(lat_view_center, lon_view_center);
     }
 
@@ -347,14 +284,14 @@ module Track {
     }
 
     // Returns normalized (x,y) coordinates from perspective projection of point on sphere given by (lat,lon) coordinates
-    // onto the plane that touches the sphere at the point (lat_center, lon_center).
+    // onto the plane that touches the sphere at the point (latCenter, lonCenter).
     // This center (touch point) is also the origin for the transformed (x,y) coordinates.
     // Dimensional coordinates can be derived by multiplication with standard earth radius 6371km.
     function latLon2xy(lat, lon) {
         var ll = lon - lon_view_center;
-        var cos_lat = Math.cos(lat);
-        var x = cos_lat * Math.sin(ll);
-        var y = cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cos_lat * Math.cos(ll);
+        var cosLat = Math.cos(lat);
+        var x = cosLat * Math.sin(ll);
+        var y = cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cosLat * Math.cos(ll);
 
         //return [cos_lat * Math.sin(ll), cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cos_lat * Math.cos(ll)];
         return [x.toFloat(), y.toFloat()];
@@ -364,24 +301,9 @@ module Track {
         return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
     }
 
-    function latLongDist(lat1, lon1, lat2, lon2) {
-        var dphi = (lat2-lat1);
-        var dlambda = (lon2-lon1);
-        var a = Math.sin(0.5*dphi)*Math.sin(0.5*dphi) +
-            Math.cos(lat1)*Math.cos(lat2) *
-            Math.sin(0.5*dlambda)*Math.sin(0.5*dlambda);
-        return EARTH_RADIUS * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
-        //return EARTH_RADIUS * 2.0 * Math.asin(Math.sqrt(a));
-    }
-
-    function formatLength(l) {
-        var w = 3;
-        if(l >= 10.0 && l < 100.0) {
-            w = 2;
-        } else if(l >= 100.0) {
-            w = 1;
-        }
-        return l.format("%." + w + "f") + " km";     
+    function formatLength(ln) {
+        var l = 0.001 * EARTH_RADIUS * ln;
+        return l.format("%.2f") + " km";     
     }
 
 }
