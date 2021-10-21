@@ -247,7 +247,8 @@ class TrackView extends GenericView {
             
             // draw elevation from nearest point on track
             dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT );
-            eleTrack = ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]);  
+            eleTrack = ele[nearestPointIndex / 2] + nearestPointLambda * (ele[nearestPointIndex / 2 + 1 ] - ele[nearestPointIndex / 2]);
+            Track.eleTrack = eleTrack;
             dc.drawText(x1Ele + ed,  y2Ele + 1.5 * ed, fontsize, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             
             // draw actual elevation
@@ -444,17 +445,6 @@ class TrackView extends GenericView {
         } else {
             xCenter = Track.xPos;
             yCenter = Track.yPos;
-        }
-
-        if(showElevationPlot) {            
-            //ToDo: It seems there is a problem with getting correct altitude values in the simulator
-            // Thus simulate good enough values from the track elevation data
-            //var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
-            var eleAct = eleTrack == null ? 0.5 * ($.track.eleMax - $.track.eleMin ) :
-                eleTrack + (Math.rand() % 40 -20);           
-            //var eleAct = 0.8 * $.track.eleMin + Math.rand() % Math.round(1.1*$.track.eleMax - 0.8 * $.track.eleMin).toLong();
-            Track.setElevation(eleAct);
-            scaleEleY = (Track.eleMaxTrack - Track.eleMinTrack) > 1 ? 0.8 * eleHeight / (Track.eleMaxTrack - Track.eleMinTrack) : 0.0;
         }
 
         drawTrack(dc);
