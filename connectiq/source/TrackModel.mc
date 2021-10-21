@@ -1,103 +1,57 @@
-
-
 class TrackModel {
 
-    var lat_center;
-    var lon_center;
+    var latCenter;
+    var lonCenter;
     var diagonal;
     var name;
     var length;
     var nPoints;
     var xyArray;
+    var eleArray;
     var xyLength;
-    var xyLengthString;
+    var xyLengthLabel;
     var eleMinIdx;
     var eleMaxIdx;
     var eleMinDist;
     var eleMaxDist;
     var eleMin;
     var eleMax;
-    var eleUp;
-    var eleDown;
-    var eleArray;
+    var eleTotAscent;
+    var eleTotDescent;
 
     hidden var data;
-    hidden var boundingBox;
 
     // lat lon values must be in radians!
     function initialize(msg) {
 
         data = msg;
-        boundingBox = data[0];
-        lat_center = boundingBox[4];
-        lon_center = boundingBox[5];
-        diagonal = boundingBox[6];
+        latCenter = data[0][4];
+        lonCenter = data[0][5];
+        diagonal = data[0][6];
         name = data[1];
         length = data[2];
         nPoints = data[3];
         xyArray = data[4];
-        xyLength = 0.0;
-        var dx;
-        var dy;
-        eleMin = null;
-        eleMax = null;
-
-
+        
         if(data.size() > 5) {
             // message contains elevation data
             eleArray = data[5];
-             // determine elevation stats
-            eleMinIdx = 0;
-            eleMaxIdx = 0;
-            eleMin = 20000.0;
-            eleMax = -20000.0;
-            eleUp = 0.0;
-            eleDown = 0.0;
-
-            for(var i = 0; i < eleArray.size(); i++) {
-                var ele = eleArray[i];
-
-                if(ele < eleMin) {
-                   eleMin = ele;
-                   eleMinIdx = i;
-                }
-                if(ele > eleMax) {
-                   eleMax = ele;
-                   eleMaxIdx = i;
-                }
-                if(i > 0) {
-                    var elePrev = eleArray[i - 1];
-                    if(ele - elePrev > 0) {
-                        eleUp += (ele - elePrev);
-                    }
-                    if(ele - elePrev < 0) {
-                        eleDown -= (ele - elePrev);
-                    }
-                }
-
-            }
-
-            System.println("ele: " + eleArray.size());
-            System.println("eleMin: " + eleMin);
-            System.println("eleMax: " + eleMax);
-
+            xyLength = data[6];
+            xyLengthLabel = Track.formatLength(xyLength);  
+            eleMin = data[7];
+            eleMinDist = data[8];
+            eleMinIdx = data[9];
+            eleMax = data[10];
+            eleMaxDist = data[11];
+            eleMaxIdx = data[12];
+            eleTotAscent = data[13];
+            eleTotDescent = data[14];
         }
+    }
 
-        for(var i = 0; i < xyArray.size() - 2 ; i += 2) {
-            dx = xyArray[i + 2] - xyArray[i];
-            dy = xyArray[i + 3] - xyArray[i + 1];
-            if(eleArray != null) {
-                if(i / 2 == eleMinIdx) {
-                    eleMinDist = xyLength;
-
-                }
-                if(i / 2 == eleMaxIdx) {
-                    eleMaxDist = xyLength;
-                }
-            }
-            xyLength += Math.sqrt(dx * dx + dy * dy);
-        }
-        var ls = 6371.0 * xyLength;
-        xyLengthString = Track.formatLength(ls);      
+    function clear() {
+        data = null;
+        xyArray = null;
+        eleArray = null;
     }
 }

@@ -61,7 +61,7 @@ class ListMenu extends Ui.View
         }
 
         // add index as default value in case no value list has been provided
-        if(!showSubMenuValues && itemValueList == null) {
+        if(showSubMenuValues == 0 && itemValueList == null) {
             itemValueList = [];
             for(var i = 0; i < nItems; i++) {
                 itemValueList.add(i);
@@ -101,7 +101,7 @@ class ListMenu extends Ui.View
     function getIndexForValue(value) {
        if(itemValueList != null) {
            for(var i=0; i < itemValueList.size(); i +=1) {
-               if(itemValueList[i]==value) {
+               if(itemValueList[i] == value) {
                    return i;
                }
             }
@@ -133,7 +133,7 @@ class ListMenu extends Ui.View
     }
 
     function onShow() {
-        if(showSubMenuValues) {
+        if(showSubMenuValues == 1) {
             itemValueList = MenuDelegates.getValueLabelsForItems(itemIdList, options);
         }
     }
@@ -237,7 +237,7 @@ class ListMenu extends Ui.View
         var yL, yV, h;
 
 
-        if (showSubMenuValues && highlight && value != null)
+        if ((showSubMenuValues > 0) && highlight && value != null)
         {
             // Show label and value.
             var val = value.toString ();

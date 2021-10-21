@@ -58,7 +58,7 @@ module MenuDelegates {
             case :track_elevation_plot:
                 return [WatchUi.loadResource(Rez.Strings.yesno_opts),
                         [true, false],
-                        $.trackElevationPlot];
+                        $.trackElevationPlot];           
         }
     }
 
@@ -110,14 +110,10 @@ module MenuDelegates {
             menu = _menu;
         }
 
-        function onKey(keyEvent) {
-            System.println(keyEvent.getKey());         // e.g. KEY_MENU = 7
-            return true;
-        }
 
         function onMenuItem(item) {
             var defaultValue = null;
-            var showValue = false;
+            var showValue = 0;
             var valueList = null;
             var labelList = null;
             var idList = null;
@@ -127,25 +123,33 @@ module MenuDelegates {
 
             var entry = getMenuItem(menuItemId, 0, null);
             if(entry != null) {
-                //showValue = true;
                 labelList = entry[0];
                 valueList = entry[1];
                 defaultValue = entry[2];
             } else {
                 switch(menuItemId) {
-                    case :delete:
-                        if(track!=null) {
-                            var message = WatchUi.loadResource(Rez.Strings.msg_continue);
-                            var dialog = new WatchUi.Confirmation(message);
-                            WatchUi.pushView(
-                                dialog,
-                                new DeleteConfirmationDelegate(),
-                                WatchUi.SLIDE_IMMEDIATE
-                            );
+                    case :info:
+                        showValue = 2;
+                        labelList =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.info_labels),'|');
+                        valueList = [WatchUi.loadResource(Rez.Strings.AppVersion)];
+                        if(track != null) {
+                            valueList.add(track.name);
+                            valueList.add((0.001 * track.length).format("%.2f") + " km");
+                            valueList.add(track.nPoints);
+                            if(track.eleArray != null) {
+                                valueList.add(track.eleMin.format("%.1f") + " m");
+                                valueList.add(track.eleMax.format("%.1f") + " m");
+                                valueList.add(track.eleTotAscent.format("%.1f") + " m");
+                                valueList.add(track.eleTotDescent.format("%.1f") + " m");
+                            } 
                         }
-                        return true;
+                        while(valueList.size() < labelList.size() ) {
+                            // fill with n/a
+                            valueList.add("n/a");
+                        }
+                        break;
                     case :breadcrumbs:
-                        showValue = true;
+                        showValue = 1;
                         idList = [:bc_set, :bc_clear, :bc_number, :bc_distance];
                         labelList = WatchUi.loadResource(Rez.Strings.bc_labels);
                         break;
@@ -153,8 +157,8 @@ module MenuDelegates {
                         labelList = WatchUi.loadResource(Rez.Strings.ds_labels);
                         break;
                     case :course:
-                        showValue = true;
-                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_elevation_plot,:track_info, :track_del];
+                        showValue = 1;
+                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_elevation_plot, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -180,7 +184,7 @@ module MenuDelegates {
             var newMenu;
             var entry = [];
 
-            switch(menu.id) {
+            switch(menu.id) {                
                 case :orient:
                     if(value == 0) {
                         Track.northHeading = false;
@@ -212,13 +216,13 @@ module MenuDelegates {
                             Track.putBreadcrumbLastPosition();
                             break;
                         case :bc_clear:
-                            Track.reset();
+                            Track.resetPosition();
                             break;
                         case :bc_number:
                         case :bc_distance:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
-                                entry[0], entry[1], entry[2], false, null);
+                                entry[0], entry[1], entry[2], 0, null);
                             pushSubMenuView(newMenu);
                             return true;
                     }
@@ -228,7 +232,7 @@ module MenuDelegates {
                     Application.getApp().setProperty("breadCrumbDist", Track.breadCrumbDist);
                     break;
                 case :bc_number:
-                    Track.setBreadCrumbNumber(value);
+                    Track.resetBreadCrumbs(value);
                     Application.getApp().setProperty("breadCrumbNumber", Track.breadCrumbNumber);
                     break;
                 case :activity:
@@ -244,7 +248,7 @@ module MenuDelegates {
                         case :track_elevation_plot:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
-                                    entry[0], entry[1], entry[2], false, null);
+                                    entry[0], entry[1], entry[2], 0, null);
                             pushSubMenuView(newMenu);
                             return true;
                         case :track_del:
@@ -258,12 +262,7 @@ module MenuDelegates {
                                     WatchUi.SLIDE_IMMEDIATE
                                 );
                             }
-                            return true;
-                        case :track_info:
-                            if(track!=null) {
-                                WatchUi.pushView(new TrackInfoView(),new TrackInfoDelegate(), WatchUi.SLIDE_IMMEDIATE);
-                            }
-                            return true;
+                            return true;                       
                     }
                 case :track_update:
                     $.trackViewPeriod = value;
@@ -292,12 +291,12 @@ module MenuDelegates {
                     newMenu = new ListMenu(:dataScreen,  menu.getSelectedLabel(),
                             [:data_field, :data_field, :data_field, :data_field, :data_field],
                             WatchUi.loadResource(Rez.Strings.dfm_labels),
-                            null, null, true, [value-1]);
+                            null, null, 1, [value-1]);
                     pushSubMenuView(newMenu);
                     return true;
                 case :dataScreen:
                     entry = getMenuItem(menu.getSelectedId(),  menu.selectedItemIndex(), [menu.options[0]]);
-                    newMenu = new ListMenu(:data_field,  menu.getSelectedLabel(), null, entry[0], entry[1], entry[2], false,  [menu.options[0], menu.selectedItemIndex()]);
+                    newMenu = new ListMenu(:data_field,  menu.getSelectedLabel(), null, entry[0], entry[1], entry[2], 0,  [menu.options[0], menu.selectedItemIndex()]);
                     pushSubMenuView(newMenu);
                     return true;
                 case :data_field:
@@ -321,20 +320,8 @@ module MenuDelegates {
         function onResponse(response) {
             if (response == WatchUi.CONFIRM_NO) {
             } else {
-            //System.println("Delete track");
-                $.track=null;
+                $.track = null;    
             }
-        }
-    }
-
-    class TrackInfoDelegate extends WatchUi.BehaviorDelegate {
-
-        function initialize() {
-            BehaviorDelegate.initialize();
-        }
-
-        function onBack() {
-            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         }
     }
 }

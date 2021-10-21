@@ -14,16 +14,16 @@
     <string id="sm_save">Enregistrer</string>
     <string id="sm_disc">Ignorer</string>
     
-    <string id="bc_labels">Définir la position|Supprimer|Numéro|Distance</string>
+    <string id="bc_labels">Info|Définir la position|Supprimer|Numéro|Distance</string>
 
     <string id="ds_labels">Défaut|Écran 1|Écran 2|Écran 3|Tracé</string>
     <string id="dfm_labels"># champs données|Champs 1|Champs 2|Champ 3|Champ 4</string>  
-    <string id="dm_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréq. cardiaque|Fréq. card. %max.|Fréq. card. moy.|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vitesse dern. circ.|Circuits|Altitude|Heure|Batterie</string>
-    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Heure|Batterie</string>
+    <string id="dm_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréq. cardiaque|Fréq. card. %max.|Fréq. card. moy.|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vitesse dern. circ.|Circuits|Altitude|Ascension totale|Descente totale|Heure|Batterie</string>
+    <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Asc. tot.|Desc. tot.|Heure|Batterie</string>
            
     <string id="lap">Circuit</string> 
 
-    <string id="course_labels">Période mise à jour|Grande font|Point plus proche|Elevation plot|Info|Supprimer</string>
+    <string id="course_labels">Période mise à jour|Grande font|Point plus proche|Elevation plot|Supprimer</string>
     <string id="activities">Générique|Course à pied|Marcher|Cyclisme</string>
 
     <string id="msg_continue">Reprendre?</string> 

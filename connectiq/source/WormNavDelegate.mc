@@ -131,7 +131,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             // track view -> swtich to data view (page > 0) or elevation plot (page == 0)
             if(lastPage == 0 && Track.hasElevation()) {
                 $.page = 0;
-                $.trackView.elevationPlot = true;
+                $.trackView.showElevationPlot = true;
                 WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
             } else if(Data.activeDataScreens.size() > 0 ) {
                 if(lastPage == 0) {
@@ -152,7 +152,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             lastPage = $.page;
             $.page = -1;
             // switch to track view
-            $.trackView.elevationPlot = false;
+            $.trackView.showElevationPlot = false;
             WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
         }
         return true;
@@ -166,9 +166,9 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         }
 
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
-                                [:orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
+                                [:info, :orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
                                 WatchUi.loadResource(Rez.Strings.mm_labels),
-                                null, null, true, null);
+                                null, null, 1, null);
         WatchUi.pushView(menu, new ListMenuDelegate (menu, new MenuDelegates.MainMenuDelegate (menu)), WatchUi.SLIDE_IMMEDIATE);
 
         return true;
@@ -204,7 +204,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     }
 
     private function dataPageChange(n) {
-        if(Data.activeDataScreens.size() == 0 && !$.trackView.elevationPlot) {
+        if(Data.activeDataScreens.size() == 0 && !$.trackView.showElevationPlot) {
             // this might happen settings have been changed
             onBack();
         } else {
@@ -214,7 +214,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             } else if($.page == 0 && !Track.hasElevation() || $.page < 0 && Track.hasElevation() ) {
                 $.page = Data.activeDataScreens.size();
             }
-            System.println("page: " + $.page);
             if($.page > 0) {
                 if(dataView == null) {
                     dataView = new DataView(Data.activeDataScreens[$.page - 1]);
@@ -223,7 +222,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 }
                 WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
             } else {
-                $.trackView.elevationPlot = true;
+                $.trackView.showElevationPlot = true;
                 WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
             }
         }
@@ -233,8 +232,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     private function updateView() {
         if($.page <= 0) {
             $.trackViewCounter = 0;
-        } else {
-            $.dataViewCounter = 0;
         }
         WatchUi.requestUpdate();
     }

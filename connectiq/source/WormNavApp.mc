@@ -8,8 +8,6 @@ using Toybox.Sensor;
 using Track;
 using Data;
 
-var messageReceived = false;
-
 var mailMethod;
 var phoneMethod;
 var crashOnMessage = false;
@@ -29,7 +27,6 @@ var trackElevationPlot = false;
 var dataViewPeriod = 1;
 var lapViewPeriod = 10;
 var trackViewCounter = 0;
-var dataViewCounter = 0;
 var appTimerTicks = 0;
 
 var isDarkMode = false;
@@ -38,7 +35,7 @@ var isDarkMode = false;
 // page == -1 -> track view with track
 // page == 0 -> track view with elevation plot
 // page >= 1 -> data view with sceen #page
-var page = 0;
+var page = -1;
 
 class WormNavApp extends Application.AppBase {
     var lapViewTicker = 0;
@@ -73,58 +70,58 @@ class WormNavApp extends Application.AppBase {
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
-        if(data!=null) {
+        if(data != null) {
             System.println("load data from property store");
             track = new TrackModel(data);
         }
 
-        if(Application.getApp().getProperty("northHeading")!=null) {
+        if(Application.getApp().getProperty("northHeading") != null) {
             Track.northHeading=Application.getApp().getProperty("northHeading");
         }
 
-        if(Application.getApp().getProperty("centerMap")!=null) {
+        if(Application.getApp().getProperty("centerMap") != null) {
             Track.centerMap=Application.getApp().getProperty("centerMap");
         }
 
-        if(Application.getApp().getProperty("autolapDistance")!=null) {
+        if(Application.getApp().getProperty("autolapDistance") != null) {
             Track.autolapDistance = Application.getApp().getProperty("autolapDistance");
         }
 
-        if(Application.getApp().getProperty("breadCrumbNumber")!=null) {
+        if(Application.getApp().getProperty("breadCrumbNumber") != null) {
             Track.breadCrumbNumber = Application.getApp().getProperty("breadCrumbNumber");
         }
 
-        if(Application.getApp().getProperty("breadCrumbDist")!=null) {
+        if(Application.getApp().getProperty("breadCrumbDist") != null) {
             Track.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
         }
 
-        if(Application.getApp().getProperty("dataScreens")!=null) {
+        if(Application.getApp().getProperty("dataScreens") != null) {
             Data.setDataScreens(Application.getApp().getProperty("dataScreens"));
         } else {
             Data.setDataScreens(Data.dataScreensDefault);
         }
 
-        if(Application.getApp().getProperty("activityType")!=null) {
+        if(Application.getApp().getProperty("activityType") != null) {
             activityType = Application.getApp().getProperty("activityType");
         }
 
-        if(Application.getApp().getProperty("trackViewPeriod")!=null) {
+        if(Application.getApp().getProperty("trackViewPeriod") != null) {
             trackViewPeriod = Application.getApp().getProperty("trackViewPeriod");
         }
 
-        if(Application.getApp().getProperty("trackViewLargeFont")!=null) {
+        if(Application.getApp().getProperty("trackViewLargeFont") != null) {
             trackViewLargeFont = Application.getApp().getProperty("trackViewLargeFont");
         }
 
-        if(Application.getApp().getProperty("trackNearestPoint")!=null) {
+        if(Application.getApp().getProperty("trackNearestPoint") != null) {
             Track.findNearestPoint = Application.getApp().getProperty("trackNearestPoint");
         }
 
-        if(Application.getApp().getProperty("trackElevationPlot")!=null) {
+        if(Application.getApp().getProperty("trackElevationPlot") != null) {
             trackElevationPlot = Application.getApp().getProperty("trackElevationPlot");
         }
 
-        if(Application.getApp().getProperty("isDarkMode")!=null) {
+        if(Application.getApp().getProperty("isDarkMode") != null) {
             isDarkMode = Application.getApp().getProperty("isDarkMode");
         }
 
@@ -149,8 +146,8 @@ class WormNavApp extends Application.AppBase {
     // Return the initial view of your application here
     function getInitialView() {
         trackView = new TrackView();
-        if(track!= null) {
-            trackView.isNewTrack=true;
+        if(track !=  null) {
+            trackView.isNewTrack = true;
         }
         viewDelegate = new WormNavDelegate();
         phoneMethod = method(:onPhone);
@@ -164,17 +161,25 @@ class WormNavApp extends Application.AppBase {
 
     function onPhone(msg) {
         System.println("onPhone(msg)");
-        messageReceived = true;
-        page = 0;
-        track = new TrackModel(msg.data);
         try {
+            // Property should be explicitly deleted. 
+            // Otherwise OOM excception is thrown when message contains elevation data (due to complexity of msg?)
+            if (track != null) {
+                track.clear();
+                track = null;
+            }
+            Application.getApp().deleteProperty("trackData");
             Application.getApp().setProperty("trackData", msg.data);
-            $.trackView.isNewTrack=true;
-            WatchUi.requestUpdate();
+            track = new TrackModel(msg.data);
+            $.trackView.isNewTrack = true;
+            page = -1;
+            $.trackView.showElevationPlot = false;
+            WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+            //WatchUi.requestUpdate();
         }
         catch( ex ) {
             System.println(ex.getErrorMessage());
-            track=null;
+            track = null;
             System.exit();
         }
     }
@@ -222,21 +227,13 @@ class WormNavApp extends Application.AppBase {
                 WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             }
         }
-        else if(page < 0)  {
+        else if(page <= 0)  {
             // track view active
             if(trackViewCounter %  trackViewPeriod == 0) {
                 WatchUi.requestUpdate();
             }
             trackViewCounter += 1;
         }
-        else {
-            // data view active
-            if(dataViewCounter %  dataViewPeriod == 0) {
-                WatchUi.requestUpdate();
-            }
-            dataViewCounter += 1;
-        }
-
     }
 
      // split string str by separator char c into string array
