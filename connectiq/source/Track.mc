@@ -80,8 +80,6 @@ module Track {
 
         eleMin = null;
         eleMax = null;
-        eleMinTrack = null;
-        eleMaxTrack = null;
         eleTrack = null;
 
         nearestPointIndex = -1;
@@ -218,6 +216,10 @@ module Track {
         lon_view_center=$.track.lonCenter;
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
+        if($.track.eleArray != null) {
+            eleMinTrack = $.track.eleMin;
+            eleMaxTrack = $.track.eleMax;
+        }
         onPositionCalled = false;
         resetPosition();
         resetBreadCrumbs(null);
