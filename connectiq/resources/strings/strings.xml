@@ -26,7 +26,7 @@
 
     <string id="lap">Lap</string> 
 
-    <string id="course_labels">Update period|Large font|Nearest point|Elevation plot|Delete</string>   
+    <string id="course_labels">Update period|Large font|Show profile|Delete</string>   
     <string id="activities">Generic|Running|Walking|Cycling</string>
 
     <string id="msg_continue">Continue?</string> 

@@ -23,7 +23,7 @@
            
     <string id="lap">Runde</string> 
     
-    <string id="course_labels">Aktual. Periode|Große Schrift|Nächster Punkt|Elevation plot|Löschen</string>
+    <string id="course_labels">Aktual. Periode|Große Schrift|Show profile|Löschen</string>
     <string id="activities">Generisch|Laufen|Walking|Radfahren</string>
 
     <string id="msg_continue">Weiter?</string> 

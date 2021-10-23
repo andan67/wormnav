@@ -113,10 +113,6 @@ class WormNavApp extends Application.AppBase {
             trackViewLargeFont = Application.getApp().getProperty("trackViewLargeFont");
         }
 
-        if(Application.getApp().getProperty("trackNearestPoint") != null) {
-            Track.findNearestPoint = Application.getApp().getProperty("trackNearestPoint");
-        }
-
         if(Application.getApp().getProperty("trackElevationPlot") != null) {
             trackElevationPlot = Application.getApp().getProperty("trackElevationPlot");
         }

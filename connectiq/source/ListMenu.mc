@@ -31,6 +31,16 @@ class ListMenu extends Ui.View
     var menuHeight = null;
     var onMenuTicks = -1;
 
+    // Initialize menu with
+    // _id: id of menu
+    // _menuTitle: title of menu
+    // _itemIdList: id list of sub menu items
+    // _itemLabelList: labels of sub menu items
+    // _itemValueList: values of sub menu items
+    // _initValue: initial (actual) value
+    // _showSubMenuValues: if true actual value is shown under main menu item
+    // _options: dictionary container for additional options
+
     function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _showSubMenuValues, _options)
     {
         View.initialize ();
