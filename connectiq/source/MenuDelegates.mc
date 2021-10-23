@@ -50,12 +50,8 @@ module MenuDelegates {
             case :track_large_font:
                 return [WatchUi.loadResource(Rez.Strings.yesno_opts),
                         [true, false],
-                        $.trackViewLargeFont];
-            case :track_nearest_point:
-                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
-                        [true, false],
-                        Track.findNearestPoint];
-            case :track_elevation_plot:
+                        $.trackViewLargeFont];        
+            case :track_profile:
                 return [WatchUi.loadResource(Rez.Strings.yesno_opts),
                         [true, false],
                         $.trackElevationPlot];           
@@ -158,7 +154,7 @@ module MenuDelegates {
                         break;
                     case :course:
                         showValue = 1;
-                        idList = [:track_update, :track_large_font, :track_nearest_point, :track_elevation_plot, :track_del];
+                        idList = [:track_update, :track_large_font, :track_profile, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -243,9 +239,8 @@ module MenuDelegates {
                 case :course:
                     switch(menu.getSelectedId()) {
                         case :track_update:
-                        case :track_large_font:
-                        case :track_nearest_point:
-                        case :track_elevation_plot:
+                        case :track_large_font:                        
+                        case :track_profile:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
                                     entry[0], entry[1], entry[2], 0, null);
@@ -272,11 +267,7 @@ module MenuDelegates {
                     $.trackViewLargeFont = value;
                     Application.getApp().setProperty("trackViewLargeFont", $.trackViewLargeFont);
                     break;
-                case :track_nearest_point:
-                    Track.findNearestPoint = value;
-                    Application.getApp().setProperty("trackNearestPoint", Track.findNearestPoint);
-                    break;
-                case :track_elevation_plot:
+                case :track_profile:
                     $.trackElevationPlot = value;
                     Application.getApp().setProperty("trackElevationPlot", $.trackElevationPlot);
                     break;
