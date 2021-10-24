@@ -29,31 +29,14 @@ module Data {
     }
 
     function setField(_screen, _idx, _field) {
-        dataScreens[5*_screen + _idx] = _field;
+        dataScreens[5 *_screen + _idx] = _field;
         setActiveDataScreens();
     }
 
     function setDataScreens(_dataScreens) {
         dataScreens = [];
-        // check for old format
-        if(_dataScreens[0] instanceof Lang.Array) {
-            // old format
-            for(var i = 0; i < _dataScreens.size(); i++) {
-                dataScreens.add(_dataScreens[i].size());
-                dataScreens.addAll(_dataScreens[i]);
-                for (var j = 0; j < 4 - _dataScreens[i].size(); j++) {
-                    // default
-                    dataScreens.add(0);
-                }
-            }
-            // for track screen
-            for(var i = 15; i < 20; i++) {
-                dataScreens.add(dataScreensDefault[i]);
-            }
-        } else {
-            for(var i = 0; i < _dataScreens.size(); i++) {
-                dataScreens.add(_dataScreens[i]);
-            }
+        for(var i = 0; i < _dataScreens.size(); i++) {
+            dataScreens.add(_dataScreens[i]);
         }
         setActiveDataScreens();
     }

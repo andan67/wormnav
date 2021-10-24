@@ -49,14 +49,36 @@ module Track {
     var autolapDistance = 1000.0;
     var isAutoLapActive = false;
 
+    // track data
+    var trackData;
+    var latCenter;
+    var lonCenter;
+    var diagonal;
+    var name;
+    var length;
+    var nPoints;
+    var xyArray;
+    var xyLength;
+    var xyLengthLabel;
+    var eleMin;
+    var eleMinDist;
+    var eleMinIdx;
+    var eleMax;
+    var eleMaxDist; 
+    var eleMaxIdx;
+    var eleTotAscent;
+    var eleTotDescent;
+    var hasTrackData = false;
+    var hasElevationData = false;
+
     // used for elevation plot
-    var ele = null;
-    var eleMin = null;
-    var eleMax = null;
+    var eleAct = null;
+    var eleMinAct = null;
+    var eleMaxAct = null;
     var eleMinTrack = null;
     var eleMaxTrack = null;
     var eleTrack = null;
-    var eleTotAscent = null;
+    var eleTotAscentAct = null;
 
     var positionDistance = 0.0;
     var onPositionCalled = false;
@@ -69,9 +91,9 @@ module Track {
         cos_heading_smooth = 1.0;
         sin_heading_smooth = 0.0;
 
-        eleMin = null;
-        eleMax = null;
-        eleTrack = null;
+        //eleMinAct = null;
+        //eleMaxAct = null;
+        //eleTrack = null;
     }
 
     function resetBreadCrumbs(number) {
@@ -120,15 +142,16 @@ module Track {
         //var lon = info.position.toRadians()[1].toFloat();
         onPositionCalled = true;        
         setPosition(info.position.toRadians()[0], info.position.toRadians()[1]);
-        if(hasElevation()) {
+        if($.trackElevationPlot && hasElevationData) {
             //ToDo: It seems there is a problem with getting correct altitude values in the simulator
             // Thus simulate good enough values from the track elevation data
             // get elevevation from activity info as this should be the better value from either gps or barometer
             
-            eleTotAscent = Activity.getActivityInfo() != null ? Activity.getActivityInfo().totalAscent : null;
-            var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
-            //var eleAct = eleTrack == null ? 0.5 * ($.track.eleMax + $.track.eleMin ) :
-            //    eleTrack + (Math.rand() % 20 -10);
+            //eleTotAscentAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().totalAscent : null;
+            eleTotAscentAct = 47.0;
+            //var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
+            var eleAct = eleTrack == null ? 0.5 * (eleMin + eleMax) :
+                eleTrack + (Math.rand() % 20 -10);
             setElevation(eleAct);
         }    
     }
@@ -199,14 +222,68 @@ module Track {
 
     }
 
-    function newTrack() {
-        lat_view_center=$.track.latCenter;
-        lon_view_center=$.track.lonCenter;
+    function deleteTrack() {
+        trackData = null;
+        xyArray = null;
+        latCenter = null;
+        lonCenter = null;
+        diagonal = null;
+        name = null;
+        length = null;
+        nPoints = null;
+        xyArray = null;
+        xyLength = null;
+        eleMin = null;
+        eleMinDist = null;
+        eleMinIdx = null;
+        eleMax = null;
+        eleMaxDist = null;
+        eleMaxIdx = null;
+        eleTotAscent = null;
+        eleTotDescent = null;
+
+        hasTrackData = false;
+        hasElevationData = false;
+    }
+
+    function newTrack(data) {
+        deleteTrack();
+
+        trackData = data;
+
+        latCenter = data[0][4];
+        lonCenter = data[0][5];
+        diagonal = data[0][6];
+        name = data[1];
+        length = data[2];
+        nPoints = data[3];
+        xyArray = data[4];
+        hasTrackData = true;
+
+        if(xyArray.size() > 2 * nPoints) {
+            hasElevationData = true;
+            // message contains elevation data
+            xyLength = data[0][7];
+            xyLengthLabel = Track.formatLength(xyLength);  
+            eleMin = data[0][8];
+            eleMinDist = data[0][9];
+            eleMinIdx = data[0][10];
+            eleMax = data[0][11];
+            eleMaxDist = data[0][12];
+            eleMaxIdx = data[0][13];
+            eleTotAscent = data[0][14];
+            eleTotDescent = data[0][15];
+        }
+
+        lat_view_center = latCenter;
+        lon_view_center = lonCenter;
+        
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
-        if($.track.eleArray != null) {
-            eleMinTrack = $.track.eleMin;
-            eleMaxTrack = $.track.eleMax;
+
+        if(eleMinTrack == null) {
+            eleMinTrack = eleMin;
+            eleMaxTrack = eleMax;
         }
         onPositionCalled = false;
         resetPosition();
@@ -214,27 +291,23 @@ module Track {
         setPosition(lat_view_center, lon_view_center);
     }
 
-    function hasElevation() {
-        return $.trackElevationPlot && $.track != null && $.track.eleArray != null;
-    }
-
     function setElevation(e) {
         if (e != null) {
-            ele = e;
-            if(eleMax == null || e > eleMax) {
-                eleMax = e;
-                if($.track != null && $.track.eleMax != null && e > $.track.eleMax) {
-                    eleMaxTrack = e;
+            eleAct = e;
+            if(eleMaxAct == null || eleAct > eleMaxAct) {
+                eleMaxAct = eleAct;
+                if(eleAct > eleMax) {
+                    eleMaxTrack = eleAct;
                 } else {
-                    eleMaxTrack = $.track.eleMax;
+                    eleMaxTrack = eleMax;
                 }
             }
-            if(eleMin == null || e < eleMin) {
-                eleMin = e;
-                if($.track != null && $.track.eleMin != null && e < $.track.eleMin) {
-                    eleMinTrack = e;
+            if(eleMinAct == null || eleAct < eleMinAct) {
+                eleMinAct = eleAct;
+                if(eleAct < eleMin) {
+                    eleMinTrack = eleAct;
                 } else {
-                    eleMinTrack = $.track.eleMin;
+                    eleMinTrack = eleMin;
                 }
             }
         }

@@ -118,8 +118,9 @@ public class SendToDeviceUtility {
                 Math.toRadians(boundingBox.getLonWest()),
                 latCenter, lonCenter);
 
-        List<Float> boundingBoxValueList = new ArrayList<>();
+        //List<Object> boundingBoxValueList = new ArrayList<>();
 
+        List<Object> boundingBoxValueList = new ArrayList<>();
 
         // add bounding box related data to message container
         boundingBoxValueList.add((float) xy.x);
@@ -136,11 +137,11 @@ public class SendToDeviceUtility {
         boundingBoxValueList.add((float) lonCenter);
         boundingBoxValueList.add((float) boundingBox.getDiagonalLengthInMeters());
 
-        message.add(boundingBoxValueList);
-
-        message.add(trackName);
-        message.add(trackLength);
-        message.add(geoPoints.size());
+//        message.add(boundingBoxValueList);
+//
+//        message.add(trackName);
+//        message.add(trackLength);
+//        message.add(geoPoints.size());
 
         List<Float> trackPointsValueList = new ArrayList<>();
         List<Float> elevationValueList = new ArrayList<>();
@@ -163,7 +164,7 @@ public class SendToDeviceUtility {
             }
         }
 
-        message.add(trackPointsValueList);
+        //message.add(trackPointsValueList);
 
         if(hasElevation && sendElevationData ) {
             float xyLength = 0;
@@ -211,18 +212,35 @@ public class SendToDeviceUtility {
                 }
                 xyLength += (float)Math.sqrt(dx * dx + dy * dy);
             }
+            trackPointsValueList.addAll(elevationValueList);
 
-            message.add(elevationValueList);
-            message.add(xyLength);
-            message.add(eleMin);
-            message.add(eleMinDist);
-            message.add(eleMinIdx);
-            message.add(eleMax);
-            message.add(eleMaxDist);
-            message.add(eleMaxIdx);
-            message.add(eleAscent);
-            message.add(eleDescent);
+//            message.add(elevationValueList);
+//            message.add(xyLength);
+//            message.add(eleMin);
+//            message.add(eleMinDist);
+//            message.add(eleMinIdx);
+//            message.add(eleMax);
+//            message.add(eleMaxDist);
+//            message.add(eleMaxIdx);
+//            message.add(eleAscent);
+//            message.add(eleDescent);
+            boundingBoxValueList.add(xyLength);
+            boundingBoxValueList.add(eleMin);
+            boundingBoxValueList.add(eleMinDist);
+            boundingBoxValueList.add(eleMinIdx);
+            boundingBoxValueList.add(eleMax);
+            boundingBoxValueList.add(eleMaxDist);
+            boundingBoxValueList.add(eleMaxIdx);
+            boundingBoxValueList.add(eleAscent);
+            boundingBoxValueList.add(eleDescent);
         }
+
+
+        message.add(boundingBoxValueList);
+        message.add(trackName);
+        message.add(trackLength);
+        message.add(geoPoints.size());
+        message.add(trackPointsValueList);
         return message;
     }
 
