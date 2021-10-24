@@ -128,15 +128,15 @@ module MenuDelegates {
                         showValue = 2;
                         labelList =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.info_labels),'|');
                         valueList = [WatchUi.loadResource(Rez.Strings.AppVersion)];
-                        if(track != null) {
-                            valueList.add(track.name);
-                            valueList.add((0.001 * track.length).format("%.2f") + " km");
-                            valueList.add(track.nPoints);
-                            if(track.eleArray != null) {
-                                valueList.add(track.eleMin.format("%.1f") + " m");
-                                valueList.add(track.eleMax.format("%.1f") + " m");
-                                valueList.add(track.eleTotAscent.format("%.1f") + " m");
-                                valueList.add(track.eleTotDescent.format("%.1f") + " m");
+                        if(Track.hasTrackData) {
+                            valueList.add(Track.name);
+                            valueList.add((0.001 * Track.length).format("%.2f") + " km");
+                            valueList.add(Track.nPoints);
+                            if(Track.hasElevationData) {
+                                valueList.add(Track.eleMin.format("%.1f") + " m");
+                                valueList.add(Track.eleMax.format("%.1f") + " m");
+                                valueList.add(Track.eleTotAscent.format("%.1f") + " m");
+                                valueList.add(Track.eleTotDescent.format("%.1f") + " m");
                             } 
                         }
                         while(valueList.size() < labelList.size() ) {
@@ -311,7 +311,7 @@ module MenuDelegates {
         function onResponse(response) {
             if (response == WatchUi.CONFIRM_NO) {
             } else {
-                $.track = null;    
+                Track.deleteTrack();   
             }
         }
     }

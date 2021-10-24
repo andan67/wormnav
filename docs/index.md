@@ -1,12 +1,11 @@
-WormNav
+WormNav User Guide
 ===================================
+# Introduction
+WormNav is a ConnectIQ app for a number of Garmin wearables that provides a simple 'worm' navigation feature where the course to be followed is shown as simple line ('worm') on the screen along with the current position. This type of navigation should be good enough for many scenarios to safely follow the course in an unknown terrain.
 
-## User Guide
+The course data is created by an Android companion app and tranmitted via Bluetooth to the Garmin wearable.
 
-This project provides a simple 'worm' navigation feature for selected Garmin devices.
-It consists of two apps:
-- An Android companion app to manage GPX tracks and routes and send them to the Garmin device via bluetooth.
-- The ConnectIQ app for the Garmin device to navigate along the track and run activities.
+WormNav is mainly targeted at those Garmin wearable that to not have a built-in course feature (like the Forerunner 235).
 
 ### Installation and basic set-up
 - Pre-requisiste: Installation of [Garmin Connect™ app](https://play.google.com/store/apps/details?id=com.garmin.android.apps.connectmobile) from Google Play Store

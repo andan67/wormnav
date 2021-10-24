@@ -16,7 +16,6 @@ var dataView;
 var lapView;
 var viewDelegate;
 var device = null;
-var track = null;
 var session = null;
 var sessionEvent = 0;
 var activityType = ActivityRecording.SPORT_RUNNING;
@@ -24,7 +23,6 @@ var activityType = ActivityRecording.SPORT_RUNNING;
 var trackViewPeriod = 1;
 var trackViewLargeFont = false;
 var trackElevationPlot = false;
-var dataViewPeriod = 1;
 var lapViewPeriod = 10;
 var trackViewCounter = 0;
 var appTimerTicks = 0;
@@ -50,7 +48,7 @@ class WormNavApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state) {
-        System.println("onStart");
+        //System.println("onStart");
 
         // vivoactive stands for all devices with round screen shape
         // ToDo: Implement resource/annotation based method to set device dependent settings
@@ -60,7 +58,7 @@ class WormNavApp extends Application.AppBase {
             device = "generic";
         }
 
-        System.println("Device: " + device);
+        //System.println("Device: " + device);
 
         Data.setMaxHeartRate();
 
@@ -72,7 +70,8 @@ class WormNavApp extends Application.AppBase {
 
         if(data != null) {
             System.println("load data from property store");
-            track = new TrackModel(data);
+            Track.newTrack(data);
+            data = null;
         }
 
         if(Application.getApp().getProperty("northHeading") != null) {
@@ -137,12 +136,15 @@ class WormNavApp extends Application.AppBase {
     // onStop() is called when your application is exiting
     function onStop(state) {
         Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
+        if(Track.hasTrackData) {
+            Application.getApp().setProperty("trackData", Track.trackData);     
+        }
     }
 
     // Return the initial view of your application here
     function getInitialView() {
         trackView = new TrackView();
-        if(track !=  null) {
+        if(Track.hasTrackData !=  null) {
             trackView.isNewTrack = true;
         }
         viewDelegate = new WormNavDelegate();
@@ -158,15 +160,11 @@ class WormNavApp extends Application.AppBase {
     function onPhone(msg) {
         System.println("onPhone(msg)");
         try {
-            // Property should be explicitly deleted. 
-            // Otherwise OOM excception is thrown when message contains elevation data (due to complexity of msg?)
-            if (track != null) {
-                track.clear();
-                track = null;
-            }
+           
             Application.getApp().deleteProperty("trackData");
-            Application.getApp().setProperty("trackData", msg.data);
-            track = new TrackModel(msg.data);
+            //Application.getApp().setProperty("trackData", msg.data);            
+            Track.newTrack(msg.data);
+            //Application.getApp().setProperty("trackData", msg.data);
             $.trackView.isNewTrack = true;
             page = -1;
             $.trackView.showElevationPlot = false;
@@ -175,7 +173,7 @@ class WormNavApp extends Application.AppBase {
         }
         catch( ex ) {
             System.println(ex.getErrorMessage());
-            track = null;
+            Track.deleteTrack();
             System.exit();
         }
     }

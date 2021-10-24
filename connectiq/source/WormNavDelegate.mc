@@ -130,7 +130,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
 
         if($.page == -1) {
             // track view -> swtich to data view (page > 0) or elevation plot (page == 0)
-            if(lastPage == 0 && Track.hasElevation()) {
+            if(lastPage == 0 && $.trackElevationPlot && Track.hasElevationData) {
                 $.page = 0;
                 $.trackView.showElevationPlot = true;
                 WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
@@ -180,8 +180,8 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {
                 if($.session == null) {
                     var sname = "WormNavActivity";
-                    if($.track != null && $.track.name != null) {
-                        sname = $.track.name.substring(0, $.track.name.length() < 16 ? $.track.name.length() : 15);
+                    if(Track.hasTrackData && Track.name != null) {
+                        sname = Track.name.substring(0, Track.name.length() < 16 ? Track.name.length() : 15);
                     }
                     $.session = ActivityRecording.createSession({:name => sname, :sport => $.activityType});
                 }
@@ -210,9 +210,10 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             onBack();
         } else {
             $.page += n;
+            var profileEnabled = $.trackElevationPlot && Track.hasElevationData;
             if($.page > Data.activeDataScreens.size()) {
-                $.page = Track.hasElevation()? 0 : 1;
-            } else if($.page == 0 && !Track.hasElevation() || $.page < 0 && Track.hasElevation() ) {
+                $.page = profileEnabled? 0 : 1;
+            } else if($.page == 0 && !profileEnabled || $.page < 0 && profileEnabled ) {
                 $.page = Data.activeDataScreens.size();
             }
             if($.page > 0) {
@@ -224,6 +225,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
                 WatchUi.switchToView($.dataView, self, WatchUi.SLIDE_IMMEDIATE);
             } else {
                 $.trackView.showElevationPlot = true;
+                $.trackViewCounter = 0;
                 WatchUi.switchToView($.trackView, self, WatchUi.SLIDE_IMMEDIATE);
             }
         }
