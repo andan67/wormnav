@@ -62,8 +62,8 @@ android {
         applicationId "org.andan.android.connectiq.wormnav"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 120
-        versionName '1.2.0'
+        versionCode 121
+        versionName '1.2.1'
         setProperty("archivesBaseName", "Worm navigation")
     }
 

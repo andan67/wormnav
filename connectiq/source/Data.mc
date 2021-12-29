@@ -21,22 +21,22 @@ module Data {
     var maxHeartRate = null;
 
     function setMaxHeartRate() {
-        maxHeartRate = UserProfile.getHeartRateZones( UserProfile.getCurrentSport())[5];
+        maxHeartRate = UserProfile.getHeartRateZones(UserProfile.getCurrentSport())[5];
     }
 
-    function getField(_screen, _idx) {
-        return dataScreens[5*_screen + _idx];
+    function getField(screen, idx) {
+        return dataScreens[5 * screen + idx];
     }
 
-    function setField(_screen, _idx, _field) {
-        dataScreens[5 *_screen + _idx] = _field;
+    function setField(screen, idx, field) {
+        dataScreens[5 * screen +  idx] = field;
         setActiveDataScreens();
     }
 
-    function setDataScreens(_dataScreens) {
+    function setDataScreens(screens) {
         dataScreens = [];
-        for(var i = 0; i < _dataScreens.size(); i++) {
-            dataScreens.add(_dataScreens[i]);
+        for(var i = 0; i < screens.size(); i++) {
+            dataScreens.add(screens[i]);
         }
         setActiveDataScreens();
     }
@@ -52,41 +52,35 @@ module Data {
 
     function getDataFieldLabelValue(i) {
         var dataValue = null;
-        var data = null;
+        var aInfo = Activity.getActivityInfo();
+
         switch(i) {
             case 0: // TIMER
-                data = Activity.getActivityInfo().timerTime;
-                dataValue = data != null? Data.msToTime(data, false) : "--";
+                dataValue = aInfo.timerTime != null ? Data.msToTime(aInfo.timerTime, false) : "--";
                 break;
             case 1: // DISTANCE
-                data = Activity.getActivityInfo().elapsedDistance;
-                dataValue = data != null? (0.001*data+0.0001).format("%.2f") : "--";
+                dataValue = aInfo.elapsedDistance != null ? (0.001 * aInfo.elapsedDistance + 0.00001).format("%.2f") : "--";
                 break;
             case 2: // PACE
-                data = Activity.getActivityInfo().currentSpeed;
-                dataValue = data != null? Data.convertSpeedToPace(data) : null;
+                dataValue = aInfo.currentSpeed != null ? Data.convertSpeedToPace(aInfo.currentSpeed) : null;
                 break;
             case 3: // SPEED
-                data = Activity.getActivityInfo().currentSpeed;
-                dataValue = data != null ? (3.6*data).format("%.2f") : null;
+                dataValue = aInfo.currentSpeed != null ? (3.6 * aInfo.currentSpeed).format("%.2f") : null;
                 break;
             case 4: // AVERAGE_PACE
-                data = Activity.getActivityInfo().averageSpeed;
-                dataValue = data != null?  Data.convertSpeedToPace(data) : null;
+                dataValue = aInfo.averageSpeed != null ?  Data.convertSpeedToPace(aInfo.averageSpeed) : null;
                 break;
             case 5: // AVERAGE_SPEED
-                data = Activity.getActivityInfo().averageSpeed;
-                dataValue = data != null?  (3.6*data).format("%.2f") : null;
+                dataValue = aInfo.averageSpeed != null ?  (3.6 * aInfo.averageSpeed).format("%.2f") : null;
                 break;
             case 6: // CURRENT_HEART_RATE
-                dataValue = Activity.getActivityInfo().currentHeartRate;
+                dataValue = aInfo.currentHeartRate;
                 break;
             case 7: // PERCENT_HEART_RATE
-                data = Activity.getActivityInfo().currentHeartRate;
-                dataValue = data != null ? (100.0*data/maxHeartRate).format("%.0f") + "%" : null;
+                dataValue = aInfo.currentHeartRate != null ? (100.0 * aInfo.currentHeartRate / maxHeartRate).format("%.0f") + "%" : null;
                 break;
             case 8: // AVERAGE_HEART_RATE
-                dataValue = Activity.getActivityInfo().averageHeartRate;
+                dataValue = aInfo.averageHeartRate;
                 break;
             case 9: // LAP_TIMER
                 dataValue = Track.autolapDistance > 0 ? Data.msToTime(Track.lapTime.toLong(), false) : null;
@@ -114,32 +108,26 @@ module Data {
                 dataValue = Track.autolapDistance > 0 ? Track.lapCounter : null;
                 break;
             case 16: // ALTITUDE
-                data = Activity.getActivityInfo().altitude;
-                dataValue = data != null ? data.format("%.0f") : null;
+                dataValue = aInfo.altitude != null ?  aInfo.altitude.format("%.0f") : null;
                 break;
             case 17: // TOTAL_ASCENT
-                data = Activity.getActivityInfo().totalAscent;
-                dataValue = data != null ? data.format("%.0f") : null;
+                dataValue = aInfo.totalAscent != null ? aInfo.totalAscent.format("%.0f") : null;
                 break;
             case 18: // TOTAL_DESCENT
-                data = Activity.getActivityInfo().totalDescent;
-                dataValue = data != null ? data.format("%.0f") : null;
+                dataValue = aInfo.totalDescent != null ? aInfo.totalDescent.format("%.0f") : null;
                 break;    
             case 19: // CLOCK_TIME
-                data = Sys.getClockTime();
-                dataValue =  data != null ?
-                    data.hour.format("%02d") + ":" +
-                    data.min.format("%02d") + ":" +
-                    data.sec.format("%02d"): null;
+                var time = Sys.getClockTime();
+                dataValue = 
+                    time.hour.format("%02d") + ":" +
+                    time.min.format("%02d") + ":" +
+                    time.sec.format("%02d");
                 break;
             case 20: // BATTERY
-                data = Sys.getSystemStats().battery;
-                dataValue = data != null ? data.format("%.1f") + "%" : null;
-                break;
-            default:
+                dataValue = Sys.getSystemStats().battery.format("%.1f") + "%";
                 break;
         }
-        return [dataFieldLabels[i], dataValue];
+        return [dataFieldLabels[i], dataValue != null ? dataValue : "--"];
     }
 
     function msToTime(ms, withDecimals) {
@@ -168,14 +156,14 @@ module Data {
         result_sec = 0;
         if( settings.paceUnits == Sys.UNIT_METRIC ) {
             result_per = "/km";
-            conversionvalue = 1000.0d;
+            conversionvalue = 1000.0;
         } else {
             result_per = "/mi";
-            conversionvalue = 1609.34d;
+            conversionvalue = 1609.34;
         }
 
         if( speed != null && speed > 0 ) {
-            var secpermetre = 1.0d / speed; // speed = m/s
+            var secpermetre = 1.0 / speed; // speed = m/s
             result_sec = secpermetre * conversionvalue;
             result_min = result_sec / 60;
             result_min = result_min.format("%d").toNumber();

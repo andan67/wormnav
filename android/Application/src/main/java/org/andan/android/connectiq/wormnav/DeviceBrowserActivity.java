@@ -296,7 +296,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         // -1 because of header
         if (position > 0 && mSdkReady) {
             mDevice = mAdapter.getItem(position - 1);
-            if(mDevice.getStatus() == IQDeviceStatus.CONNECTED ) {
+            if(true || mDevice.getStatus() == IQDeviceStatus.CONNECTED ) {
                 displaySendToDeviceDialog();
             }
         }
@@ -418,8 +418,8 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         logEntry.setNoTrackPointsOriginal(mGeoPoints.size());
 
                         logEntry.setOptimized(maxPathWpt > 0);
-                        logEntry.setTrackLengthSent((float)message.get(2));
-                        logEntry.setNoTrackPointsSent((int)message.get(3));
+                        logEntry.setTrackLengthSent((float)((List<Object>)message.get(0)).get(1));
+                        logEntry.setNoTrackPointsSent((int)((List<Object>)message.get(0)).get(2));
 
                         Bundle messageBundle = new Bundle();
                         messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);

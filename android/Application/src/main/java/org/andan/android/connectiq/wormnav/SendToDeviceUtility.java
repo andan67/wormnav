@@ -55,30 +55,30 @@ public class SendToDeviceUtility {
      * @param invertCourse
      * @param sendElevationData
      * @return container message as list of objects that is send to the Garmin device via BLE
-     * The default container elements are:
-     *      0 : List<Float> with 7 elements:
-     *          x coordinate of north west point of course bounding box (normalized)
-     *          y coordinate of north west point of course bounding box (normalized)
-     *          x coordinate of south east point of course bounding box (normalized)
-     *          y coordinate of south east point of course bounding box (normalized)
-     *          latitude of course center
-     *          longitude of course center
-     *          diagonal of bounding box on meters
-     *      1 : String: track (course) name
-     *      2 : Float: track length (after potential optimization)
-     *      3 : Integer: number of track points (after potential optimization)
-     *      4 : List<Float> with 2*(number of track points) elements containing x,y coordinates of track points
-     * If elevations are sent:
-     *      5 : List<Float> with (number of track points) elements containing elevation of coordinates
-     *      6 : Float: Normalized route length calculated using x,y coordinates
-     *      7 : Float: Minimum elevation
-     *      8 : Float: Normalized distance from start to minimum elevation point
-     *      9 : Integer: Index of minimum elevation point
-     *      10 : Float: Maximum elevation
-     *      11: Float: Normalized distance from start to maximum elevation point
-     *      12: Integer: Index of maximum elevation point
-     *      13: Float: total ascent
-     *      14: Float: total descent
+     * The container elements are:
+     *      0: List<Object> with track statistics data
+     *          0: track name
+     *          1: track length
+     *          2: number of track points
+     *          3: x coordinate of north west point of course bounding box (normalized)
+     *          4: y coordinate of north west point of course bounding box (normalized)
+     *          5: x coordinate of south east point of course bounding box (normalized)
+     *          6: y coordinate of south east point of course bounding box (normalized)
+     *          7: latitude of course center
+     *          8: longitude of course center
+     *          9: diagonal of bounding box on meters
+     *         10: normalized route length calculated using x,y coordinates
+     *         11: minimum elevation
+     *         12: normalized distance from start to minimum elevation point
+     *         13: index of minimum elevation point
+     *         14: maximum elevation
+     *         15: normalized distance from start to maximum elevation point
+     *         16: index of maximum elevation point
+     *         17: total ascent
+     *         18: total descent
+     *      1: List<Float> with normalized x coordinates of track points
+     *      2: List<Float> with normalized y coordinates of track points
+     *      3: List<Float> with elevations (if enabled)
      */
     public static List <Object> generateMessageForDevice(List<GeoPoint> geoPoints, float originalTrackLength, String trackName, int maxPathWpt, double maxPathError,
                                                          boolean invertCourse, boolean sendElevationData) {
@@ -110,6 +110,14 @@ public class SendToDeviceUtility {
             }
         }
 
+        List<Object> trackStatsList = new ArrayList<>();
+
+        // add basic track data to list
+        trackStatsList.add(trackName);
+        trackStatsList.add(trackLength);
+        trackStatsList.add(geoPoints.size());
+
+        // add bounding box related data to message container
         BoundingBox boundingBox = findBoundingBox(geoPoints);
 
         double latCenter = Math.toRadians(boundingBox.getCenter().getLatitude());
@@ -118,32 +126,23 @@ public class SendToDeviceUtility {
                 Math.toRadians(boundingBox.getLonWest()),
                 latCenter, lonCenter);
 
-        //List<Object> boundingBoxValueList = new ArrayList<>();
-
-        List<Object> boundingBoxValueList = new ArrayList<>();
-
         // add bounding box related data to message container
-        boundingBoxValueList.add((float) xy.x);
-        boundingBoxValueList.add((float) xy.y);
+        trackStatsList.add((float) xy.x);
+        trackStatsList.add((float) xy.y);
 
         xy = transform(Math.toRadians(boundingBox.getLatSouth()),
                 Math.toRadians(boundingBox.getLonEast()),
                 latCenter, lonCenter);
 
-        boundingBoxValueList.add((float) xy.x);
-        boundingBoxValueList.add((float) xy.y);
+        trackStatsList.add((float) xy.x);
+        trackStatsList.add((float) xy.y);
 
-        boundingBoxValueList.add((float) latCenter);
-        boundingBoxValueList.add((float) lonCenter);
-        boundingBoxValueList.add((float) boundingBox.getDiagonalLengthInMeters());
+        trackStatsList.add((float) latCenter);
+        trackStatsList.add((float) lonCenter);
+        trackStatsList.add((float) boundingBox.getDiagonalLengthInMeters());
 
-//        message.add(boundingBoxValueList);
-//
-//        message.add(trackName);
-//        message.add(trackLength);
-//        message.add(geoPoints.size());
-
-        List<Float> trackPointsValueList = new ArrayList<>();
+        List<Float> xCoordValueList = new ArrayList<>();
+        List<Float> yCoordValueList = new ArrayList<>();
         List<Float> elevationValueList = new ArrayList<>();
 
         boolean hasElevation = true;
@@ -153,8 +152,8 @@ public class SendToDeviceUtility {
             xyPoint xyP = transform(Math.toRadians(geoPoint.getLatitude()),
                     Math.toRadians(geoPoint.getLongitude()),
                     latCenter, lonCenter);
-            trackPointsValueList.add((float) xyP.x);
-            trackPointsValueList.add((float) xyP.y);
+            xCoordValueList.add((float) xyP.x);
+            yCoordValueList.add((float) xyP.y);
             if(hasElevation) {
                 try {
                     elevationValueList.add((float) geoPoint.getAltitude());
@@ -164,7 +163,9 @@ public class SendToDeviceUtility {
             }
         }
 
-        //message.add(trackPointsValueList);
+        message.add(trackStatsList);
+        message.add(xCoordValueList);
+        message.add(yCoordValueList);
 
         if(hasElevation && sendElevationData ) {
             float xyLength = 0;
@@ -199,48 +200,35 @@ public class SendToDeviceUtility {
                 }
             }
 
-            for(int i = 0; i < trackPointsValueList.size() - 2; i += 2) {
-                float dx = trackPointsValueList.get(i + 2) - trackPointsValueList.get(i);
-                float dy = trackPointsValueList.get(i + 3) - trackPointsValueList.get(i + 1);
+            for(int i = 0; i < xCoordValueList.size() - 1; i++) {
+                float dx = xCoordValueList.get(i + 1) - xCoordValueList.get(i);
+                float dy = yCoordValueList.get(i + 1) - yCoordValueList.get(i);
 
-                if(i / 2 == eleMinIdx) {
+                if(i == eleMinIdx) {
                     eleMinDist = xyLength;
 
                 }
-                if(i / 2 == eleMaxIdx) {
+                if(i == eleMaxIdx) {
                     eleMaxDist = xyLength;
                 }
                 xyLength += (float)Math.sqrt(dx * dx + dy * dy);
             }
-            trackPointsValueList.addAll(elevationValueList);
+            // add elevation related data to list
 
-//            message.add(elevationValueList);
-//            message.add(xyLength);
-//            message.add(eleMin);
-//            message.add(eleMinDist);
-//            message.add(eleMinIdx);
-//            message.add(eleMax);
-//            message.add(eleMaxDist);
-//            message.add(eleMaxIdx);
-//            message.add(eleAscent);
-//            message.add(eleDescent);
-            boundingBoxValueList.add(xyLength);
-            boundingBoxValueList.add(eleMin);
-            boundingBoxValueList.add(eleMinDist);
-            boundingBoxValueList.add(eleMinIdx);
-            boundingBoxValueList.add(eleMax);
-            boundingBoxValueList.add(eleMaxDist);
-            boundingBoxValueList.add(eleMaxIdx);
-            boundingBoxValueList.add(eleAscent);
-            boundingBoxValueList.add(eleDescent);
+            trackStatsList.add(xyLength);
+            trackStatsList.add(eleMin);
+            trackStatsList.add(eleMinDist);
+            trackStatsList.add(eleMinIdx);
+            trackStatsList.add(eleMax);
+            trackStatsList.add(eleMaxDist);
+            trackStatsList.add(eleMaxIdx);
+            trackStatsList.add(eleAscent);
+            trackStatsList.add(eleDescent);
+
+            // add elevation data to message
+            message.add(elevationValueList);
         }
 
-
-        message.add(boundingBoxValueList);
-        message.add(trackName);
-        message.add(trackLength);
-        message.add(geoPoints.size());
-        message.add(trackPointsValueList);
         return message;
     }
 

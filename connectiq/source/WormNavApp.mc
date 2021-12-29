@@ -8,8 +8,6 @@ using Toybox.Sensor;
 using Track;
 using Data;
 
-var mailMethod;
-var phoneMethod;
 var crashOnMessage = false;
 var trackView;
 var dataView;
@@ -21,14 +19,17 @@ var sessionEvent = 0;
 var activityType = ActivityRecording.SPORT_RUNNING;
 
 var trackViewPeriod = 1;
-var trackViewLargeFont = false;
-var trackElevationPlot = false;
+var trackViewLargeFont = true;
+var trackElevationPlot = true;
+var trackStorage = true;
 var lapViewPeriod = 10;
 var trackViewCounter = 0;
 var appTimerTicks = 0;
 
 var isDarkMode = false;
 
+var msgData = null;
+var newTrackReceived = false;
 
 // page == -1 -> track view with track
 // page == 0 -> track view with elevation plot
@@ -58,66 +59,68 @@ class WormNavApp extends Application.AppBase {
             device = "generic";
         }
 
-        //System.println("Device: " + device);
-
         Data.setMaxHeartRate();
-
-
-        var data = Application.getApp().getProperty("trackData");
-
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
-        if(data != null) {
-            System.println("load data from property store");
-            Track.newTrack(data);
-            data = null;
+
+        var trackStats = getProperty("trackStats");
+        if(trackStats != null) {
+             Track.newTrack(trackStats,
+                getProperty("trackXData"),
+                getProperty("trackYData"),
+                getProperty("trackEleData")
+            );                  
         }
 
-        if(Application.getApp().getProperty("northHeading") != null) {
-            Track.northHeading=Application.getApp().getProperty("northHeading");
+        if(getProperty("northHeading") != null) {
+            Track.northHeading = getProperty("northHeading");
         }
 
-        if(Application.getApp().getProperty("centerMap") != null) {
-            Track.centerMap=Application.getApp().getProperty("centerMap");
+        if(getProperty("centerMap") != null) {
+            Track.centerMap=getProperty("centerMap");
         }
 
-        if(Application.getApp().getProperty("autolapDistance") != null) {
-            Track.autolapDistance = Application.getApp().getProperty("autolapDistance");
+        if(getProperty("autolapDistance") != null) {
+            Track.autolapDistance = getProperty("autolapDistance");
         }
 
-        if(Application.getApp().getProperty("breadCrumbNumber") != null) {
-            Track.breadCrumbNumber = Application.getApp().getProperty("breadCrumbNumber");
+        if(getProperty("breadCrumbNumber") != null) {
+            Track.breadCrumbNumber = getProperty("breadCrumbNumber");
         }
 
-        if(Application.getApp().getProperty("breadCrumbDist") != null) {
-            Track.breadCrumbDist = Application.getApp().getProperty("breadCrumbDist");
+        if(getProperty("breadCrumbDist") != null) {
+            Track.breadCrumbDist = getProperty("breadCrumbDist");
         }
 
-        if(Application.getApp().getProperty("dataScreens") != null) {
-            Data.setDataScreens(Application.getApp().getProperty("dataScreens"));
+        if(getProperty("dataScreens") != null) {
+            Data.setDataScreens(getProperty("dataScreens"));
         } else {
             Data.setDataScreens(Data.dataScreensDefault);
         }
 
-        if(Application.getApp().getProperty("activityType") != null) {
-            activityType = Application.getApp().getProperty("activityType");
+        if(getProperty("activityType") != null) {
+            activityType = getProperty("activityType");
         }
 
-        if(Application.getApp().getProperty("trackViewPeriod") != null) {
-            trackViewPeriod = Application.getApp().getProperty("trackViewPeriod");
+        if(getProperty("trackViewPeriod") != null) {
+            trackViewPeriod = getProperty("trackViewPeriod");
         }
 
-        if(Application.getApp().getProperty("trackViewLargeFont") != null) {
-            trackViewLargeFont = Application.getApp().getProperty("trackViewLargeFont");
+        if(getProperty("trackViewLargeFont") != null) {
+            trackViewLargeFont = getProperty("trackViewLargeFont");
         }
 
-        if(Application.getApp().getProperty("trackElevationPlot") != null) {
-            trackElevationPlot = Application.getApp().getProperty("trackElevationPlot");
+        if(getProperty("trackElevationPlot") != null) {
+            trackElevationPlot = getProperty("trackElevationPlot");
         }
 
-        if(Application.getApp().getProperty("isDarkMode") != null) {
-            isDarkMode = Application.getApp().getProperty("isDarkMode");
+        if(getProperty("trackStorage") != null) {
+            trackStorage = getProperty("trackStorage");
+        }
+
+        if(getProperty("isDarkMode") != null) {
+            isDarkMode = getProperty("isDarkMode");
         }
 
         Position.enableLocationEvents(Position.LOCATION_CONTINUOUS, method(:onPosition));
@@ -135,52 +138,73 @@ class WormNavApp extends Application.AppBase {
 
     // onStop() is called when your application is exiting
     function onStop(state) {
+        trackView = null;
+        dataView = null;
+        Track.deleteTrack();
+
         Position.enableLocationEvents(Position.LOCATION_DISABLE, method(:onPosition));
-        if(Track.hasTrackData) {
-            Application.getApp().setProperty("trackData", Track.trackData);     
-        }
     }
 
     // Return the initial view of your application here
     function getInitialView() {
         trackView = new TrackView();
-        if(Track.hasTrackData !=  null) {
+        if(Track.hasTrackData) {
             trackView.isNewTrack = true;
         }
         viewDelegate = new WormNavDelegate();
-        phoneMethod = method(:onPhone);
         if(Communications has :registerForPhoneAppMessages) {
-            Communications.registerForPhoneAppMessages(phoneMethod);
-        } else {
-            Communications.setMailboxListener(mailMethod);
+            Communications.registerForPhoneAppMessages( method(:onPhone));
         }
         return [trackView, viewDelegate];
     }
 
-    function onPhone(msg) {
-        System.println("onPhone(msg)");
-        try {
-           
-            Application.getApp().deleteProperty("trackData");
-            //Application.getApp().setProperty("trackData", msg.data);            
-            Track.newTrack(msg.data);
-            //Application.getApp().setProperty("trackData", msg.data);
-            $.trackView.isNewTrack = true;
-            page = -1;
-            $.trackView.showElevationPlot = false;
-            WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
-            //WatchUi.requestUpdate();
-        }
-        catch( ex ) {
-            System.println(ex.getErrorMessage());
-            Track.deleteTrack();
-            System.exit();
+    function clearTrackStorage() {
+        setProperty("trackStats", null );
+        setProperty("trackXData", null);
+        setProperty("trackYData", null);
+        setProperty("trackEleData", null);
+    }
+
+    function onPhone(msg) {        
+        try {          
+            // quick check if message is in correct format
+            msgData = msg.data;
+            if(msgData[0][2] instanceof Lang.Number) {
+                $.trackView.isNewTrack = true;
+                page = -1;
+                WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+            }
+        } catch( ex ) {
+            msgData = null;
         }
     }
 
     // handles screen updates
     function onTimer() {
         appTimerTicks += 1;
+
+        if(newTrackReceived) {
+            // handle new track event here as this results in less peak memory
+            newTrackReceived = false;
+            Track.deleteTrack();
+                
+            clearTrackStorage();
+            Track.newTrack($.msgData[0], $.msgData[1],  $.msgData[2], $.msgData.size() == 4 ? $.msgData[3] : null );                
+            msgData = null;
+            if(trackStorage) {
+                setProperty("trackStats", Track.trackStats);
+                setProperty("trackXData", Track.xArray);
+                setProperty("trackYData", Track.yArray);
+                if(Track.hasElevationData) {
+                   setProperty("trackEleData", Track.eleArray);
+                }
+            }  
+            $.trackView.isNewTrack = true;
+            $.trackView.showElevationPlot = false;
+            page = -1;
+            WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+            return;
+        }
 
         // used to handle session start/stop events in UI that live for 2 seconds
         if(sessionEvent > 0) {
@@ -227,6 +251,8 @@ class WormNavApp extends Application.AppBase {
                 WatchUi.requestUpdate();
             }
             trackViewCounter += 1;
+        } else {
+            WatchUi.requestUpdate();
         }
     }
 
