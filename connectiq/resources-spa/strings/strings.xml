@@ -23,7 +23,7 @@
            
     <string id="lap">Vuelta</string> 
 
-    <string id="course_labels">Período de actual.|Grandes font|Show profile|Borrar</string>
+    <string id="course_labels">Grandes font|Mostrar perfil|Almacenamiento|Período de actual.|Borrar</string>
     <string id="activities">Gener.|Correr|Andar|Bici</string>
 
     <string id="msg_continue">Continuar?</string> 

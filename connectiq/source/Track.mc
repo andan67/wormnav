@@ -50,14 +50,17 @@ module Track {
     var isAutoLapActive = false;
 
     // track data
-    var trackData;
+    var trackStats;
+    var xArray;
+    var yArray;
+    var eleArray;
+
     var latCenter;
     var lonCenter;
     var diagonal;
     var name;
     var length;
     var nPoints;
-    var xyArray;
     var xyLength;
     var xyLengthLabel;
     var eleMin;
@@ -87,13 +90,10 @@ module Track {
         xLastPos = null;
         yLastPos = null;
         positionDistance = 0.0;
+        onPositionCalled = false;
 
         cos_heading_smooth = 1.0;
         sin_heading_smooth = 0.0;
-
-        //eleMinAct = null;
-        //eleMaxAct = null;
-        //eleTrack = null;
     }
 
     function resetBreadCrumbs(number) {
@@ -112,7 +112,6 @@ module Track {
             cumDistance = 0.0;
         }
     }
-
 
     function putBreadcrumbPosition(x ,y) {
         var i = 2 * pos_nelements;
@@ -147,11 +146,16 @@ module Track {
             // Thus simulate good enough values from the track elevation data
             // get elevevation from activity info as this should be the better value from either gps or barometer
             
-            //eleTotAscentAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().totalAscent : null;
+            // enable for real device
+            eleTotAscentAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().totalAscent : null;
+            var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
+
+            // enable for simulation
+            /*
             eleTotAscentAct = 47.0;
-            //var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
-            var eleAct = eleTrack == null ? 0.5 * (eleMin + eleMax) :
-                eleTrack + (Math.rand() % 20 -10);
+            var eleAct = eleTrack == null ? 0.5 * (eleMin + eleMax) : eleTrack + (Math.rand() % 20 -10);
+            */
+
             setElevation(eleAct);
         }    
     }
@@ -168,7 +172,7 @@ module Track {
 
         // (lat,lon) coordinates from position are transformed to projected (x,y) coordinates.
         // Hereafter, only (x,y) coordinates should be used
-        var _xy = latLon2xy(lat, lon);
+        var xy = latLon2xy(lat, lon);
 
         // store last xy coordinates for heading and breadcrumb distance for gps positions
         if(xPos != null && onPositionCalled) {
@@ -176,8 +180,8 @@ module Track {
             yLastPos = yPos;
         }
 
-        xPos = _xy[0];
-        yPos = _xy[1];
+        xPos = xy[0];
+        yPos = xy[1];
 
         // determine distance and smoothed heading
         if(xLastPos != null) {
@@ -213,8 +217,6 @@ module Track {
             putBreadcrumbPosition(xPos, yPos);
             // reset cumulative distance by larger value of either breadcrumd distance or distance from previous position
             cumDistance -= breadCrumbDist > positionDistance ? breadCrumbDist : positionDistance;
-            //System.println("putBreadcrumbPosition: ");
-            //System.println("cumDistance: " + cumDistance);
         }
 
         latLast = lat;
@@ -223,15 +225,16 @@ module Track {
     }
 
     function deleteTrack() {
-        trackData = null;
-        xyArray = null;
+        trackStats = null;
+        xArray = null;
+        yArray = null;
+        eleArray = null;
         latCenter = null;
         lonCenter = null;
         diagonal = null;
         name = null;
         length = null;
         nPoints = null;
-        xyArray = null;
         xyLength = null;
         eleMin = null;
         eleMinDist = null;
@@ -244,37 +247,44 @@ module Track {
 
         hasTrackData = false;
         hasElevationData = false;
+
+        onPositionCalled = false;
+        resetPosition();
+        resetBreadCrumbs(null);
     }
 
-    function newTrack(data) {
-        deleteTrack();
+    function newTrack(_stats, _xArray, _yArray, _eleArray) {
+        trackStats = _stats;
+        
+        name = trackStats[0];
+        length = trackStats[1];
+        nPoints = trackStats[2];
 
-        trackData = data;
+        latCenter = trackStats[7];
+        lonCenter = trackStats[8];
+        diagonal = trackStats[9];
 
-        latCenter = data[0][4];
-        lonCenter = data[0][5];
-        diagonal = data[0][6];
-        name = data[1];
-        length = data[2];
-        nPoints = data[3];
-        xyArray = data[4];
+        xArray = _xArray;
+        yArray = _yArray;
         hasTrackData = true;
 
-        if(xyArray.size() > 2 * nPoints) {
+        if(_eleArray != null) {
             hasElevationData = true;
-            // message contains elevation data
-            xyLength = data[0][7];
-            xyLengthLabel = Track.formatLength(xyLength);  
-            eleMin = data[0][8];
-            eleMinDist = data[0][9];
-            eleMinIdx = data[0][10];
-            eleMax = data[0][11];
-            eleMaxDist = data[0][12];
-            eleMaxIdx = data[0][13];
-            eleTotAscent = data[0][14];
-            eleTotDescent = data[0][15];
-        }
+            eleArray = _eleArray;
 
+            // message contains elevation data
+            xyLength = trackStats[10];
+            xyLengthLabel = Track.formatLength(xyLength);  
+            eleMin = trackStats[11];
+            eleMinDist = trackStats[12];
+            eleMinIdx = trackStats[13];
+            eleMax = trackStats[14];
+            eleMaxDist = trackStats[15];
+            eleMaxIdx = trackStats[16];
+            eleTotAscent = trackStats[17];
+            eleTotDescent = trackStats[18];
+        }
+       
         lat_view_center = latCenter;
         lon_view_center = lonCenter;
         
@@ -370,10 +380,6 @@ module Track {
 
         //return [cos_lat * Math.sin(ll), cos_lat_view_center * Math.sin(lat) - sin_lat_view_center * cos_lat * Math.cos(ll)];
         return [x.toFloat(), y.toFloat()];
-    }
-
-    function xyDist2(x1, y1, x2, y2) {
-        return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
     }
 
     function formatLength(ln) {

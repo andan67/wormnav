@@ -160,12 +160,6 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onMenu() {
-        //Workaround for issue
-        // if($.page == -1 && $.appTimerTicks - onPrevPageTick < 3) {
-        //     // counteract
-        //     onNextPage();
-        // }
-
         var menu = new ListMenu(:MainMenu, WatchUi.loadResource(Rez.Strings.mm_title),
                                 [:info, :orient, :breadcrumbs, :autolap, :activity, :course, :screens, :background],
                                 WatchUi.loadResource(Rez.Strings.mm_labels),
@@ -218,7 +212,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
             }
             if($.page > 0) {
                 if(dataView == null) {
-                    dataView = new DataView(Data.activeDataScreens[$.page - 1]);
+                    $.dataView = new DataView(Data.activeDataScreens[$.page - 1]);
                 } else {
                     $.dataView.setDataFields(Data.activeDataScreens[$.page - 1]);
                 }

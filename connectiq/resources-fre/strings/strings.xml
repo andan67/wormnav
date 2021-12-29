@@ -23,7 +23,7 @@
            
     <string id="lap">Circuit</string> 
 
-    <string id="course_labels">Période mise à jour|Grande font|Show profile|Supprimer</string>
+    <string id="course_labels">Grande font|Montre le profile|Stocker|Période mise à jour|Supprimer</string>
     <string id="activities">Générique|Course à pied|Marcher|Cyclisme</string>
 
     <string id="msg_continue">Reprendre?</string> 

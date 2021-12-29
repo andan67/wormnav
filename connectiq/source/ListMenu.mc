@@ -32,61 +32,58 @@ class ListMenu extends Ui.View
     var onMenuTicks = -1;
 
     // Initialize menu with
-    // _id: id of menu
-    // _menuTitle: title of menu
-    // _itemIdList: id list of sub menu items
-    // _itemLabelList: labels of sub menu items
-    // _itemValueList: values of sub menu items
-    // _initValue: initial (actual) value
-    // _showSubMenuValues: if true actual value is shown under main menu item
-    // _options: dictionary container for additional options
+    // id: id of menu
+    // menuTitle: title of menu
+    // itemIdList: id list of sub menu items
+    // itemLabelList: labels of sub menu items
+    // itemValueList: values of sub menu items
+    // initValue: initial (actual) value
+    // showSubMenuValues: if true actual value is shown under main menu item
+    // options: dictionary container for additional options
 
-    function initialize (_id, _menuTitle, _itemIdList, _itemLabelList, _itemValueList, _initValue, _showSubMenuValues, _options)
+    function initialize (id, menuTitle, itemIdList, itemLabelList, itemValueList, initValue, showSubMenuValues, options)
     {
         View.initialize ();
-        id = _id;
+        self.id = id;
         if(id == :MainMenu) {
             onMenuTicks = $.appTimerTicks;
         }
-        itemValueList = _itemValueList;
-        initValue = _initValue;
-        showSubMenuValues = _showSubMenuValues;
-        itemIdList = _itemIdList;
-        options = _options;
+        self.itemValueList = itemValueList;
+        self.initValue = initValue;
+        self.showSubMenuValues = showSubMenuValues;
+        self.itemIdList = itemIdList;
+        self.options = options;
+        self.itemLabelList = itemLabelList;
+        self.title = menuTitle;
 
-
-        if(_itemLabelList instanceof String) {
-            itemLabelList = Application.getApp().split(_itemLabelList,'|');
-        } else {
-            itemLabelList = _itemLabelList;
+        if(self.itemLabelList instanceof String) {
+            self.itemLabelList = Application.getApp().split(self.itemLabelList,'|');
         }
 
         // determine number of items as minimum size of all item arrays
-        nItems = itemIdList!= null? itemIdList.size() : 101;
-        if(itemLabelList != null && itemLabelList.size() < nItems) {
-            nItems = itemLabelList.size();
+        nItems = self.itemIdList!= null? self.itemIdList.size() : 101;
+        if(self.itemLabelList != null && self.itemLabelList.size() < nItems) {
+            nItems = self.itemLabelList.size();
         }
-        if(itemValueList != null && itemValueList.size() < nItems) {
-            nItems = itemValueList.size();
+        if(itemValueList != null && self.itemValueList.size() < nItems) {
+            nItems = self.itemValueList.size();
         }
 
         // add index as default value in case no value list has been provided
-        if(showSubMenuValues == 0 && itemValueList == null) {
-            itemValueList = [];
+        if(self.showSubMenuValues == 0 && self.itemValueList == null) {
+            self.itemValueList = [];
             for(var i = 0; i < nItems; i++) {
-                itemValueList.add(i);
+                self.itemValueList.add(i);
             }
         }
 
         // derive labels from values if set
-        if(itemLabelList == null) {
-            itemLabelList = [];
+        if(self.itemLabelList == null) {
+            self.itemLabelList = [];
             for(var i = 0; i < nItems; i++) {
-                itemLabelList.add(itemValueList[i].toString());
+                self.itemLabelList.add(self.itemValueList[i].toString());
             }
         }
-
-        title = _menuTitle;
 
         index = 0;
         nextIndex = 0;

@@ -9,12 +9,17 @@ class DataView extends GenericView {
     hidden var width;
     hidden var height;
     hidden var data = new [4];
-    hidden var mDataFields;
+    hidden var dataFields;
     hidden var numberDataFields = 0;
-    hidden var dfLines;
-    hidden var dfCenters;
     hidden var font;
     hidden var fontNumber;
+
+    hidden var offset;
+    hidden var h;
+    hidden var yl;
+    hidden var yv;
+    hidden var w2;
+
 
     // Set the label of the field here
     function initialize(dataFields) {
@@ -22,13 +27,13 @@ class DataView extends GenericView {
         setDataFields(dataFields);
     }
 
-    function setDataFields(dataFields) {
-        mDataFields = new [dataFields.size()];
+    function setDataFields(df) {
+        dataFields = new [df.size()];
         // deep copy of data fields items (integers)
-        for(var i=0; i< mDataFields.size(); i+=1) {
-            mDataFields[i] = dataFields[i];
+        for(var i = 0; i < dataFields.size(); i += 1) {
+            dataFields[i] = df[i];
         }
-        numberDataFields = Data.min(4,mDataFields.size());
+        numberDataFields = Data.min(4,dataFields.size());
         font = Graphics.FONT_SMALL;
         switch(numberDataFields) {
             case 1:
@@ -67,51 +72,23 @@ class DataView extends GenericView {
             return;
         }
 
-        var h1 = dc.getFontHeight(font);
-        var a1 = dc.getFontAscent(font);
-        var d1 = dc.getFontDescent(font);
-        var h2 = dc.getFontHeight(fontNumber);
-        var a2 = dc.getFontAscent(fontNumber);
-        var d2 = dc.getFontDescent(fontNumber);
-
-        var offset = 0;
-        var h = height / Data.min(numberDataFields,3);
+        offset = numberDataFields == 1 ? -dc.getFontDescent(fontNumber) : 0.0;
+        h = height / Data.min(numberDataFields, 3);
         if($.device.equals("vivoactive") && numberDataFields > 1) {
             // narrow vertical size of data fields for vivoactive devices with round screen
             if(numberDataFields > 2) {
-                //offset = 2 * (h - h1 - h2);
-                offset = 0.20*h;
-                h = (height - 2* offset) / 3;
+                offset = 0.2 * h;
+                h = (height - 2 * offset) / 3;
             } else {
-                //offset = 1* (h - h1 - h2);
-                offset = 0.3*h;
-                h = (height - 2* offset) / 2;
+                offset = 0.3 * h;
+                h = (height - 2 * offset) / 2;
             }
         }
         // top position of data label text in pixels from top of data field
-        var y1 = 0.5 * (h - h1 - h2 + d2);
+        yl = 0.5 * (h - dc.getFontHeight(font) -  dc.getFontHeight(fontNumber) + dc.getFontDescent(fontNumber));
         // top position of data value text in pixels from top of data field
-        var y2 = y1 + a1;
-        var w2= 0.5 * width;
-        switch(numberDataFields) {
-            case 1:
-                dfLines = [];
-                dfCenters = [[w2, y1-d2, y2-d2]];
-                break;
-            case 2:
-                dfLines = [[[0, offset + h],[width, offset + h]]];
-                dfCenters = [[w2, offset + y1, offset + y2],[w2, offset + h + y1, offset + h + y2]];
-                break;
-            case 3:
-                dfLines = [[[0, offset + h],[width, offset + h]],[[0, offset + 2*h],[width, offset + 2*h]]];
-                dfCenters = [[w2, offset + y1, offset + y2],[w2, offset + h + y1, offset + h + y2],[w2, offset + 2*h + y1, offset + 2*h + y2]];
-                break;
-            case 4:
-            default:
-                dfLines = [[[0,offset + h],[width,offset + h]],[[0,offset + 2*h],[width,offset + 2*h]],[[w2,offset + h],[w2,offset + 2*h]]];
-                dfCenters = [[w2, offset + y1, offset + y2],[0.5*w2, offset + h+ y1, offset + h + y2],[1.5*w2, offset + h+ y1, offset + h + y2],[w2, offset + 2*h + y1, offset +2*h + y2]];
-                break;
-        }
+        yv = yl + dc.getFontAscent(font);
+        w2 = 0.5 * width;
     }
 
     // Handle the update event
@@ -123,35 +100,37 @@ class DataView extends GenericView {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
-        for(var i=0; i < dfLines.size(); i +=1) {
-            dc.drawLine(dfLines[i][0][0],dfLines[i][0][1],dfLines[i][1][0],dfLines[i][1][1]);
+        for(var i = 1; i < numberDataFields; i += 1) {
+            var j = Data.min(i, 2);
+            dc.drawLine(0, offset + j * h, width, offset + j * h);
+            if( i == 3) {
+                dc.drawLine(w2, offset + h, w2, offset + 2 * h);  
+            }      
         }
 
-        var dataLabelValue = null;
-        for(var i=0; i< numberDataFields; i+= 1) {
-            dataLabelValue = Data.getDataFieldLabelValue(mDataFields[i]);
-            drawField(dc, dataLabelValue[0], dataLabelValue[1] , dfCenters[i][0], dfCenters[i][1], dfCenters[i][2]);
+        // drwa fileds
+        dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
+        for(var i = 0; i < numberDataFields; i += 1) {
+             var dataLabelValue = Data.getDataFieldLabelValue(dataFields[i]);
+             var xc = 0.0;
+             var ylc = offset;
+             var yvc = offset;
+             if( numberDataFields < 4 || i == 0 || i == 3) {
+                var j = Data.min(i, 2);
+                xc = w2;
+                ylc += yl + j * h;
+                yvc += yv + j * h;
+             } else {
+                ylc += yl + h;
+                yvc += yv + h;
+                xc = (i - 0.5) * w2;
+             }
+             dc.drawText(xc, ylc, font, dataLabelValue[0], Graphics.TEXT_JUSTIFY_CENTER);
+             dc.drawText(xc, yvc, fontNumber, dataLabelValue[1], Graphics.TEXT_JUSTIFY_CENTER);
         }
 
         drawStartStop(dc);
     }
-
-    function drawField(dc, label, value, x, y1, y2) {
-        if(value == null) {
-            value="--";
-        }
-        if( label == null ) {
-            label = "";
-
-        }
-        dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        //dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        //dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(x, y1, font, label, Graphics.TEXT_JUSTIFY_CENTER);
-        dc.drawText(x, y2, fontNumber, value, Graphics.TEXT_JUSTIFY_CENTER);
-        return;
-    }
-
 }
 
 

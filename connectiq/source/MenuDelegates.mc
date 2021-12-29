@@ -1,4 +1,3 @@
-
 using Toybox.WatchUi;
 using Toybox.System;
 using Toybox.Lang;
@@ -9,8 +8,10 @@ using Track;
 
 module MenuDelegates {
 
-    function pushSubMenuView(_menu) {
-        WatchUi.pushView(_menu, new ListMenuDelegate (_menu, new SubMenuDelegate(_menu)), WatchUi.SLIDE_IMMEDIATE);
+    var app = Application.getApp();
+
+    function pushSubMenuView(menu) {
+        WatchUi.pushView(menu, new ListMenuDelegate (menu, new SubMenuDelegate(menu)), WatchUi.SLIDE_IMMEDIATE);
     }
 
     function getMenuItem(id, idx, options){
@@ -20,7 +21,7 @@ module MenuDelegates {
                         [0.0,100.0,200.0,400.0,500.0,1000.0,2000.0,5000.0],
                         Track.autolapDistance];
             case :bc_number:
-                return [null, [1,2,5,10,20,50,100], Track.breadCrumbNumber];
+                return [null, [5,10,20,50,100,200,500], Track.breadCrumbNumber];
             case :bc_distance:
                 return [["off","50m","100m","200m","500m","1km","2km","5km","10km","20km"],
                         [0.0,50.0,100.0,200.0,500.0,1000.0,2000.0,5000.0,10000.0,20000.0],
@@ -48,13 +49,17 @@ module MenuDelegates {
                         [1,2,5,10,15,30,60],
                         $.trackViewPeriod];
             case :track_large_font:
-                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
+                return [WatchUi.loadResource(Rez.Strings.onoff_opts),
                         [true, false],
                         $.trackViewLargeFont];        
             case :track_profile:
-                return [WatchUi.loadResource(Rez.Strings.yesno_opts),
+                return [WatchUi.loadResource(Rez.Strings.onoff_opts),
                         [true, false],
-                        $.trackElevationPlot];           
+                        $.trackElevationPlot];
+            case :track_storage:
+                return [WatchUi.loadResource(Rez.Strings.onoff_opts),
+                        [true, false],
+                        $.trackStorage];                   
         }
     }
 
@@ -67,7 +72,7 @@ module MenuDelegates {
                 if(entry != null) {
                     var mlabels = entry[0];
                     if(entry[0] instanceof Lang.String) {
-                        mlabels = Application.getApp().split(entry[0],'|');
+                        mlabels = app.split(entry[0],'|');
                     }
                     var values = entry[1];
                     var j;
@@ -101,9 +106,9 @@ module MenuDelegates {
 
         hidden var menu;
 
-        function initialize(_menu) {
+        function initialize(menu) {
             MenuInputDelegate.initialize();
-            menu = _menu;
+            self.menu = menu;
         }
 
 
@@ -126,7 +131,7 @@ module MenuDelegates {
                 switch(menuItemId) {
                     case :info:
                         showValue = 2;
-                        labelList =  Application.getApp().split(WatchUi.loadResource(Rez.Strings.info_labels),'|');
+                        labelList =  app.split(WatchUi.loadResource(Rez.Strings.info_labels),'|');
                         valueList = [WatchUi.loadResource(Rez.Strings.AppVersion)];
                         if(Track.hasTrackData) {
                             valueList.add(Track.name);
@@ -154,7 +159,7 @@ module MenuDelegates {
                         break;
                     case :course:
                         showValue = 1;
-                        idList = [:track_update, :track_large_font, :track_profile, :track_del];
+                        idList = [:track_large_font, :track_profile, :track_storage, :track_update, :track_del];
                         labelList = WatchUi.loadResource(Rez.Strings.course_labels);
                         break;
                     default:
@@ -170,9 +175,9 @@ module MenuDelegates {
     class SubMenuDelegate extends WatchUi.MenuInputDelegate {
         hidden var menu;
 
-        function initialize(_menu) {
+        function initialize(menu) {
             MenuInputDelegate.initialize();
-            menu = _menu;
+            self.menu = menu;
         }
 
         function onMenuItem(item) {
@@ -189,12 +194,12 @@ module MenuDelegates {
                         Track.northHeading = true;
                         Track.centerMap = (value == 2);
                     }
-                    Application.getApp().setProperty("northHeading", Track.northHeading);
-                    Application.getApp().setProperty("centerMap", Track.centerMap);
+                    app.setProperty("northHeading", Track.northHeading);
+                    app.setProperty("centerMap", Track.centerMap);
                     break;
                 case :background:
                     $.isDarkMode = value;
-                    Application.getApp().setProperty("isDarkMode", $.isDarkMode);
+                    app.setProperty("isDarkMode", $.isDarkMode);
                     if($.trackView != null) {
                         trackView.setDarkMode($.isDarkMode);
                     }
@@ -204,7 +209,7 @@ module MenuDelegates {
                     break;
                 case :autolap:
                     Track.setAutolapDistance(value);
-                    Application.getApp().setProperty("autolapDistance",value);
+                    app.setProperty("autolapDistance",value);
                     break;
                 case :breadcrumbs:
                     switch(menu.getSelectedId()) {
@@ -212,7 +217,7 @@ module MenuDelegates {
                             Track.putBreadcrumbLastPosition();
                             break;
                         case :bc_clear:
-                            Track.resetPosition();
+                            Track.resetBreadCrumbs(null);
                             break;
                         case :bc_number:
                         case :bc_distance:
@@ -225,15 +230,15 @@ module MenuDelegates {
                     break;
                 case :bc_distance:
                     Track.breadCrumbDist = value;
-                    Application.getApp().setProperty("breadCrumbDist", Track.breadCrumbDist);
+                    app.setProperty("breadCrumbDist", Track.breadCrumbDist);
                     break;
                 case :bc_number:
                     Track.resetBreadCrumbs(value);
-                    Application.getApp().setProperty("breadCrumbNumber", Track.breadCrumbNumber);
+                    app.setProperty("breadCrumbNumber", Track.breadCrumbNumber);
                     break;
                 case :activity:
                     $.activityType = value;
-                    Application.getApp().setProperty("activityType", $.activityType);
+                    app.setProperty("activityType", $.activityType);
                     Data.setMaxHeartRate();
                     break;
                 case :course:
@@ -241,13 +246,14 @@ module MenuDelegates {
                         case :track_update:
                         case :track_large_font:                        
                         case :track_profile:
+                        case :track_storage:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
                             newMenu = new ListMenu(menu.getSelectedId(), menu.getSelectedLabel(), null,
                                     entry[0], entry[1], entry[2], 0, null);
                             pushSubMenuView(newMenu);
                             return true;
                         case :track_del:
-                            if(track!=null) {
+                            if(Track.hasTrackData) {
                                 var message = WatchUi.loadResource(Rez.Strings.msg_delete_track);
 
                                 var dialog = new WatchUi.Confirmation(message);
@@ -261,20 +267,24 @@ module MenuDelegates {
                     }
                 case :track_update:
                     $.trackViewPeriod = value;
-                    Application.getApp().setProperty("trackViewPeriod", $.trackViewPeriod);
+                    app.setProperty("trackViewPeriod", $.trackViewPeriod);
                     break;
                 case :track_large_font:
                     $.trackViewLargeFont = value;
-                    Application.getApp().setProperty("trackViewLargeFont", $.trackViewLargeFont);
+                    app.setProperty("trackViewLargeFont", $.trackViewLargeFont);
                     break;
                 case :track_profile:
                     $.trackElevationPlot = value;
-                    Application.getApp().setProperty("trackElevationPlot", $.trackElevationPlot);
+                    app.setProperty("trackElevationPlot", $.trackElevationPlot);
                     break;
+                 case :track_storage:
+                    $.trackStorage = value;
+                    app.setProperty("trackStorage", $.trackStorage);
+                    break;            
                 case :screens:
                     if(value == 0) {
                         Data.setDataScreens(Data.dataScreensDefault);
-                        Application.getApp().setProperty("dataScreens", Data.dataScreens);
+                        app.setProperty("dataScreens", Data.dataScreens);
                         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
                         return true;
                     }
@@ -292,7 +302,7 @@ module MenuDelegates {
                     return true;
                 case :data_field:
                     Data.setField(menu.options[0], menu.options[1], value);
-                    Application.getApp().setProperty("dataScreens",Data.dataScreens);
+                    app.setProperty("dataScreens",Data.dataScreens);
                     break;
                 default:
                     break;
@@ -311,7 +321,8 @@ module MenuDelegates {
         function onResponse(response) {
             if (response == WatchUi.CONFIRM_NO) {
             } else {
-                Track.deleteTrack();   
+                Track.deleteTrack();
+                app.clearTrackStorage();
             }
         }
     }
