@@ -303,15 +303,29 @@ The specfic elements of this screen are:
 {::options parse_block_html="true" /}
 <div style="clear: both"/>
 
-# Important notes and limitations
-- Use of the app for navigation is at your own risk
-- The number of course points heavily impacts the memory and power consumption as well as the performance (screen refresh rate) of the app
-- For the Forerunner 235, the following limits and performance figures have been determined   
-  - Maximum number of points: ~300 with or ~450 without elevation data
-  - For a 300 points course with elevation data:
-    - Course view: refresh time ~370ms with power consumption ~8.5% per hour
-    - Profile view: refresh time ~870ms with power consumption ~13% per hour
-- For other, especially newer devices the limitations and performance figures might be much higher
-- It is highly recommended to use the optimize feature of the companion app for tracks/routes with large number of points. A maximum error of ~10m induced by the optimization process should be good enough for many use cases.
-- On Forerunner 235 and likely with other older and low spec Garmin devices, the transmission or storage of courses with large number of points might fail. If an optimization is not possible, the limit can be extended by deleting a loaded course from the app (from Course menu).
-- If the course profile view is active, the point on the course that is nearest to the current position is determined by a projection method. This expensive procedure explains the lower refresh rate and higher power consumption compared to the course view. Note that the current position might still be at a large distance from the course, which would make the current elevation and distance data potentially very inaccurate. The actual distance can be assessed from the course view. Also the passed distance can be wrong at start or end at round courses and in general at course segments which are close to each other.
+# Important notes
+## No warrenty
+This app comes with no warrenty or guaranted feature. The use of the app for navigation is absolutely at your own risk!
+## Limitations and known issues
+The number of course points heavily impacts the memory and power consumption as well as the performance (screen refresh rate) of the app.
+
+For the Forerunner 235, the following limits and performance figures have been determined   
+- Maximum number of points: ~300 with or ~450 without elevation data
+- For a 300 points course with elevation data:
+  - Course view: refresh time ~370ms with battery consumption ~8.5% per hour
+  - Profile view: refresh time ~870ms with battery consumption ~13% per hour
+
+The limitations and performance figures might be much higher for other, especially newer Garmin devices.
+
+It is highly recommended to use the optimize feature of the companion app for tracks/routes with large number of points. A maximum error of ~10m induced by the optimization process should be good enough for many use cases.
+
+For Forerunner 235 (and likely  other older and low spec Garmin devices), the transmission of courses with large number of points might fail or could result in a loss of stored application properties which hold the settings and by default the loaded course data. If an optimization is unwanted or not possible, try the following workarounds from the Course menu options
+- Delete the loaded course first before sending a new course to the Garmin device
+- Disable the storage of course data on app exit to avoid loosing other app settings. The downside is that the course needs to be re-transmitted from the companion app for the next usage.
+
+## Course profile
+If the course profile view is active, the point on the course that is nearest to the current position is determined by a projection method. This expensive procedure explains the lower refresh rate and higher power consumption compared to the course view. 
+
+Note that the current position might still be at a large distance from the course, which would make the current elevation and distance data potentially very inaccurate. The actual distance can be assessed from the course view. 
+
+Also the passed distance can be wrong at start or end at round courses and in general at course segments which are close to each other.
