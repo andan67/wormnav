@@ -304,8 +304,8 @@ The specfic elements of this screen are:
 <div style="clear: both"/>
 
 # Important notes
-## No warrenty
-This app comes with no warrenty or guaranted feature. The use of the app for navigation is absolutely at your own risk!
+## No warranty
+This app comes with no warranty or guaranted feature. The use of the app for navigation is absolutely at your own risk!
 ## Limitations and known issues
 The number of course points heavily impacts the memory and power consumption as well as the performance (screen refresh rate) of the app.
 
