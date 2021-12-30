@@ -104,8 +104,8 @@ class DataView extends GenericView {
             var j = Data.min(i, 2);
             dc.drawLine(0, offset + j * h, width, offset + j * h);
             if( i == 3) {
-                dc.drawLine(w2, offset + h, w2, offset + 2 * h);  
-            }      
+                dc.drawLine(w2, offset + h, w2, offset + 2 * h);
+            }
         }
 
         // drwa fileds

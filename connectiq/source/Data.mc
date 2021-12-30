@@ -115,10 +115,10 @@ module Data {
                 break;
             case 18: // TOTAL_DESCENT
                 dataValue = aInfo.totalDescent != null ? aInfo.totalDescent.format("%.0f") : null;
-                break;    
+                break;
             case 19: // CLOCK_TIME
                 var time = Sys.getClockTime();
-                dataValue = 
+                dataValue =
                     time.hour.format("%02d") + ":" +
                     time.min.format("%02d") + ":" +
                     time.sec.format("%02d");

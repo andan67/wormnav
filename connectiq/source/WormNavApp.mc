@@ -70,7 +70,7 @@ class WormNavApp extends Application.AppBase {
                 getProperty("trackXData"),
                 getProperty("trackYData"),
                 getProperty("trackEleData")
-            );                  
+            );
         }
 
         if(getProperty("northHeading") != null) {
@@ -165,8 +165,8 @@ class WormNavApp extends Application.AppBase {
         setProperty("trackEleData", null);
     }
 
-    function onPhone(msg) {        
-        try {          
+    function onPhone(msg) {
+        try {
             // quick check if message is in correct format
             msgData = msg.data;
             if(msgData[0][2] instanceof Lang.Number) {
@@ -187,9 +187,8 @@ class WormNavApp extends Application.AppBase {
             // handle new track event here as this results in less peak memory
             newTrackReceived = false;
             Track.deleteTrack();
-                
             clearTrackStorage();
-            Track.newTrack($.msgData[0], $.msgData[1],  $.msgData[2], $.msgData.size() == 4 ? $.msgData[3] : null );                
+            Track.newTrack($.msgData[0], $.msgData[1],  $.msgData[2], $.msgData.size() == 4 ? $.msgData[3] : null );
             msgData = null;
             if(trackStorage) {
                 setProperty("trackStats", Track.trackStats);
@@ -198,7 +197,7 @@ class WormNavApp extends Application.AppBase {
                 if(Track.hasElevationData) {
                    setProperty("trackEleData", Track.eleArray);
                 }
-            }  
+            }
             $.trackView.isNewTrack = true;
             $.trackView.showElevationPlot = false;
             page = -1;

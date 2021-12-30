@@ -54,7 +54,7 @@ class TrackView extends GenericView {
     var fontsize = Graphics.FONT_MEDIUM;
     var fontHeight = 0;
     var fontsizeNumber = Graphics.FONT_LARGE;
-   
+
     var topPadding = 0.0;
     var bottomPadding = 0.0;
 
@@ -93,7 +93,7 @@ class TrackView extends GenericView {
         var _yCenter = yCenter;
         var _scaleFactor = scaleFactor;
         var _cosTransform = cosTransform;
-        var _sinTransform = sinTransform; 
+        var _sinTransform = sinTransform;
 
         var _xArray = null;
         var _yArray = null;
@@ -108,7 +108,7 @@ class TrackView extends GenericView {
             _nPoints = Track.nPoints;
 
             for(var i = 0; i < _nPoints; i++ ) {
-                
+
                 if(i > 0) {
                     x1 = x2;
                     y1 = y2;
@@ -117,12 +117,12 @@ class TrackView extends GenericView {
                 xr = _scaleFactor * (_xArray[i] - _xCenter);
                 yr = _scaleFactor * (_yArray[i] - _yCenter);
                 x2 = _xSCenter + xr * _cosTransform - yr * _sinTransform;
-                y2 = _ySCenter - xr * _sinTransform - yr * _cosTransform;        
+                y2 = _ySCenter - xr * _sinTransform - yr * _cosTransform;
 
                 if(i > 0) {
                     dc.drawLine(x1, y1, x2, y2);
                 }
-                
+
             }
         }
 
@@ -151,12 +151,12 @@ class TrackView extends GenericView {
         var x1 = 0.0;
         var y1 = 0.0;
         var x2 = 0.0;
-        var y2 = 0.0;       
+        var y2 = 0.0;
 
         var d2 = Track.EARTH_RADIUS * Track.EARTH_RADIUS;
         var nearestPointIndex = -1;
         var nearestPointLambda = 0.0;
-        var findNearestPoint = Track.onPositionCalled;     
+        var findNearestPoint = Track.onPositionCalled;
         var dx = 0.0;
         var dy = 0.0;
         var xt1 = 0.0;
@@ -180,7 +180,7 @@ class TrackView extends GenericView {
         var _x1Ele = x1Ele;
         var _y1Ele = y1Ele;
         var _x2Ele = x2Ele;
-        var _y2Ele = y2Ele + _scaleEleY * _eleMinTrack; 
+        var _y2Ele = y2Ele + _scaleEleY * _eleMinTrack;
 
         var _xp = Track.xPos;
         var _yp = Track.yPos;
@@ -193,8 +193,8 @@ class TrackView extends GenericView {
         if(Track.hasElevationData) {
             dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT);
             dc.setPenWidth(2);
-            _xArray = Track.xArray;            
-            _yArray = Track.yArray;    
+            _xArray = Track.xArray;
+            _yArray = Track.yArray;
             _eleArray = Track.eleArray;
             _nPoints = Track.nPoints;
 
@@ -206,14 +206,13 @@ class TrackView extends GenericView {
                     yt1 = yt2;
                 }
                 // track coordinates
-                xt2 = _xArray[i];            
+                xt2 = _xArray[i];
                 yt2 = _yArray[i];
 
                 // x1,x2: screen coordinate of distance on track from start to previous/current point
                 // y1,y2: screnn coordiante of elevation of previous /current point
                 x2 = _x1Ele + _scaleEleX * dss;
                 y2 = _y2Ele - _scaleEleY * _eleArray[i];
-                
 
                 if(i > 0) {
                     dc.drawLine(x1, y1, x2, y2);
@@ -256,80 +255,80 @@ class TrackView extends GenericView {
 
         _y2Ele = y2Ele;
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
-        
+
         // draw axes
         dc.drawLine(_x1Ele, _y2Ele, _x2Ele, _y2Ele);
         dc.drawLine(_x2Ele, _y2Ele, _x2Ele, _y1Ele);
         dc.drawLine(_x1Ele, _y1Ele, _x1Ele, _y2Ele);
-        
+
         // draw axes' tick marks
         for(var w = 0.25; w <= 0.75; w += 0.25) {
             dc.drawLine(_x1Ele + w * _eleWidth, _y2Ele, _x1Ele + w * _eleWidth, y2Ele + 0.04 * _eleWidth );
             dc.drawLine(_x1Ele , _y2Ele - w * _eleHeight, x1Ele - 0.04 * _eleWidth, _y2Ele - w * _eleHeight );
-            dc.drawLine(_x2Ele , _y2Ele - w * _eleHeight, x2Ele + 0.04 * _eleWidth, _y2Ele - w * _eleHeight );   
+            dc.drawLine(_x2Ele , _y2Ele - w * _eleHeight, x2Ele + 0.04 * _eleWidth, _y2Ele - w * _eleHeight );
         }
-        
-        // draw min/max elevation values 
+
+        // draw min/max elevation values
         var ed = 0.08 * (pixelWidth2 - _x1Ele);
         dc.drawText(_x2Ele - ed,  _y2Ele + 1.5 * ed, fontsize, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
         dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + Track.eleTotAscent.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
         dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-        
+
         // draw length
         dc.drawText(pixelWidth2, 1.12 * _y2Ele, fontsize , Track.xyLengthLabel, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
         // draw nearest point on track
         if(nearestPointIndex >= 0) {
-            //System.println("nearestPointIndex:" + nearestPointIndex);  
+            //System.println("nearestPointIndex:" + nearestPointIndex);
             x2 = _x1Ele + _scaleEleX * dssn;
             y2 = _y2Ele - _scaleEleY * (Track.eleAct - Track.eleMinTrack);
-                        
+
             // draw elevation from nearest point on track
             dc.setColor(trackColor, Graphics.COLOR_TRANSPARENT );
             // interpolate elevation
             eleTrack = _eleArray[nearestPointIndex] + nearestPointLambda * (_eleArray[nearestPointIndex + 1] - _eleArray[nearestPointIndex]);
             Track.eleTrack = eleTrack;
             dc.drawText(_x1Ele + ed,  _y2Ele + 1.5 * ed, fontsize, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-            
+
             // draw actual elevation
             dc.setColor(cursorColor, backgroundColor);
             dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + Track.eleTotAscentAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.drawLine(x2, _y2Ele, x2, _y1Ele);
-            
+
             // draw small horizontal line at actual elevation
             dc.drawLine(x2 - 2, y2, x2 + 2, y2);
 
             // draw distance to end of course
             dc.drawText(pixelWidth2, 1.12 * _y2Ele + 0.8 * dc.getFontHeight(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
-                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);         
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             //}
         }
-        
+
         _xArray = null;
         _yArray = null;
-        _eleArray = null;      
+        _eleArray = null;
         // drawTrackTime = System.getTimer() - _clock;
     }
 
     function drawPositionArrowAndCompass(dc) {
-        
+
         var _sin = 0.0;
         var _cos = 1.0;
         if(Track.northHeading || Track.centerMap) {
             _sin = Track.sin_heading_smooth;
             _cos = Track.cos_heading_smooth;
-        } 
-        
+        }
+
         var _dx1 =  sizeCursor * _sin;
         var _dy1 = -sizeCursor * _cos;
         var _dx2 = -_dy1 - 1.577352 * _dx1;
-        var _dy2 =  _dx1 - 1.577352 * _dy1;            
+        var _dy2 =  _dx1 - 1.577352 * _dy1;
         var _dx3 = -3.154704 * _dx1 - _dx2;
         var _dy3 = -3.154704 * _dy1 - _dy2;
 
         var _xy = xy2Screen(Track.xPos, Track.yPos);
-        
+
         var _x1 = _xy[0] + _dx1;
         var _y1 = _xy[1] + _dy1;
         var _x2 = _xy[0] + _dx2;
@@ -355,7 +354,7 @@ class TrackView extends GenericView {
         _dy1 = + 0.5 * sizeCompass * sinTransform;
         _dx2 = - sizeCompass * sinTransform;
         _dy2 = - sizeCompass * cosTransform;
-      
+
         // north part of compass
         var points = [[xCompass + _dx1, yCompass + _dy1 - bottomPadding],
                       [xCompass - _dx2, yCompass - _dy2 - bottomPadding],
@@ -379,11 +378,11 @@ class TrackView extends GenericView {
         Track.resetBreadCrumbs(null);
     }
 
-    function xy2Screen(x, y) {      
+    function xy2Screen(x, y) {
         var xr = scaleFactor * (x - xCenter);
         var yr = scaleFactor * (y - yCenter);
         return [xSCenter + xr * cosTransform - yr * sinTransform,
-                ySCenter - xr * sinTransform - yr * cosTransform];    
+                ySCenter - xr * sinTransform - yr * cosTransform];
     }
 
     // Load your resources here
@@ -394,13 +393,13 @@ class TrackView extends GenericView {
         pixelHeight2 = 0.5 * pixelHeight;
         pixelHeight3 = 0.6666667 * pixelHeight;
         pixelMin = pixelWidth < pixelHeight ? pixelWidth : pixelHeight;
-        
+
         // coordinates for drawing the scale
         x1Scale = 0.4 * pixelWidth;
         y1Scale = 0.96 * pixelHeight;
         x2Scale = 0.6 * pixelWidth;
         y2Scale = 0.98 * pixelHeight;
-        
+
         // size and coordinates for the compass
         sizeCompass = 0.25 * (x2Scale - x1Scale);
         xCompass = x2Scale + 2 * sizeCompass;
@@ -446,19 +445,19 @@ class TrackView extends GenericView {
 
         if(isNewTrack) {
             isNewTrack = false;
-            
+
             if($.msgData != null) {
                 // Newly tansmitted track data exists.
                 // Handle this case in app base class outside update loop as this results in less peak memory
                 $.newTrackReceived = true;
-                return;        
+                return;
             }
-            
+
             setZoomLevel(null);
             if(Track.hasElevationData) {
                 scaleEleX = eleWidth / Track.xyLength;
             }
-            
+
         }
 
         xSCenter = pixelWidth2;
@@ -467,16 +466,16 @@ class TrackView extends GenericView {
         if(Track.northHeading || Track.centerMap || !Track.onPositionCalled) {
             sinTransform = 0.0;
             cosTransform = 1.0;
-        } else {           
+        } else {
             sinTransform = Track.sin_heading_smooth;
             cosTransform = Track.cos_heading_smooth;
-            ySCenter = pixelHeight3;    
+            ySCenter = pixelHeight3;
         }
 
         if(Track.centerMap) {
             // the x,y cooridnate origin is the center of the map by construction
             xCenter = 0.0;
-            yCenter = 0.0;    
+            yCenter = 0.0;
         } else {
             xCenter = Track.xPos;
             yCenter = Track.yPos;
@@ -518,7 +517,6 @@ class TrackView extends GenericView {
                     drawTrackTime, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             */
         }
-         
 
         if(!showElevationPlot) {
             drawScale(dc);

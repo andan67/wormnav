@@ -67,7 +67,7 @@ module Track {
     var eleMinDist;
     var eleMinIdx;
     var eleMax;
-    var eleMaxDist; 
+    var eleMaxDist;
     var eleMaxIdx;
     var eleTotAscent;
     var eleTotDescent;
@@ -85,8 +85,8 @@ module Track {
 
     var positionDistance = 0.0;
     var onPositionCalled = false;
-    
-    function resetPosition() {    
+
+    function resetPosition() {
         xLastPos = null;
         yLastPos = null;
         positionDistance = 0.0;
@@ -139,13 +139,12 @@ module Track {
         // Hereafter, only (x,y) coordinates should be used
         //var lat = info.position.toRadians()[0].toFloat();
         //var lon = info.position.toRadians()[1].toFloat();
-        onPositionCalled = true;        
+        onPositionCalled = true;
         setPosition(info.position.toRadians()[0], info.position.toRadians()[1]);
         if($.trackElevationPlot && hasElevationData) {
             //ToDo: It seems there is a problem with getting correct altitude values in the simulator
             // Thus simulate good enough values from the track elevation data
             // get elevevation from activity info as this should be the better value from either gps or barometer
-            
             // enable for real device
             eleTotAscentAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().totalAscent : null;
             var eleAct = Activity.getActivityInfo() != null ? Activity.getActivityInfo().altitude : null;
@@ -157,7 +156,7 @@ module Track {
             */
 
             setElevation(eleAct);
-        }    
+        }
     }
 
     function setPosition(lat, lon) {
@@ -187,7 +186,7 @@ module Track {
         if(xLastPos != null) {
             var dx = xPos - xLastPos;
             var dy = yPos - yLastPos;
-        
+
             // Dimensional distance between current and last point
             var d = Math.sqrt(dx * dx + dy * dy);
             // distance in m
@@ -255,7 +254,7 @@ module Track {
 
     function newTrack(_stats, _xArray, _yArray, _eleArray) {
         trackStats = _stats;
-        
+
         name = trackStats[0];
         length = trackStats[1];
         nPoints = trackStats[2];
@@ -274,7 +273,7 @@ module Track {
 
             // message contains elevation data
             xyLength = trackStats[10];
-            xyLengthLabel = Track.formatLength(xyLength);  
+            xyLengthLabel = Track.formatLength(xyLength);
             eleMin = trackStats[11];
             eleMinDist = trackStats[12];
             eleMinIdx = trackStats[13];
@@ -284,10 +283,10 @@ module Track {
             eleTotAscent = trackStats[17];
             eleTotDescent = trackStats[18];
         }
-       
+
         lat_view_center = latCenter;
         lon_view_center = lonCenter;
-        
+
         cos_lat_view_center = Math.cos(lat_view_center);
         sin_lat_view_center = Math.sin(lat_view_center);
 
@@ -384,7 +383,7 @@ module Track {
 
     function formatLength(ln) {
         var l = 0.001 * EARTH_RADIUS * ln;
-        return l.format("%.2f") + " km";     
+        return l.format("%.2f") + " km";
     }
 
 }

@@ -51,7 +51,7 @@ module MenuDelegates {
             case :track_large_font:
                 return [WatchUi.loadResource(Rez.Strings.onoff_opts),
                         [true, false],
-                        $.trackViewLargeFont];        
+                        $.trackViewLargeFont];
             case :track_profile:
                 return [WatchUi.loadResource(Rez.Strings.onoff_opts),
                         [true, false],
@@ -59,7 +59,7 @@ module MenuDelegates {
             case :track_storage:
                 return [WatchUi.loadResource(Rez.Strings.onoff_opts),
                         [true, false],
-                        $.trackStorage];                   
+                        $.trackStorage];
         }
     }
 
@@ -142,7 +142,7 @@ module MenuDelegates {
                                 valueList.add(Track.eleMax.format("%.1f") + " m");
                                 valueList.add(Track.eleTotAscent.format("%.1f") + " m");
                                 valueList.add(Track.eleTotDescent.format("%.1f") + " m");
-                            } 
+                            }
                         }
                         while(valueList.size() < labelList.size() ) {
                             // fill with n/a
@@ -185,7 +185,7 @@ module MenuDelegates {
             var newMenu;
             var entry = [];
 
-            switch(menu.id) {                
+            switch(menu.id) {
                 case :orient:
                     if(value == 0) {
                         Track.northHeading = false;
@@ -244,7 +244,7 @@ module MenuDelegates {
                 case :course:
                     switch(menu.getSelectedId()) {
                         case :track_update:
-                        case :track_large_font:                        
+                        case :track_large_font:
                         case :track_profile:
                         case :track_storage:
                             entry = getMenuItem(menu.getSelectedId(), 0, null);
@@ -263,7 +263,7 @@ module MenuDelegates {
                                     WatchUi.SLIDE_IMMEDIATE
                                 );
                             }
-                            return true;                       
+                            return true;
                     }
                 case :track_update:
                     $.trackViewPeriod = value;
@@ -280,7 +280,7 @@ module MenuDelegates {
                  case :track_storage:
                     $.trackStorage = value;
                     app.setProperty("trackStorage", $.trackStorage);
-                    break;            
+                    break;
                 case :screens:
                     if(value == 0) {
                         Data.setDataScreens(Data.dataScreensDefault);
