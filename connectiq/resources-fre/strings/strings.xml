@@ -1,9 +1,10 @@
 <strings>
     <string id="AppName">WormNav</string>
     <string id="prompt">Cliquez sur le bouton de menu</string>
-    
+
     <string id="mm_title">Menu</string>
-    <string id="mm_labels">Info|Orientation|Breadcrumbs|Auto lap|Type d'activité|Parcours|Campos de datos|Color de fondo</string>
+    <string id="mm_labels">Info|Orientation|Breadcrumbs|Auto lap|Type d'activité|Parcours|Champs données|Couleur de fond</string>
+    <string id="info_labels">App. version|Nom du parcours|Longueur|Nombre de points|Min altitude|Max altitude|Ascension totale|Descente totale</string>
 
     <string id="orient_opts">Tracé en haut|Nord en haut|Centré</string>
     <string id="yesno_opts">Oui|Non</string>
@@ -13,26 +14,21 @@
     <string id="sm_res">Reprendre</string>
     <string id="sm_save">Enregistrer</string>
     <string id="sm_disc">Ignorer</string>
-    
-    <string id="bc_labels">Info|Définir la position|Supprimer|Numéro|Distance</string>
+
+    <string id="bc_labels">Définir la position|Supprimer|Numéro|Distance</string>
 
     <string id="ds_labels">Défaut|Écran 1|Écran 2|Écran 3|Tracé</string>
-    <string id="dfm_labels"># champs données|Champs 1|Champs 2|Champ 3|Champ 4</string>  
+    <string id="dfm_labels"># champs données|Champs 1|Champs 2|Champ 3|Champ 4</string>
     <string id="dm_labels">Chrono|Distance|Allure|Vitesse|Allure moyenne|Vitesse moyenne|Fréq. cardiaque|Fréq. card. %max.|Fréq. card. moy.|Temps circuit|Distance circuit|Allure circuit|Vitesse circuit|Allure dern. circ.|Vitesse dern. circ.|Circuits|Altitude|Ascension totale|Descente totale|Heure|Batterie</string>
     <string id="df_labels">Chrono|Distance|Allure|Vitesse|Allure moy|Vit. moy.|Fréq. card.|FC %Max|FC moy.|Temps circ|Dist. circ.|All. circ.|Vitesse circ.|All der circ|Vit der circ|Circuits |Altitude|Asc. tot.|Desc. tot.|Heure|Batterie</string>
-           
-    <string id="lap">Circuit</string> 
+
+    <string id="lap">Circuit</string>
 
     <string id="course_labels">Grande font|Montre le profile|Stocker|Période mise à jour|Supprimer</string>
-    <string id="activities">Générique|Course à pied|Marcher|Cyclisme</string>
+    <string id="activities">Générique|Course à pied|Marcher|Cyclisme|Randonnée</string>
 
-    <string id="msg_continue">Reprendre?</string> 
-    <string id="msg_delete_track">Supprimer le parcours?</string>   
-    <string id="msg_exit_app">Quitter l'app?</string>   
-    <string id="msg_discard">Ignorer?</string>  
-
-    <string id="info_lenght">Longueur/km:</string>
-    <string id="info_name">Nom:</string>        
-    <string id="info_points"># points:</string>      
-        
+    <string id="msg_continue">Reprendre?</string>
+    <string id="msg_delete_track">Supprimer le parcours?</string>
+    <string id="msg_exit_app">Quitter l'app?</string>
+    <string id="msg_discard">Ignorer?</string>
 </strings>

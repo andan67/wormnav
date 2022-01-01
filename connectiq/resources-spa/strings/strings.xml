@@ -4,7 +4,8 @@
 
     <string id="mm_title">Menú</string>
     <string id="mm_labels">Info|Orientación|Breadcrumbs|Auto lap|Tipo Actividad|Track|Campos de datos|Color de fondo</string>
-    
+    <string id="info_labels">App. version|Nombre del curso|Longitud|Número de puntos|Min altitud|Max altitud|Ascenso total|Descenso total</string>
+
     <string id="orient_opts">Track arriba|Norte arriba|Centrado</string>
     <string id="yesno_opts">Si|No</string>
     <string id="color_opts">Negro|Blanco</string>
@@ -13,26 +14,21 @@
     <string id="sm_res">Continuar</string>
     <string id="sm_save">Guardar</string>
     <string id="sm_disc">Descartar</string>
-    
+
     <string id="bc_labels">Establecer posición|Borrar|Número|Distancia</string>
-    
+
     <string id="ds_labels">Reset|Pantalla 1|Pantalla 2|Pantalla 3|Track</string>
-    <string id="dfm_labels">Num. Campos|Campos 1|Campos 2|Campos 3|Campos 4</string>  
-    <string id="dm_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo medio|Velocidad media|Frecuencia cardiaca|Frec. card. % máx.|Frec. card. media|Tiempo de vuelta|Distancia vuelta|Ritmo vuelta|Velocidad vuelta|Ritmo ult. vuelta|Veloc. ult. vuelta|Vueltas|Altitud|Ascenso total|Discesa totale|Hora del día|Batería</string>
-    <string id="df_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo med.|Vel. media|Frec. card.|%FC máx.|FC media|Tiempo v.|Dist. vuelta|Rit. vuel.|Vel. vuelta|Rmo ú. vue|Vel. ú. vue|Vueltas|Altitud|Asc. tot.|Disc. tot.|Hora del día|Batería</string>
-           
-    <string id="lap">Vuelta</string> 
+    <string id="dfm_labels">Num. Campos|Campos 1|Campos 2|Campos 3|Campos 4</string>
+    <string id="dm_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo medio|Velocidad media|Frecuencia cardiaca|Frec. card. % máx.|Frec. card. media|Tiempo de vuelta|Distancia vuelta|Ritmo vuelta|Velocidad vuelta|Ritmo ult. vuelta|Veloc. ult. vuelta|Vueltas|Altitud|Ascenso total|Descenso total|Hora del día|Batería</string>
+    <string id="df_labels">Tiempo|Distancia|Ritmo|Velocidad|Ritmo med.|Vel. media|Frec. card.|%FC máx.|FC media|Tiempo v.|Dist. vuelta|Rit. vuel.|Vel. vuelta|Rmo ú. vue|Vel. ú. vue|Vueltas|Altitud|Asc. tot.|Des. tot.|Hora del día|Batería</string>
+
+    <string id="lap">Vuelta</string>
 
     <string id="course_labels">Grandes font|Mostrar perfil|Almacenamiento|Período de actual.|Borrar</string>
-    <string id="activities">Gener.|Correr|Andar|Bici</string>
+    <string id="activities">Gener.|Correr|Andar|Bici|Senderismo</string>
 
-    <string id="msg_continue">Continuar?</string> 
-    <string id="msg_delete_track">Borrar Track?</string>   
-    <string id="msg_exit_app">Salir?</string>   
-    <string id="msg_discard">Descartar?</string>  
-
-    <string id="info_lenght">Long./km:</string>
-    <string id="info_name">Nombre:</string>        
-    <string id="info_points"># puntos:</string>      
-        
+    <string id="msg_continue">Continuar?</string>
+    <string id="msg_delete_track">Borrar Track?</string>
+    <string id="msg_exit_app">Salir?</string>
+    <string id="msg_discard">Descartar?</string>
 </strings>

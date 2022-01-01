@@ -4,7 +4,8 @@
 
     <string id="mm_title">Menü</string>
     <string id="mm_labels">Info|Kartenorientierung|Breadcrumbs|Auto lap|Aktivitätstyp|Strecke|Datenfelder|Hintergrundfarbe</string>
-    
+    <string id="info_labels">App Version|Streckenname|Länge|Anzahl Punkte|Min. Höhe|Max. Höhe|Gesamtanstieg|Gesamtabstieg</string>
+
     <string id="orient_opts">Track oben|Norden oben|Zentriert</string>
     <string id="yesno_opts">Ja|Nein</string>
     <string id="color_opts">Schwarz|Weiss</string>
@@ -17,22 +18,17 @@
     <string id="bc_labels">Setze Position|Löschen|Anzahl|Distanz</string>
 
     <string id="ds_labels">Standard|Datenseite 1|Datenseite 2|Datenseite 3|Trackseite</string>
-    <string id="dfm_labels"># Felder|Feld 1|Feld 2|Feld 3|Feld 4</string>  
+    <string id="dfm_labels"># Felder|Feld 1|Feld 2|Feld 3|Feld 4</string>
     <string id="dm_labels">Timer|Distanz|Pace|Geschwindigkeit|Ø Pace|Ø Geschwindigkeit|Herzfrequenz|Herzfreq. %Max.|Ø Herzfrequenz|Rundenzeit|Rundendistanz|Rundennpace|Rundengeschw.|Letze Runde Pace|Letze R. Geschw.|Runden|Höhe|Gesamtanstieg|Gesamtabstieg|Uhrzeit|Akkustand</string>
     <string id="df_labels">Timer|Distanz|Pace|Geschwind.|Ø Pace|Ø Geschw.|HF|HF - %Max.|Ø HF|Rundenzeit|Rd. Dist.|Rundenpace|Rd. Geschw.|L. R. Pace|L. R. G.|Runden|Höhe|Anstieg|Abstieg|Uhrzeit|Akku</string>
-           
-    <string id="lap">Runde</string> 
-    
+
+    <string id="lap">Runde</string>
+
     <string id="course_labels">Große Schrift|Streckenprofil|Speichern|Aktual. Periode|Löschen</string>
-    <string id="activities">Generisch|Laufen|Walking|Radfahren</string>
+    <string id="activities">Generisch|Laufen|Walking|Radfahren|Wandern</string>
 
-    <string id="msg_continue">Weiter?</string> 
-    <string id="msg_delete_track">Strecke löschen?</string>   
-    <string id="msg_exit_app">App beenden?</string>   
-    <string id="msg_discard">Verwerfen?</string>  
-
-    <string id="info_lenght">Länge/km:</string>
-    <string id="info_name">Name:</string>        
-    <string id="info_points"># Punkte:</string>  
-            
+    <string id="msg_continue">Weiter?</string>
+    <string id="msg_delete_track">Strecke löschen?</string>
+    <string id="msg_exit_app">App beenden?</string>
+    <string id="msg_discard">Verwerfen?</string>
 </strings>

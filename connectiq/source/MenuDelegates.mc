@@ -33,7 +33,7 @@ module MenuDelegates {
             case :activity:
                 return [WatchUi.loadResource(Rez.Strings.activities),
                         [ActivityRecording.SPORT_GENERIC, ActivityRecording.SPORT_RUNNING,
-                         ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING],
+                         ActivityRecording.SPORT_WALKING, ActivityRecording.SPORT_CYCLING, ActivityRecording.SPORT_HIKING],
                          $.activityType];
             case :background:
                 return [WatchUi.loadResource(Rez.Strings.color_opts),

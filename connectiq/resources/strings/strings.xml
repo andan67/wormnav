@@ -1,12 +1,12 @@
 <strings>
     <string id="AppName">WormNav</string>
-    <string id="AppVersion">1.6.1</string>
+    <string id="AppVersion">1.6.2</string>
     <string id="prompt">Click the menu button</string>
-    
+
     <string id="mm_title">Menu</string>
     <string id="mm_labels">Info|Map orientation|Breadcrumbs|Auto lap|Activity type|Course|Data fields|Background color</string>
     <string id="info_labels">App version|Course name|Length|No. points|Min elevation|Max elevation|Total ascent|Total descent</string>
-    
+
     <string id="orient_opts">Track up|North up|Centered</string>
     <string id="yesno_opts">Yes|No</string>
     <string id="onoff_opts">On|Off</string>
@@ -18,25 +18,20 @@
     <string id="sm_disc">Discard</string>
 
     <string id="bc_labels">Set current pos.|Clear|Number|Distance</string>
-    
+
     <string id="ds_labels">Defaults|Data screen 1|Data screen 2|Data screen 3|Track screen</string>
-    <string id="dfm_labels"># Fields|Field 1|Field 2|Field 3|Field 4</string>  
+    <string id="dfm_labels"># Fields|Field 1|Field 2|Field 3|Field 4</string>
     <string id="dm_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|Heart Rate %Max|Avg. Heart Rate|Lap Time|Lap Distance|Lap Pace|Lap Speed|Last Lap Pace|Last Lap Speed|Laps|Elevation|Total ascent|Total descent|Time of Day|Battery</string>
     <string id="df_labels">Timer|Distance|Pace|Speed|Avg. Pace|Avg. Speed|Heart Rate|HR %Max.|Avg. HR|Lap Time|Lap Dist.|Lap Pace|Lap Speed|L Lap Pace|L Lap Spd.|Laps|Elevation|Tot. asc.|Tot. desc.|Time of Day|Battery</string>
     <string id="df_slabels">T|D|P|S|AP|AS|HR|HR%|AHR|LT|LD|LP|LS|LLP|LLS|L|E|TA|TD|DT|B</string>
 
-    <string id="lap">Lap</string> 
+    <string id="lap">Lap</string>
 
-    <string id="course_labels">Large font|Show profile|Store|Update period|Delete</string>   
-    <string id="activities">Generic|Running|Walking|Cycling</string>
+    <string id="course_labels">Large font|Show profile|Store|Update period|Delete</string>
+    <string id="activities">Generic|Running|Walking|Cycling|Hiking</string>
 
-    <string id="msg_continue">Continue?</string> 
-    <string id="msg_delete_track">Delete Track?</string>   
-    <string id="msg_exit_app">Exit App?</string>   
-    <string id="msg_discard">Discard?</string>  
-
-    <string id="info_lenght">Length/km:</string>
-    <string id="info_name">Name:</string>        
-    <string id="info_points"># points:</string>      
-        
+    <string id="msg_continue">Continue?</string>
+    <string id="msg_delete_track">Delete Track?</string>
+    <string id="msg_exit_app">Exit App?</string>
+    <string id="msg_discard">Discard?</string>
 </strings>
