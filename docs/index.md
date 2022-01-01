@@ -328,4 +328,4 @@ If the course profile view is active, the point on the course that is nearest to
 
 Note that the current position might still be at a large distance from the course, which would make the current elevation and distance data potentially very inaccurate. The actual distance can be assessed from the course view. 
 
-Also the passed distance can be wrong at start or end at round courses and in general at course segments which are close to each other.
+Also the passed distance can be wrong at start or end of round courses and in general at course segments which are close to each other.
