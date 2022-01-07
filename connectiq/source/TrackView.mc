@@ -107,13 +107,20 @@ class TrackView extends GenericView {
             _yArray = Track.yArray;
             _nPoints = Track.nPoints;
 
+            /*
+            System.println("_xArray.size(): " + _xArray.size());
+            System.println("_yArray.size(): " + _yArray.size());
+            System.println("_xCenter: " +_xCenter);
+            System.println("_yCenter: " +_yCenter);
+            System.println("_cosTransform: " +_cosTransform);
+            System.println("_sinTransform: " +_sinTransform);
+            */
             for(var i = 0; i < _nPoints; i++ ) {
 
                 if(i > 0) {
                     x1 = x2;
                     y1 = y2;
                 }
-
                 xr = _scaleFactor * (_xArray[i] - _xCenter);
                 yr = _scaleFactor * (_yArray[i] - _yCenter);
                 x2 = _xSCenter + xr * _cosTransform - yr * _sinTransform;
@@ -446,12 +453,15 @@ class TrackView extends GenericView {
         if(isNewTrack) {
             isNewTrack = false;
 
+            /*
+
             if($.msgData != null) {
                 // Newly tansmitted track data exists.
                 // Handle this case in app base class outside update loop as this results in less peak memory
                 $.newTrackReceived = true;
                 return;
             }
+            */
 
             setZoomLevel(null);
             if(Track.hasElevationData) {

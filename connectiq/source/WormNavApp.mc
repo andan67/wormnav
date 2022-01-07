@@ -128,6 +128,8 @@ class WormNavApp extends Application.AppBase {
         // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
+
+        //System.println("onStart finished");
     }
 
 
@@ -147,6 +149,7 @@ class WormNavApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
+        //System.println("getInitialView");
         trackView = new TrackView();
         if(Track.hasTrackData) {
             trackView.isNewTrack = true;
@@ -155,6 +158,7 @@ class WormNavApp extends Application.AppBase {
         if(Communications has :registerForPhoneAppMessages) {
             Communications.registerForPhoneAppMessages( method(:onPhone));
         }
+        //System.println("getInitialView finished");
         return [trackView, viewDelegate];
     }
 
@@ -166,15 +170,27 @@ class WormNavApp extends Application.AppBase {
     }
 
     function onPhone(msg) {
+        System.println("onPhone");
         try {
+
             // quick check if message is in correct format
             msgData = msg.data;
+            //System.println("msgData.size(): " + msgData.size());
             if(msgData[0][2] instanceof Lang.Number) {
-                $.trackView.isNewTrack = true;
-                page = -1;
-                WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+                //System.println("msgData[0][2]: " + msgData[0][2]);
+                /*
+                if(trackView != null) {
+                    trackView.isNewTrack = true;
+                    System.println("rackView.isNewTrack: " + trackView.isNewTrack );
+                    page = -1;
+                    WatchUi.switchToView(trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+                }
+                */
+                newTrackReceived = true;
             }
         } catch( ex ) {
+            //System.println("ex.getErrorMEssage:" + ex.getErrorMessage());
+            //ex.printStackTrace();
             msgData = null;
         }
     }
@@ -198,8 +214,8 @@ class WormNavApp extends Application.AppBase {
                    setProperty("trackEleData", Track.eleArray);
                 }
             }
-            $.trackView.isNewTrack = true;
-            $.trackView.showElevationPlot = false;
+            trackView.isNewTrack = true;
+            trackView.showElevationPlot = false;
             page = -1;
             WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
             return;
