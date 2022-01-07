@@ -49,8 +49,6 @@ class WormNavApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state) {
-        //System.println("onStart");
-
         // vivoactive stands for all devices with round screen shape
         // ToDo: Implement resource/annotation based method to set device dependent settings
         if(System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_ROUND) {
@@ -128,8 +126,6 @@ class WormNavApp extends Application.AppBase {
         // timer is used for data fields and auto lap
         appTimer = new Timer.Timer();
         appTimer.start(method(:onTimer), 1000, true);
-
-        //System.println("onStart finished");
     }
 
 
@@ -149,7 +145,6 @@ class WormNavApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        //System.println("getInitialView");
         trackView = new TrackView();
         if(Track.hasTrackData) {
             trackView.isNewTrack = true;
@@ -158,7 +153,6 @@ class WormNavApp extends Application.AppBase {
         if(Communications has :registerForPhoneAppMessages) {
             Communications.registerForPhoneAppMessages( method(:onPhone));
         }
-        //System.println("getInitialView finished");
         return [trackView, viewDelegate];
     }
 
@@ -170,27 +164,13 @@ class WormNavApp extends Application.AppBase {
     }
 
     function onPhone(msg) {
-        System.println("onPhone");
         try {
-
             // quick check if message is in correct format
             msgData = msg.data;
-            //System.println("msgData.size(): " + msgData.size());
             if(msgData[0][2] instanceof Lang.Number) {
-                //System.println("msgData[0][2]: " + msgData[0][2]);
-                /*
-                if(trackView != null) {
-                    trackView.isNewTrack = true;
-                    System.println("rackView.isNewTrack: " + trackView.isNewTrack );
-                    page = -1;
-                    WatchUi.switchToView(trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
-                }
-                */
                 newTrackReceived = true;
             }
         } catch( ex ) {
-            //System.println("ex.getErrorMEssage:" + ex.getErrorMessage());
-            //ex.printStackTrace();
             msgData = null;
         }
     }
@@ -204,7 +184,7 @@ class WormNavApp extends Application.AppBase {
             newTrackReceived = false;
             Track.deleteTrack();
             clearTrackStorage();
-            Track.newTrack($.msgData[0], $.msgData[1],  $.msgData[2], $.msgData.size() == 4 ? $.msgData[3] : null );
+            Track.newTrack(msgData[0], msgData[1],  msgData[2], msgData.size() == 4 ? msgData[3] : null );
             msgData = null;
             if(trackStorage) {
                 setProperty("trackStats", Track.trackStats);
@@ -217,7 +197,7 @@ class WormNavApp extends Application.AppBase {
             trackView.isNewTrack = true;
             trackView.showElevationPlot = false;
             page = -1;
-            WatchUi.switchToView($.trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView(trackView, viewDelegate, WatchUi.SLIDE_IMMEDIATE);
             return;
         }
 
