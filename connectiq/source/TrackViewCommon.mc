@@ -54,8 +54,6 @@ class TrackViewCommon extends GenericView {
     var fontsize = Graphics.FONT_MEDIUM;
     var fontHeight = 0;
     var fontsizeNumber = Graphics.FONT_LARGE;
-
-    var paddingEnabled = false;
     var padding = 0.0;
 
     var showElevationPlot = false;
@@ -414,10 +412,6 @@ class TrackViewCommon extends GenericView {
         y2Ele = pixelHeight2 + 0.6 * eleHeight;
 
         fontHeight = dc.getFontHeight(fontsize);
-
-        if(paddingEnabled) {
-            padding = dc.getFontAscent(fontsize);
-        }
     }
 
     // Called when this View is brought to the foreground. Restore
