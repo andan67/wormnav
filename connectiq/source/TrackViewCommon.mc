@@ -290,14 +290,14 @@ class TrackViewCommon extends GenericView {
             // draw actual elevation
             dc.setColor(cursorColor, backgroundColor);
             dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + Track.eleTotAscentAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + (Track.eleTotAscentAct != null ? Track.eleTotAscentAct.format("%d") : ""), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.drawLine(x2, _y2Ele, x2, _y1Ele);
 
             // draw small horizontal line at actual elevation
             dc.drawLine(x2 - 2, y2, x2 + 2, y2);
 
             // draw distance to end of course
-            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 0.8 * dc.getFontHeight(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
+            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 1.1 * dc.getFontAscent(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             //}
         }
