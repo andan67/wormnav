@@ -13,7 +13,6 @@ var trackView;
 var dataView;
 var lapView;
 var viewDelegate;
-var device = null;
 var session = null;
 var sessionEvent = 0;
 var activityType = ActivityRecording.SPORT_RUNNING;
@@ -49,13 +48,6 @@ class WormNavApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state) {
-        // vivoactive stands for all devices with round screen shape
-        // ToDo: Implement resource/annotation based method to set device dependent settings
-        if(System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_ROUND) {
-            device = "vivoactive";
-        } else {
-            device = "generic";
-        }
 
         Data.setMaxHeartRate();
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
