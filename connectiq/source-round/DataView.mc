@@ -23,8 +23,8 @@ class DataView extends DataViewCommon {
             fontNumber = Graphics.FONT_NUMBER_HOT;
             offset = -dc.getFontDescent(fontNumber);
         } else if(numberDataFields == 2) {
-            font = Graphics.FONT_LARGE;
-            fontNumber = Graphics.FONT_NUMBER_HOT;
+            font = Graphics.FONT_MEDIUM;
+            fontNumber = Graphics.FONT_NUMBER_MEDIUM;
             offset = 3.0 * height / 20.0;
             h = 7.0 * height / 20.0;
         } else {
