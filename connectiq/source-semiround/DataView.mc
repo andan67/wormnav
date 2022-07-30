@@ -24,7 +24,8 @@ class DataView extends DataViewCommon {
             offset = -dc.getFontDescent(fontNumber);
         } else if(numberDataFields == 2) {
             font = Graphics.FONT_MEDIUM;
-            fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+            //fontNumber = Graphics.FONT_NUMBER_MEDIUM;
+            fontNumber = Graphics.FONT_NUMBER_HOT;
         }
 
          // top position of data label text in pixels from top of data field

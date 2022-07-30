@@ -405,5 +405,6 @@
 
     <string name="settings_load_from_repository">Load data on start</string>
     <string name="settings_save_into_repository">Save data on exit</string>
+    <string name="title_activity_worm_nav_main">WormNavMain</string>
 
 </resources>

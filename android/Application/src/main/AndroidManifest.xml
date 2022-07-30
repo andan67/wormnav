@@ -1,124 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 The Android Open Source Project
-
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.andan.android.connectiq.wormnav" >
+    package="org.andan.android.connectiq.wormnav">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
-    <!-- Specific apps you interact with, eg: -->
+
+        <!-- Specific apps you interact with, eg: -->
         <package android:name="com.garmin.android.apps.connectmobile" />
     </queries>
-    <!-- All intent-filters for config actions must include the categories
-        com.google.android.wearable.watchface.category.COMPANION_CONFIGURATION and
-        android.intent.category.DEFAULT. -->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/AppTheme">
         <activity
-            android:name="org.andan.android.connectiq.wormnav.MainActivity"
-            android:theme="@style/MyTheme"
-            android:largeHeap="true"
-            android:label="@string/app_name">
+            android:name=".WormNavMain"
+            android:exported="true"
+            android:label="@string/title_activity_worm_nav_main"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.RouteCreatorActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/route_creator_name">
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:largeHeap="true"
+            android:theme="@style/MyTheme">
+           <!-- <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".RouteCreatorActivity"
+            android:label="@string/route_creator_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.RouteEditorActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/route_editor_name">
+            android:name=".RouteEditorActivity"
+            android:label="@string/route_editor_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.RouteOptimizerActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/route_optimizer_name">
+            android:name=".RouteOptimizerActivity"
+            android:label="@string/route_optimizer_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.RoutesBrowserActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/route_picker_name">
+            android:name=".RoutesBrowserActivity"
+            android:label="@string/route_picker_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.TracksBrowserActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/track_manager_name">
+            android:name=".TracksBrowserActivity"
+            android:label="@string/track_manager_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.DeviceBrowserActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/device_browser_name">
+            android:name=".DeviceBrowserActivity"
+            android:label="@string/device_browser_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="org.andan.android.connectiq.wormnav.PoiActivity"
-            android:theme="@style/MapTheme"
-            android:label="@string/poi_manager_name">
+            android:name=".PoiActivity"
+            android:label="@string/poi_manager_name"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="org.andan.android.connectiq.wormnav.IQSendMessageIntentService"
+            android:name=".IQSendMessageIntentService"
             android:exported="false" />
-
     </application>
 
 </manifest>
