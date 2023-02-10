@@ -46,6 +46,7 @@ class DataViewCommon extends GenericView {
         dc.setPenWidth(1);
 
         for(var i = 1; i < numberDataFields; i += 1) {
+            // Optimize
             var j = Data.min(i, 2);
             dc.drawLine(0, offset + j * h, width, offset + j * h);
             if( i == 3) {

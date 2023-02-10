@@ -130,6 +130,7 @@ class TrackViewCommon extends GenericView {
             var _xya = Track.bxy;
             _nPoints = Track.pos_nelements;
             for(var i = 0; i < _nPoints; i += 1) {
+                // Optimize j -> 2*j
                 var j = (Track.pos_start_index + i) % Track.breadCrumbNumber;
                 xr = _scaleFactor * (_xya[2 * j] - _xCenter);
                 yr = _scaleFactor * (_xya[2 * j + 1] - _yCenter);
@@ -324,6 +325,7 @@ class TrackViewCommon extends GenericView {
         var _dx3 = -3.154704 * _dx1 - _dx2;
         var _dy3 = -3.154704 * _dy1 - _dy2;
 
+        //Inline function call 
         var _xy = xy2Screen(Track.xPos, Track.yPos);
 
         var _x1 = _xy[0] + _dx1;
