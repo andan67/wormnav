@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -13,7 +13,6 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '30.0.2'
 
     defaultConfig {
         minSdkVersion 21
@@ -30,6 +29,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'pl.nwg.dev.common'
 }
 
 dependencies {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="about_app" translatable="false">©2021 andan67</string>
+    <string name="about_app" translatable="false">©2023 andan67</string>
     <string name="about_to_delete_route">You\'re about to delete the route</string>
     <string name="about_to_delete_track">You\'re about to delete the track</string>
 

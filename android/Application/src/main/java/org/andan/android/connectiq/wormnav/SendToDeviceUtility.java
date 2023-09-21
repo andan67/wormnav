@@ -1,5 +1,7 @@
 package org.andan.android.connectiq.wormnav;
 
+import static org.andan.android.connectiq.wormnav.SendToDeviceUtility.MESSAGE_SEND_OK;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +22,8 @@ import pt.karambola.gpx.beans.Track;
 import pt.karambola.gpx.util.GpxUtils;
 
 public class SendToDeviceUtility {
+    public final static int MESSAGE_SEND_OK = 0;
+    public final static int MESSAGE_SEND_NOT_OK = 1;
 
     private SendToDeviceUtility() {
     }
@@ -392,25 +396,25 @@ class TransmissionLogEntry {
     @SuppressLint("DefaultLocale")
     public String toLogString() {
         if(!isOptimized)
-            if(statusCode==IQSendMessageIntentService.MESSAGE_SEND_OK)
+            if(statusCode==MESSAGE_SEND_OK)
                 return String.format("%tF %tT: Track '%s' (%.2fkm, #%d) successfully sent to device '%s'",
                     new Date(sendTime), new Time(sendTime), trackName,
                             0.001 * trackLengthOriginal, noTrackPointsOriginal,
                             deviceName);
             else
-                return String.format("%tF %tT: Track '%s' (%.2fkm, #%d) unsuccessfully sent to device '%s' for reason '%s'",
+                return String.format("%tF %tT: Track '%s' (%.2fkm, #%d) failed to send to device '%s' for reason '%s'",
                         new Date(sendTime), new Time(sendTime), trackName,
                         0.001 * trackLengthOriginal, noTrackPointsOriginal,
                         deviceName, statusMessage);
         else {
-            if(statusCode==IQSendMessageIntentService.MESSAGE_SEND_OK)
+            if(statusCode==MESSAGE_SEND_OK)
                 return String.format("%tF %tT: Optimized track '%s' (%.2fkm->%.2fkm, #%d->#%d) successfully sent to device '%s'",
                         new Date(sendTime), new Time(sendTime), trackName,
                         0.001 * trackLengthOriginal, 0.001 * trackLengthSent,
                         noTrackPointsOriginal, noTrackPointsSent,
                         deviceName);
             else
-                return String.format("%tF %tT: Optimized track '%s' (%.2fkm->%.2fkm, #%d->#%d) unsuccessfully sent to device '%s' for reason '%s'",
+                return String.format("%tF %tT: Optimized track '%s' (%.2fkm->%.2fkm, #%d->#%d) failed to sent to device '%s' for reason '%s'",
                         new Date(sendTime), new Time(sendTime), trackName,
                         0.001 * trackLengthOriginal, 0.001 * trackLengthSent,
                         noTrackPointsOriginal, noTrackPointsSent,

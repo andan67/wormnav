@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:8.0.0'
     }
 }
 
@@ -16,7 +16,8 @@ dependencies {
     implementation files('libs/httpclient-4.5.jar')
     implementation files('libs/httpcore-4.4.1.jar')
     implementation files('libs/httpmime-4.5.jar')
-    implementation files('libs/connectiq.jar')
+    //implementation files('libs/connectiq.jar')
+    implementation("com.garmin.connectiq:ciq-companion-app-sdk:2.0.3@aar")
 }
 
 repositories {
@@ -49,21 +50,20 @@ List<String> dirs = [
 
 android {
 
-    compileSdkVersion 30
-    buildToolsVersion '30.0.2'
-
+    compileSdk 33
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/NOTICE', 'META-INF/LICENSE']
+        }
     }
+
 
     defaultConfig {
         applicationId "org.andan.android.connectiq.wormnav"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 121
-        versionName '1.2.1'
+        targetSdkVersion 33
+        versionCode 132
+        versionName '1.3.2'
         setProperty("archivesBaseName", "Worm navigation")
     }
 
@@ -93,7 +93,6 @@ android {
     buildTypes {
         release {
             //debuggable true
-            //minifyEnabled true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
@@ -133,6 +132,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'org.andan.android.connectiq.wormnav'
+    buildToolsVersion '33.0.2'
 }
 
 
