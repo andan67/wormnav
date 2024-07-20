@@ -61,7 +61,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
     // Workaround on FR230 and 235 where holding menu button also fires onPreviousPage
     // see https://forums.garmin.com/developer/connect-iq/f/discussion/4294/fr230-holding-menu-button-triggers-onpreviouspage-and-then-onmenu
     //var onPrevPageTick = 0;
-    
+
     var lastPage = 1;
 
     function initialize() {
@@ -129,7 +129,7 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         }
 
         if($.page == -1) {
-            // track view -> swtich to data view (page > 0) or elevation plot (page == 0)
+            // track view -> switch to data view (page > 0) or elevation plot (page == 0)
             if(lastPage == 0 && $.trackElevationPlot && Track.hasElevationData) {
                 $.page = 0;
                 $.trackView.showElevationPlot = true;

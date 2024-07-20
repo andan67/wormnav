@@ -1,1 +1,10 @@
 project.manifest = manifest.xml
+
+base.sourcePath = $(semiround.sourcePath)
+
+# Set the source path for wearable devices by device family
+round.sourcePath = source;source-round
+semiround.sourcePath = source;source-semiround
+
+
+fr55.sourcePath = source;source-fr55

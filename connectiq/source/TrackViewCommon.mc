@@ -1,7 +1,7 @@
 using Toybox.WatchUi;
 using Track;
 
-class TrackView extends GenericView {
+class TrackViewCommon extends GenericView {
 
     var zoomLevel = null;
     var scaleFactor;
@@ -54,9 +54,7 @@ class TrackView extends GenericView {
     var fontsize = Graphics.FONT_MEDIUM;
     var fontHeight = 0;
     var fontsizeNumber = Graphics.FONT_LARGE;
-
-    var topPadding = 0.0;
-    var bottomPadding = 0.0;
+    var padding = 0.0;
 
     var showElevationPlot = false;
 
@@ -66,13 +64,13 @@ class TrackView extends GenericView {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
-        dc.drawLine(x1Scale, y1Scale - bottomPadding,
-                    x1Scale, y2Scale - bottomPadding);
-        dc.drawLine(x1Scale, y2Scale - bottomPadding,
-                    x2Scale, y2Scale - bottomPadding);
-        dc.drawLine(x2Scale, y2Scale - bottomPadding,
-                    x2Scale, y1Scale - bottomPadding);
-        dc.drawText(pixelWidth2, y2Scale - fontHeight - bottomPadding,
+        dc.drawLine(x1Scale, y1Scale - padding,
+                    x1Scale, y2Scale - padding);
+        dc.drawLine(x1Scale, y2Scale - padding,
+                    x2Scale, y2Scale - padding);
+        dc.drawLine(x2Scale, y2Scale - padding,
+                    x2Scale, y1Scale - padding);
+        dc.drawText(pixelWidth2, y2Scale - fontHeight - padding,
             fontsize , formattedScale(), Graphics.TEXT_JUSTIFY_CENTER);
     }
 
@@ -292,14 +290,14 @@ class TrackView extends GenericView {
             // draw actual elevation
             dc.setColor(cursorColor, backgroundColor);
             dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + Track.eleTotAscentAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + (Track.eleTotAscentAct != null ? Track.eleTotAscentAct.format("%d") : ""), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.drawLine(x2, _y2Ele, x2, _y1Ele);
 
             // draw small horizontal line at actual elevation
             dc.drawLine(x2 - 2, y2, x2 + 2, y2);
 
             // draw distance to end of course
-            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 0.8 * dc.getFontHeight(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
+            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 1.1 * dc.getFontAscent(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             //}
         }
@@ -355,14 +353,14 @@ class TrackView extends GenericView {
         _dy2 = - sizeCompass * cosTransform;
 
         // north part of compass
-        var points = [[xCompass + _dx1, yCompass + _dy1 - bottomPadding],
-                      [xCompass - _dx2, yCompass - _dy2 - bottomPadding],
-                      [xCompass - _dx1, yCompass - _dy1 - bottomPadding]];
+        var points = [[xCompass + _dx1, yCompass + _dy1 - padding],
+                      [xCompass - _dx2, yCompass - _dy2 - padding],
+                      [xCompass - _dx1, yCompass - _dy1 - padding]];
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(points);
 
         // south part of compass
-        points[1] = [xCompass + _dx2, yCompass + _dy2 - bottomPadding];
+        points[1] = [xCompass + _dx2, yCompass + _dy2 - padding];
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(points);
 
@@ -370,9 +368,6 @@ class TrackView extends GenericView {
 
     function initialize() {
         GenericView.initialize();
-        if($.device.equals("vivoactive")) {
-            fontsize=Graphics.FONT_XTINY;
-        }
         Track.resetPosition();
         Track.resetBreadCrumbs(null);
     }
@@ -417,11 +412,6 @@ class TrackView extends GenericView {
         y2Ele = pixelHeight2 + 0.6 * eleHeight;
 
         fontHeight = dc.getFontHeight(fontsize);
-
-        if($.device.equals("vivoactive")) {
-            topPadding = 0.5 * dc.getFontAscent(fontsize);
-            bottomPadding = 0.5 * dc.getFontAscent(fontsize);
-        }
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -495,14 +485,14 @@ class TrackView extends GenericView {
             for(i = 0; i < Data.getField(3, 0); i++) {
                 // index of data field
                 var j = Data.getField(3, i + 1);
-                dc.drawText(pixelWidth2, topPadding + (1 + 2 * i) * y,
+                dc.drawText(pixelWidth2, padding + (1 + 2 * i) * y,
                     actualFontsize,
                     //Data.dataFieldSLabels[j] +": "+
                     Data.getDataFieldLabelValue(j)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             }
             // show computation time for draw track or draw profile for testing performance on real devices
             /*
-            dc.drawText(pixelWidth2, topPadding + (1 + 2 * i) * y,
+            dc.drawText(pixelWidth2, padding + (1 + 2 * i) * y,
                     actualFontsize,
                     //Data.dataFieldSLabels[j] +": "+
                     drawTrackTime, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
