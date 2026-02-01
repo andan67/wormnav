@@ -2,9 +2,10 @@ using Toybox.WatchUi;
 using Toybox.Activity;
 using Data;
 using Track;
+using Layout;
 
 
-class DataViewCommon extends GenericView {
+class DataView extends GenericView {
 
     hidden var width;
     hidden var height;
@@ -34,6 +35,38 @@ class DataViewCommon extends GenericView {
             dataFields[i] = df[i];
         }
         numberDataFields = Data.min(4,dataFields.size());
+    }
+
+    function onLayout(dc) {
+        if(numberDataFields == 0) {
+            return;
+        }
+
+        width = dc.getWidth();
+        height = dc.getHeight();
+
+        if(numberDataFields == 1) {
+            font = Layout.DATA_FONT_1;
+            fontNumber = Layout.DATA_FONT_NUMBER_1;
+            offset = -dc.getFontDescent(fontNumber);
+            h = height;
+        } else if(numberDataFields == 2) {
+            font = Layout.DATA_FONT_2;
+            fontNumber = Layout.DATA_FONT_NUMBER_2;
+            offset = Layout.DATA_OFFSET_FACTOR_2 * height;
+            h = Layout.DATA_HEIGHT_FACTOR_2 * height;
+        } else {
+            font = Layout.DATA_FONT_3;
+            fontNumber = Layout.DATA_FONT_NUMBER_3;
+            offset = Layout.DATA_OFFSET_FACTOR_3 * height;
+            h = Layout.DATA_HEIGHT_FACTOR_3 * height;
+        }
+
+         // top position of data label text in pixels from top of data field
+        yl = 0.5 * (h - dc.getFontHeight(font) -  dc.getFontHeight(fontNumber) + dc.getFontDescent(fontNumber));
+        // top position of data value text in pixels from top of data field
+        yv = yl + dc.getFontAscent(font);
+        w2 = 0.5 * width;
     }
 
     // Handle the update event

@@ -1,7 +1,8 @@
 using Toybox.WatchUi;
 using Track;
+using Layout;
 
-class TrackViewCommon extends GenericView {
+class TrackView extends GenericView {
 
     var zoomLevel = null;
     var scaleFactor;
@@ -51,10 +52,8 @@ class TrackViewCommon extends GenericView {
     var sizeCursor;
     var posCursor;
     var isNewTrack = false;
-    var fontsize = Graphics.FONT_MEDIUM;
+    
     var fontHeight = 0;
-    var fontsizeNumber = Graphics.FONT_LARGE;
-    var padding = 0.0;
 
     var showElevationPlot = false;
 
@@ -64,14 +63,14 @@ class TrackViewCommon extends GenericView {
         dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(2);
 
-        dc.drawLine(x1Scale, y1Scale - padding,
-                    x1Scale, y2Scale - padding);
-        dc.drawLine(x1Scale, y2Scale - padding,
-                    x2Scale, y2Scale - padding);
-        dc.drawLine(x2Scale, y2Scale - padding,
-                    x2Scale, y1Scale - padding);
-        dc.drawText(pixelWidth2, y2Scale - fontHeight - padding,
-            fontsize , formattedScale(), Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawLine(x1Scale, y1Scale - Layout.TRACK_PADDING,
+                    x1Scale, y2Scale - Layout.TRACK_PADDING);
+        dc.drawLine(x1Scale, y2Scale - Layout.TRACK_PADDING,
+                    x2Scale, y2Scale - Layout.TRACK_PADDING);
+        dc.drawLine(x2Scale, y2Scale - Layout.TRACK_PADDING,
+                    x2Scale, y1Scale - Layout.TRACK_PADDING);
+        dc.drawText(pixelWidth2, y2Scale - fontHeight - Layout.TRACK_PADDING,
+            Layout.TRACK_FONT , formattedScale(), Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     function drawTrack(dc) {
@@ -267,12 +266,12 @@ class TrackViewCommon extends GenericView {
 
         // draw min/max elevation values
         var ed = 0.08 * (pixelWidth2 - _x1Ele);
-        dc.drawText(_x2Ele - ed,  _y2Ele + 1.5 * ed, fontsize, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + Track.eleTotAscent.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(_x2Ele - ed,  _y2Ele + 1.5 * ed, Layout.TRACK_FONT, Track.eleMinTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(Layout.TRACK_FONT), Layout.TRACK_FONT, "^" + Track.eleTotAscent.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(_x2Ele - ed,  _y1Ele - 1.5 * ed, Layout.TRACK_FONT, Track.eleMaxTrack.format("%d"), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
 
         // draw length
-        dc.drawText(pixelWidth2, 1.12 * _y2Ele, fontsize , Track.xyLengthLabel, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(pixelWidth2, 1.12 * _y2Ele, Layout.TRACK_FONT , Track.xyLengthLabel, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
         // draw nearest point on track
         if(nearestPointIndex >= 0) {
@@ -285,19 +284,19 @@ class TrackViewCommon extends GenericView {
             // interpolate elevation
             eleTrack = _eleArray[nearestPointIndex] + nearestPointLambda * (_eleArray[nearestPointIndex + 1] - _eleArray[nearestPointIndex]);
             Track.eleTrack = eleTrack;
-            dc.drawText(_x1Ele + ed,  _y2Ele + 1.5 * ed, fontsize, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(_x1Ele + ed,  _y2Ele + 1.5 * ed, Layout.TRACK_FONT, eleTrack.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 
             // draw actual elevation
             dc.setColor(cursorColor, backgroundColor);
-            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed, fontsize, Track.eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
-            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(fontsize), fontsize, "^" + (Track.eleTotAscentAct != null ? Track.eleTotAscentAct.format("%d") : ""), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed, Layout.TRACK_FONT, Track.eleAct.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+            dc.drawText(_x1Ele + ed,  _y1Ele - 1.5 * ed - dc.getFontAscent(Layout.TRACK_FONT), Layout.TRACK_FONT, "^" + (Track.eleTotAscentAct != null ? Track.eleTotAscentAct.format("%d") : ""), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
             dc.drawLine(x2, _y2Ele, x2, _y1Ele);
 
             // draw small horizontal line at actual elevation
             dc.drawLine(x2 - 2, y2, x2 + 2, y2);
 
             // draw distance to end of course
-            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 1.1 * dc.getFontAscent(fontsize), fontsize , Track.formatLength(Track.xyLength - dssn), 
+            dc.drawText(pixelWidth2, 1.12 * _y2Ele + 1.1 * dc.getFontAscent(Layout.TRACK_FONT), Layout.TRACK_FONT , Track.formatLength(Track.xyLength - dssn), 
                 Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             //}
         }
@@ -353,14 +352,14 @@ class TrackViewCommon extends GenericView {
         _dy2 = - sizeCompass * cosTransform;
 
         // north part of compass
-        var points = [[xCompass + _dx1, yCompass + _dy1 - padding],
-                      [xCompass - _dx2, yCompass - _dy2 - padding],
-                      [xCompass - _dx1, yCompass - _dy1 - padding]];
+        var points = [[xCompass + _dx1, yCompass + _dy1 - Layout.TRACK_PADDING],
+                      [xCompass - _dx2, yCompass - _dy2 - Layout.TRACK_PADDING],
+                      [xCompass - _dx1, yCompass - _dy1 - Layout.TRACK_PADDING]];
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(points);
 
         // south part of compass
-        points[1] = [xCompass + _dx2, yCompass + _dy2 - padding];
+        points[1] = [xCompass + _dx2, yCompass + _dy2 - Layout.TRACK_PADDING];
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(points);
 
@@ -411,7 +410,7 @@ class TrackViewCommon extends GenericView {
         x2Ele = x1Ele + eleWidth;
         y2Ele = pixelHeight2 + 0.6 * eleHeight;
 
-        fontHeight = dc.getFontHeight(fontsize);
+        fontHeight = dc.getFontHeight(Layout.TRACK_FONT);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -479,20 +478,20 @@ class TrackViewCommon extends GenericView {
             } else {
                 dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
             }
-            var actualFontsize = $.trackViewLargeFont ? fontsizeNumber : fontsize;
+            var actualFontsize = $.trackViewLargeFont ? Layout.TRACK_FONT_LARGE : Layout.TRACK_FONT;
             var y = 0.5 * dc.getFontAscent(actualFontsize);
             var i;
             for(i = 0; i < Data.getField(3, 0); i++) {
                 // index of data field
                 var j = Data.getField(3, i + 1);
-                dc.drawText(pixelWidth2, padding + (1 + 2 * i) * y,
+                dc.drawText(pixelWidth2, Layout.TRACK_PADDING + (1 + 2 * i) * y,
                     actualFontsize,
                     //Data.dataFieldSLabels[j] +": "+
                     Data.getDataFieldLabelValue(j)[1], Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
             }
             // show computation time for draw track or draw profile for testing performance on real devices
             /*
-            dc.drawText(pixelWidth2, padding + (1 + 2 * i) * y,
+            dc.drawText(pixelWidth2, Layout.TRACK_PADDING + (1 + 2 * i) * y,
                     actualFontsize,
                     //Data.dataFieldSLabels[j] +": "+
                     drawTrackTime, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
