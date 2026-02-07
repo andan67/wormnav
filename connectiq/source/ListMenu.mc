@@ -170,7 +170,6 @@ class ListMenu extends Ui.View
 
     function drawMenu (dc)
     {
-        var width = dc.getWidth ();
         var height = dc.getHeight ();
         var h3 = height / 3;
 
@@ -199,7 +198,6 @@ class ListMenu extends Ui.View
             return;
         }
         var h31 = 0.29 * height;
-        var h32 = height - h31;
 
         dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
         dc.fillRectangle (0, y, width, h31);

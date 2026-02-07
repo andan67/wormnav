@@ -14,6 +14,7 @@ module Data {
     const dataFieldLabels = Application.getApp().split(WatchUi.loadResource(Rez.Strings.df_labels),'|');
 
     const dataScreensDefault = [4,0,1,4,6,4,9,10,11,15,4,12,5,14,10,2,0,1,4,6];
+    //const dataScreensDefault = [4,0,1,4,6,3,0,1,4,6,1,0,1,4,6,1,2,0,1,4,6];
 
     var dataScreens = [];
     var activeDataScreens = [];

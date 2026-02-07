@@ -53,7 +53,6 @@ class WormNavApp extends Application.AppBase {
         // explicit enablement of heart rate sensor seems to be required to detect an external HRM
         Sensor.setEnabledSensors([Sensor.SENSOR_HEARTRATE]);
 
-
         var trackStats = getProperty("trackStats");
         if(trackStats != null) {
              Track.newTrack(trackStats,

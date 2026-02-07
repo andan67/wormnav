@@ -1,4 +1,6 @@
 project.manifest = manifest.xml
+project.typecheck = 0
+project.optimization = 2
 
 base.sourcePath = $(semiround.sourcePath)
 
@@ -8,3 +10,5 @@ semiround.sourcePath = source;source-semiround
 
 
 fr55.sourcePath = source;source-fr55
+venu441mm.sourcePath = source;source-venu4
+venu445mm.sourcePath = source;source-venu4

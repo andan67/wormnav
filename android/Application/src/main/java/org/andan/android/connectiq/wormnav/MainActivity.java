@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.LinkMovementMethod;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.internal.platform.Platform;
 import pt.karambola.geo.Units;
 import pt.karambola.gpx.beans.Gpx;
 import pt.karambola.gpx.io.GpxFileIo;
@@ -94,7 +96,6 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
     /* Id to identify Location permission request. */
     private static final int PERMISSION_REQUEST = 0;
-    private static final String APP_PERMISSIONS[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,11 +129,17 @@ public class MainActivity extends Utils implements ActivityCompat.OnRequestPermi
 
         // up-front permission handling
         List<String> appPermissionsNeeded = new ArrayList<>();
-        for (String permission : APP_PERMISSIONS) {
-            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                appPermissionsNeeded.add(permission);
-            }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            appPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
+
+        if (Build.VERSION.SDK_INT < 30 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            appPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
         // request permission
         if (!appPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(

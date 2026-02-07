@@ -169,6 +169,11 @@ class WormNavDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
+    (:action_menu)
+        function onActionMenu() {
+        return onMenu();
+    }
+
     private function startStopActivity() {
        if( Toybox has :ActivityRecording ) {
             if( ( $.session == null ) || ( $.session.isRecording() == false ) ) {

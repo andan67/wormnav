@@ -14,13 +14,16 @@
      limitations under the License.
 -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.andan.android.connectiq.wormnav" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -43,6 +46,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.MainActivity"
+            android:exported="true"
             android:theme="@style/MyTheme"
             android:largeHeap="true"
             android:label="@string/app_name">
@@ -54,6 +58,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.RouteCreatorActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/route_creator_name">
             <intent-filter>
@@ -63,6 +68,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.RouteEditorActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/route_editor_name">
             <intent-filter>
@@ -72,6 +78,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.RouteOptimizerActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/route_optimizer_name">
             <intent-filter>
@@ -81,6 +88,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.RoutesBrowserActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/route_picker_name">
             <intent-filter>
@@ -90,6 +98,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.TracksBrowserActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/track_manager_name">
             <intent-filter>
@@ -99,6 +108,7 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.DeviceBrowserActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/device_browser_name">
             <intent-filter>
@@ -108,16 +118,13 @@
 
         <activity
             android:name="org.andan.android.connectiq.wormnav.PoiActivity"
+            android:exported="true"
             android:theme="@style/MapTheme"
             android:label="@string/poi_manager_name">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="org.andan.android.connectiq.wormnav.IQSendMessageIntentService"
-            android:exported="false" />
 
     </application>
 

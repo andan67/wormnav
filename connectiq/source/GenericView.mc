@@ -9,6 +9,9 @@ class GenericView extends WatchUi.View {
     function initialize() {
         View.initialize();
         setDarkMode($.isDarkMode);
+        if(Toybox.WatchUi.View has : setActionMenuIndicator) {
+            setActionMenuIndicator({:enabled => true});
+        }
     }
 
     function drawStartStop(dc) {

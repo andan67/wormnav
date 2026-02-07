@@ -6,14 +6,12 @@ package org.andan.android.connectiq.wormnav;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ResultReceiver;
-import android.util.FloatProperty;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.os.HandlerCompat;
 
 import com.garmin.android.connectiq.ConnectIQ;
 import com.garmin.android.connectiq.ConnectIQ.ConnectIQListener;
@@ -46,10 +45,11 @@ import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.util.GeoPoint;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DeviceBrowserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -58,7 +58,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
     public static final String TRACK_NAME = "TRACK_NAME";
     public static final String TRACK_LENGTH = "TRACK_LENGTH";
-    public static final String GEO_POINTS = "GEO_POINTS";
 
     public static final String TRANSMISSION_LOG_ENTRIES = "TRANSMISSION_PROTOCOL_ENTRIES";
 
@@ -70,19 +69,14 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     private boolean mSdkReady = false;
 
     private ListView mListView;
-    private TextView mDeviceName;
-    private TextView mDeviceStatus;
-    private TextView mOpenAppButton;
     private TextView mMessageStatus;
     private IQDevice mDevice;
     private List<IQDevice> mDeviceList;
     private IQApp mMyApp;
-    private boolean mAppIsOpen;
-
-    private float[] mTrackBoundingBox;
+    private ExecutorService mExecutorService = null;
+    private Handler mMainThreadHandler = null;
     private String mTrackName;
     private float mTrackLength;
-    private int mTrackNumberOfPoints;
     private int maxPathWpt;
     private double maxPathError;
 
@@ -90,7 +84,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     Gson gson;
 
     private List<GeoPoint> mGeoPoints;
-    private float[] mTrackPoints;
 
     private final String TAG = "DeviceBrowser";
 
@@ -126,21 +119,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
             mSdkReady = false;
         }
 
-    };
-
-    private ConnectIQ.IQOpenApplicationListener mOpenAppListener = new ConnectIQ.IQOpenApplicationListener() {
-        @Override
-        public void onOpenApplicationResponse(IQDevice device, IQApp app, ConnectIQ.IQOpenApplicationStatus status) {
-            Toast.makeText(getApplicationContext(), "App Status: " + status.name(), Toast.LENGTH_SHORT).show();
-
-            if (status == ConnectIQ.IQOpenApplicationStatus.APP_IS_ALREADY_RUNNING) {
-                mAppIsOpen = true;
-                mOpenAppButton.setText(R.string.open_app_already_open);
-            } else {
-                mAppIsOpen = false;
-                mOpenAppButton.setText(R.string.open_app_open);
-            }
-        }
     };
 
     @Override
@@ -187,12 +165,13 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
 
         mTrackName = getIntent().getStringExtra(TRACK_NAME);
         mTrackLength = getIntent().getFloatExtra(TRACK_LENGTH, 0);
-        //mGeoPoints = getIntent().getParcelableArrayListExtra(GEO_POINTS);
         mGeoPoints = Data.geoPointsForDevice;
         if (mGeoPoints == null || mGeoPoints.size() == 0) {
             Toast.makeText(getApplicationContext(), "No points to sent", Toast.LENGTH_SHORT).show();
             finish();
         }
+        mExecutorService = Executors.newSingleThreadExecutor();
+        mMainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
     }
 
     @Override
@@ -232,18 +211,14 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
-
-        // It is a good idea to unregister everything and shut things down to
-        // release resources and prevent unwanted callbacks.
-        Log.i(TAG, "onDestroy: shutdown ConnectIQ");
-        try {
-            mConnectIQ.unregisterAllForEvents();
-            mConnectIQ.shutdown(this);
-        } catch (InvalidStateException e) {
-            // This is usually because the SDK was already shut down
-            // so no worries.
+        if (mExecutorService != null) {
+            mExecutorService.shutdown();
+            mExecutorService = null;
+        }
+        if (mMainThreadHandler != null) {
+            mMainThreadHandler = null;
         }
     }
 
@@ -296,7 +271,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
         // -1 because of header
         if (position > 0 && mSdkReady) {
             mDevice = mAdapter.getItem(position - 1);
-            if(true || mDevice.getStatus() == IQDeviceStatus.CONNECTED ) {
+            if (true || mDevice.getStatus() == IQDeviceStatus.CONNECTED) {
                 displaySendToDeviceDialog();
             }
         }
@@ -320,6 +295,7 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                 // automatically get a status update for each device so we do not
                 // need to call getStatus()
                 for (IQDevice device : mDeviceList) {
+                    device.setStatus(mConnectIQ.getDeviceStatus(device));
                     mConnectIQ.registerForDeviceEvents(device, mDeviceEventListener);
                     //mAdapter.updateDeviceStatus(device, device.getStatus());
                     Log.d(TAG, device.getFriendlyName());
@@ -400,7 +376,6 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                 .setPositiveButton(okText, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        Intent intentService = new Intent(DeviceBrowserActivity.this, IQSendMessageIntentService.class);
                         maxPathWpt = 0;
                         if (reduceCheckBox.isChecked()) {
                             if (!maxWptEditText.getText().toString().isEmpty()) {
@@ -418,44 +393,48 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
                         logEntry.setNoTrackPointsOriginal(mGeoPoints.size());
 
                         logEntry.setOptimized(maxPathWpt > 0);
-                        logEntry.setTrackLengthSent((float)((List<Object>)message.get(0)).get(1));
-                        logEntry.setNoTrackPointsSent((int)((List<Object>)message.get(0)).get(2));
+                        logEntry.setTrackLengthSent((float) ((List<Object>) message.get(0)).get(1));
+                        logEntry.setNoTrackPointsSent((int) ((List<Object>) message.get(0)).get(2));
 
-                        Bundle messageBundle = new Bundle();
-                        messageBundle.putParcelable(IQSendMessageIntentService.IQ_DEVICE, mDevice);
-                        messageBundle.putString(IQSendMessageIntentService.IQ_APP_ID, MY_APP);
-                        messageBundle.putSerializable(IQSendMessageIntentService.MESSAGE_DATA, (Serializable) message);
-                        messageBundle.putParcelable(IQSendMessageIntentService.RESULT_RECEIVER, new ResultReceiver(new Handler()) {
-                            @Override
-                            protected void onReceiveResult(int resultCode, Bundle resultData) {
-                                super.onReceiveResult(resultCode, resultData);
-                                // workaround to handle bug(?) that onMessageStatus is called twise with first status 'SUCCESS' and second status n'FAILUER_UNKNOWN'
-                                long sendTime = resultData.getLong(IQSendMessageIntentService.MESSAGE_SEND_TIME);
-                                String deviceName = resultData.getString(IQSendMessageIntentService.IQ_DEVICE_NAME);
-                                String status = resultData.getString(IQSendMessageIntentService.MESSAGE_STATUS);
-                                //long sendTime = resultData.getLong(IQSendMessageIntentService.MESSAGE_SEND_TIME);
-                                Log.i(TAG, "message status:" + status);
-                                final String sendTimeAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(sendTime);
-                                if (resultCode == IQSendMessageIntentService.MESSAGE_SEND_OK) {
-                                    mMessageStatus.setText("Last message sent to '" + deviceName +
-                                            "' at '" + sendTimeAsString + "' with status '" + status + "'.");
-                                } else {
-                                    mMessageStatus.setText("Last message sent to '" + deviceName +
-                                            "' at '" + sendTimeAsString + "' failed for reason '" + status + "'.");
+                        final long sendTime = new Date().getTime();
+
+                        if (mExecutorService != null) {
+                            mExecutorService.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int statusCode = SendToDeviceUtility.MESSAGE_SEND_OK;
+                                    try {
+
+                                        ConnectIQ connectIQ = ConnectIQ.getInstance();
+                                        connectIQ.sendMessage(mDevice, mMyApp, message, new ConnectIQ.IQSendMessageListener() {
+
+                                            long lastSendTime = 0;
+
+                                            @Override
+                                            public void onMessageStatus(IQDevice device, IQApp app, ConnectIQ.IQMessageStatus status) {
+                                                if (lastSendTime != sendTime) {
+                                                    lastSendTime = sendTime;
+                                                    Log.i(TAG, "onMessageStatus with status: " + status.name());
+                                                    onMessageSend(logEntry, mDevice.getFriendlyName(), sendTime,
+                                                            status == ConnectIQ.IQMessageStatus.SUCCESS ? SendToDeviceUtility.MESSAGE_SEND_OK : SendToDeviceUtility.MESSAGE_SEND_NOT_OK,
+                                                            status.name());
+                                                }
+                                            }
+
+
+                                        });
+                                    } catch (InvalidStateException e) {
+                                        Log.e(TAG, "ConnectIQ is not in a valid state");
+                                        onMessageSend(logEntry, mDevice.getFriendlyName(),
+                                                sendTime, SendToDeviceUtility.MESSAGE_SEND_NOT_OK, "ConnectIQ is not in a valid state");
+                                    } catch (ServiceUnavailableException e) {
+                                        Log.e(TAG, "ConnectIQ service is unavailable");
+                                        onMessageSend(logEntry, mDevice.getFriendlyName(),
+                                                sendTime, SendToDeviceUtility.MESSAGE_SEND_NOT_OK, "ConnectIQ service is unavailable");
+                                    }
                                 }
-                                logEntry.setDeviceName(deviceName);
-                                logEntry.setSendTime(sendTime);
-                                logEntry.setStatusCode(resultCode);
-                                logEntry.setStatusMessage(status);
-                                logEntry.addToConstraintList(mTransmissionLogEntries, 20);
-                                mMessageStatus.setText(logEntry.toLogString());
-
-                            }
-                        });
-
-                        intentService.putExtra(IQSendMessageIntentService.INTENT_BUNDLE, messageBundle);
-                        DeviceBrowserActivity.this.startService(intentService);
-
+                            });
+                        }
                     }
                 })
                 .setNegativeButton(cancelText, new DialogInterface.OnClickListener() {
@@ -470,5 +449,21 @@ public class DeviceBrowserActivity extends AppCompatActivity implements AdapterV
             alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
         alert.show();
+    }
+
+    private void onMessageSend(TransmissionLogEntry logEntry, String deviceName, long sendTime, int statusCode, String statusMessage) {
+        if (mMainThreadHandler != null) {
+            mMainThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    logEntry.setSendTime(sendTime);
+                    logEntry.setDeviceName(deviceName);
+                    logEntry.setStatusCode(statusCode);
+                    logEntry.setStatusMessage(statusMessage);
+                    logEntry.addToConstraintList(mTransmissionLogEntries, 20);
+                    mMessageStatus.setText(logEntry.toLogString());
+                }
+            });
+        }
     }
 }

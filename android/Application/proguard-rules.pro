@@ -24,3 +24,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.garmin.android.connectiq.** { *; }
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn org.jetbrains.annotations.NotNull
+-dontwarn org.jetbrains.annotations.Nullable
+
+-keepattributes Signature
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-printusage ./usage.txt

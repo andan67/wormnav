@@ -40,6 +40,7 @@ module MenuDelegates {
                         [true, false], $.isDarkMode];
             case :data_field:
                 if(idx == 0) {
+                    // default
                     return  [null, [0,1,2,3,4], Data.getField(options[0], idx)];
                 } else {
                     return [Data.dataFieldMenuLabels, null, Data.getField(options[0], idx)];
